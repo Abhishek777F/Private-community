@@ -1,0 +1,2382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>Profile • Private Community</title>
+
+<script>
+(() => {
+  const savedTheme = localStorage.getItem("private-theme") || "system";
+  document.documentElement.dataset.theme = savedTheme;
+})();
+</script>
+
+<style>
+
+/* =====================================================
+   RESET
+===================================================== */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+  --bg:#09090b;
+  --surface:#111114;
+  --surface2:#17171b;
+  --border:rgba(255,255,255,.08);
+  --text:#f7f4ed;
+  --muted:#999791;
+  --gold:#d8b56a;
+  --gold-light:#f0d797;
+  --danger:#e77b7b;
+  --shadow:0 25px 70px rgba(0,0,0,.25);
+}
+
+/* SYSTEM LIGHT */
+@media(prefers-color-scheme:light){
+  :root[data-theme="system"]{
+    --bg:#f5f3ee;
+    --surface:#ffffff;
+    --surface2:#f0eee8;
+    --border:rgba(20,20,20,.09);
+    --text:#171612;
+    --muted:#706d65;
+    --gold:#ad7e27;
+    --gold-light:#8b641e;
+    --danger:#c94f4f;
+    --shadow:0 25px 70px rgba(0,0,0,.10);
+  }
+}
+
+/* LIGHT */
+:root[data-theme="light"]{
+  --bg:#f5f3ee;
+  --surface:#ffffff;
+  --surface2:#f0eee8;
+  --border:rgba(20,20,20,.09);
+  --text:#171612;
+  --muted:#706d65;
+  --gold:#ad7e27;
+  --gold-light:#8b641e;
+  --danger:#c94f4f;
+  --shadow:0 25px 70px rgba(0,0,0,.10);
+}
+
+/* DARK */
+:root[data-theme="dark"]{
+  --bg:#09090b;
+  --surface:#111114;
+  --surface2:#17171b;
+  --border:rgba(255,255,255,.08);
+  --text:#f7f4ed;
+  --muted:#999791;
+  --gold:#d8b56a;
+  --gold-light:#f0d797;
+  --danger:#e77b7b;
+  --shadow:0 25px 70px rgba(0,0,0,.25);
+}
+
+/* =====================================================
+   BODY
+===================================================== */
+
+html{ scroll-behavior:smooth; }
+
+body{
+  min-height:100vh;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 50% -10%, rgba(216,181,106,.12), transparent 38%),
+    var(--bg);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  transition:background .3s ease,color .3s ease;
+  animation:pageEnter .42s ease both;
+}
+
+button,input,textarea,select{ font:inherit; }
+button{ cursor:pointer; }
+a{ color:inherit; text-decoration:none; }
+
+@keyframes pageEnter{
+  from{ opacity:0; transform:translateY(8px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header{
+  height:72px;
+  position:fixed;
+  top:0;left:0;right:0;
+  z-index:100;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 20px;
+  border-bottom:1px solid var(--border);
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.header-left{ display:flex; align-items:center; justify-content:flex-start; }
+
+.header-profile{
+  width:42px;height:42px;
+  border-radius:50%;
+  overflow:hidden;
+  border:1px solid rgba(216,181,106,.38);
+  background:linear-gradient(145deg,rgba(216,181,106,.16),rgba(255,255,255,.04));
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold-light);
+  font-weight:700;
+  font-size:14px;
+  padding:0;
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+
+.header-profile:hover{
+  transform:scale(1.05);
+  box-shadow:0 8px 25px rgba(216,181,106,.15);
+}
+
+.header-profile img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:none;
+}
+
+.header-title{
+  display:flex;align-items:center;justify-content:center;
+  white-space:nowrap;
+  font-size:17px;
+  font-weight:750;
+  letter-spacing:-.3px;
+  color:var(--text);
+}
+
+.header-title::before{
+  content:"";
+  width:7px;height:7px;
+  margin-right:9px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 12px rgba(216,181,106,.45);
+}
+
+.header-right{ display:flex; align-items:center; justify-content:flex-end; }
+
+.menu-button{
+  width:42px;height:42px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:rgba(255,255,255,.035);
+  color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+  padding:0;
+  transition:border-color .2s ease,color .2s ease,background .2s ease,transform .2s ease;
+}
+
+.menu-button:hover{
+  border-color:rgba(216,181,106,.4);
+  color:var(--gold-light);
+  background:rgba(216,181,106,.05);
+}
+
+.menu-button.open{ transform:rotate(90deg); }
+
+/* =====================================================
+   MAIN
+===================================================== */
+
+main{
+  width:100%;
+  max-width:900px;
+  margin:auto;
+  padding:108px 20px 110px;
+}
+
+/* =====================================================
+   PROFILE HERO
+===================================================== */
+
+.profile-hero{
+  text-align:center;
+  margin-bottom:24px;
+  animation:cardEnter .45s ease both;
+}
+
+@keyframes cardEnter{
+  from{ opacity:0; transform:translateY(15px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+.profile-photo-button{
+  width:118px;height:118px;
+  margin:0 auto 17px;
+  padding:0;
+  border-radius:50%;
+  border:2px solid rgba(216,181,106,.45);
+  background:linear-gradient(145deg,rgba(216,181,106,.16),rgba(255,255,255,.04));
+  overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold-light);
+  font-size:34px;
+  font-weight:700;
+  box-shadow:0 15px 45px rgba(0,0,0,.16);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+
+.profile-photo-button:hover{
+  transform:scale(1.035);
+  box-shadow:0 20px 55px rgba(216,181,106,.18);
+}
+
+.profile-photo-button img{
+  width:100%;height:100%;
+  object-fit:cover;
+}
+
+.photo-hint{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.profile-name{
+  font-size:28px;
+  font-weight:750;
+  letter-spacing:-.9px;
+}
+
+.profile-username{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.member-badge{
+  display:inline-flex;align-items:center;
+  gap:7px;
+  margin-top:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(216,181,106,.22);
+  color:var(--gold-light);
+  background:rgba(216,181,106,.06);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+}
+
+.member-badge-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--gold);
+}
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.card{
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),
+    var(--surface);
+  box-shadow:var(--shadow);
+  padding:22px;
+  margin-bottom:18px;
+}
+
+.card-title{
+  font-size:17px;
+  font-weight:720;
+  margin-bottom:17px;
+}
+
+.card-subtitle{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:-9px;
+  margin-bottom:18px;
+}
+
+/* =====================================================
+   FIELD
+===================================================== */
+
+.field{ margin-bottom:16px; }
+.field:last-child{ margin-bottom:0; }
+
+.field-label{
+  display:block;
+  margin-bottom:7px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:650;
+}
+
+.field input,
+.field textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:13px;
+  outline:none;
+  background:rgba(255,255,255,.035);
+  color:var(--text);
+  padding:0 13px;
+  font-size:13px;
+  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+
+.field input{ height:46px; }
+
+.field textarea{
+  min-height:105px;
+  padding-top:12px;
+  padding-bottom:12px;
+  resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus{
+  border-color:rgba(216,181,106,.45);
+  box-shadow:0 0 0 3px rgba(216,181,106,.05);
+  background:rgba(216,181,106,.025);
+}
+
+.field input::placeholder,
+.field textarea::placeholder{ color:var(--muted); }
+
+/* PHONE */
+
+.phone-row{
+  display:grid;
+  grid-template-columns:118px 1fr;
+  gap:10px;
+}
+
+.phone-row input,
+.phone-row select{
+  height:46px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  outline:none;
+  background:rgba(255,255,255,.035);
+  color:var(--text);
+  padding:0 12px;
+  font-size:13px;
+}
+
+.phone-row select{ appearance:auto; }
+
+.phone-row input:focus,
+.phone-row select:focus{
+  border-color:rgba(216,181,106,.45);
+  box-shadow:0 0 0 3px rgba(216,181,106,.05);
+}
+
+/* =====================================================
+   READ ONLY INFO
+===================================================== */
+
+.info-list{ display:flex; flex-direction:column; }
+
+.info-row{
+  min-height:54px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;
+  border-bottom:1px solid var(--border);
+}
+
+.info-row:last-child{ border-bottom:none; }
+
+.info-label{
+  color:var(--muted);
+  font-size:12px;
+}
+
+.info-value{
+  max-width:62%;
+  text-align:right;
+  color:var(--text);
+  font-size:12px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.primary-button{
+  width:100%;height:48px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:#111;
+  font-size:13px;
+  font-weight:750;
+  transition:transform .2s ease,box-shadow .2s ease,opacity .2s ease;
+}
+
+.primary-button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 12px 30px rgba(216,181,106,.20);
+}
+
+.primary-button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.secondary-button{
+  width:100%;height:46px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:rgba(255,255,255,.035);
+  color:var(--text);
+  font-size:12px;
+  font-weight:650;
+  transition:background .2s ease,border-color .2s ease;
+}
+
+.secondary-button:hover{
+  border-color:rgba(216,181,106,.35);
+  background:rgba(216,181,106,.05);
+}
+
+.photo-actions{
+  display:flex;
+  gap:10px;
+  margin-top:12px;
+}
+
+.photo-actions button{ flex:1; }
+
+/* =====================================================
+   MEMBER PROFILE
+===================================================== */
+
+.member-profile-card{ text-align:center; }
+
+.member-bio{
+  margin-top:14px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+  white-space:pre-wrap;
+}
+
+/* =====================================================
+   MENU PANEL
+===================================================== */
+
+.menu-panel{
+  position:fixed;
+  top:82px;
+  right:20px;
+  width:245px;
+  padding:8px;
+  z-index:150;
+  border:1px solid var(--border);
+  border-radius:17px;
+  background:var(--surface);
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  backdrop-filter:blur(20px);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(-8px) scale(.96);
+  transform-origin:top right;
+  transition:opacity .2s ease,transform .2s ease,visibility .2s ease;
+}
+
+.menu-panel.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0) scale(1);
+}
+
+.menu-item{
+  width:100%;height:43px;
+  border:none;
+  border-radius:11px;
+  background:transparent;
+  color:var(--text);
+  text-align:left;
+  padding:0 12px;
+  font-size:12px;
+  font-weight:600;
+  display:flex;align-items:center;
+  gap:10px;
+  transition:background .18s ease,transform .18s ease;
+}
+
+.menu-item:hover{
+  background:rgba(255,255,255,.05);
+  transform:translateX(2px);
+}
+
+.menu-icon{
+  width:18px;height:18px;
+  flex-shrink:0;
+}
+
+.menu-item.logout{ color:var(--danger); }
+
+/* THEME */
+
+.theme-section{
+  padding:9px 5px 8px;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  margin:5px 0;
+}
+
+.theme-title{
+  padding:5px 8px 8px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+.theme-option{
+  width:100%;height:38px;
+  display:flex;align-items:center;
+  gap:10px;
+  border:none;
+  border-radius:10px;
+  background:transparent;
+  color:var(--text);
+  padding:0 9px;
+  font-size:12px;
+  text-align:left;
+  transition:background .18s ease,transform .18s ease;
+}
+
+.theme-option:hover{
+  background:rgba(255,255,255,.05);
+  transform:translateX(2px);
+}
+
+.theme-option.active{
+  color:var(--gold-light);
+  background:rgba(216,181,106,.07);
+}
+
+.theme-symbol{
+  width:22px;height:18px;
+  display:grid;place-items:center;
+}
+
+.theme-check{
+  margin-left:auto;
+  opacity:0;
+}
+
+.theme-option.active .theme-check{ opacity:1; }
+
+/* =====================================================
+   BOTTOM NAV
+===================================================== */
+
+.bottom-nav{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:72px;
+  z-index:200;
+  border-top:1px solid var(--border);
+  background:color-mix(in srgb,var(--surface) 92%,transparent);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  padding:7px 10px;
+  grid-template-columns:repeat(5,1fr);
+}
+
+.nav-item{
+  position:relative;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:4px;
+  font-size:9px;
+  font-weight:600;
+  transition:color .2s ease,transform .2s ease;
+}
+
+.nav-item:hover{
+  color:var(--gold-light);
+  transform:translateY(-1px);
+}
+
+.nav-icon{
+  width:21px;height:21px;
+  display:grid;place-items:center;
+  transition:transform .25s ease;
+}
+
+.nav-item.active{ color:var(--gold-light); }
+
+.nav-item.active .nav-icon{
+  transform:translateY(-1px) scale(1.08);
+}
+
+.nav-item.active::before{
+  content:"";
+  position:absolute;
+  top:0;
+  width:28px;height:3px;
+  border-radius:0 0 5px 5px;
+  background:var(--gold);
+  box-shadow:0 0 12px rgba(216,181,106,.35);
+  animation:navIndicator .25s ease;
+}
+
+@keyframes navIndicator{
+  from{ width:0; opacity:0; }
+  to{ width:28px; opacity:1; }
+}
+
+/* =====================================================
+   FULL SCREEN PHOTO VIEWER
+===================================================== */
+
+.photo-viewer{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  width:100vw;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+  background:rgba(0,0,0,var(--viewer-bg,1));
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  touch-action:none;
+  overscroll-behavior:contain;
+  -webkit-user-select:none;
+  user-select:none;
+  transition:opacity .25s ease,visibility .25s ease;
+}
+
+.photo-viewer.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.photo-viewer.dragging .viewer-image{
+  transition:none;
+}
+
+.viewer-stage{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.viewer-image{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  transform-origin:center center;
+  will-change:transform;
+  transition:transform .25s ease;
+  -webkit-user-drag:none;
+  user-select:none;
+  touch-action:none;
+}
+
+/* top bar */
+
+.viewer-top{
+  position:absolute;
+  top:0;left:0;right:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:
+    calc(env(safe-area-inset-top,0px) + 14px)
+    16px
+    26px;
+  background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent);
+  transition:opacity .25s ease,transform .25s ease;
+}
+
+.photo-viewer.zoomed .viewer-top,
+.photo-viewer.dragging .viewer-top{
+  opacity:0;
+  transform:translateY(-10px);
+  pointer-events:none;
+}
+
+.viewer-close{
+  width:44px;height:44px;
+  flex-shrink:0;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:25px;
+  line-height:1;
+  padding:0;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:background .2s ease,border-color .2s ease;
+}
+
+.viewer-close:hover{
+  border-color:rgba(216,181,106,.5);
+  background:rgba(216,181,106,.14);
+}
+
+.viewer-title{
+  min-width:0;
+  color:#fff;
+  font-size:14px;
+  font-weight:650;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* bottom hint */
+
+.viewer-hint{
+  position:absolute;
+  left:0;right:0;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 22px);
+  z-index:2;
+  text-align:center;
+  color:rgba(255,255,255,.62);
+  font-size:11px;
+  pointer-events:none;
+  transition:opacity .3s ease;
+}
+
+.photo-viewer.zoomed .viewer-hint,
+.photo-viewer.dragging .viewer-hint,
+.viewer-hint.faded{
+  opacity:0;
+}
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:88px;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  z-index:1200;
+  max-width:calc(100% - 30px);
+  padding:11px 16px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--surface);
+  color:var(--text);
+  font-size:12px;
+  box-shadow:0 15px 40px rgba(0,0,0,.3);
+  transition:opacity .25s,transform .25s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+/* LOADING */
+
+.loading{
+  display:flex;
+  justify-content:center;
+  padding:30px;
+}
+
+.spinner{
+  width:22px;height:22px;
+  border-radius:50%;
+  border:2px solid rgba(216,181,106,.18);
+  border-top-color:var(--gold);
+  animation:spin .7s linear infinite;
+}
+
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+.hidden{ display:none !important; }
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:800px){
+  header{
+    height:68px;
+    padding:0 17px;
+  }
+  main{ padding:94px 15px 95px; }
+  .bottom-nav{ display:grid; }
+  .profile-name{ font-size:25px; }
+}
+
+@media(min-width:801px){
+  .bottom-nav{ display:none !important; }
+}
+
+@media(max-width:420px){
+  .header-title{ font-size:15px; }
+  .header-profile,
+  .menu-button{
+    width:40px;
+    height:40px;
+  }
+  .menu-panel{
+    right:12px;
+    width:245px;
+  }
+  .phone-row{ grid-template-columns:105px 1fr; }
+  .profile-photo-button{
+    width:105px;
+    height:105px;
+  }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header>
+
+  <div class="header-left">
+    <button class="header-profile" id="headerProfile" aria-label="Open profile" title="Profile">
+      <span id="headerInitial">P</span>
+      <img id="headerPhoto" alt="Profile">
+    </button>
+  </div>
+
+  <div class="header-title">Private Community</div>
+
+  <div class="header-right">
+    <button class="menu-button" id="menuButton" aria-label="Open menu" aria-expanded="false" title="Menu">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="5" r="1.8"/>
+        <circle cx="12" cy="12" r="1.8"/>
+        <circle cx="12" cy="19" r="1.8"/>
+      </svg>
+    </button>
+  </div>
+
+</header>
+
+
+<!-- MENU -->
+
+<div class="menu-panel" id="menuPanel">
+
+  <button class="menu-item" id="profileMenu">
+    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="8" r="3.2"/>
+      <path d="M5.5 20c.8-3.5 3-5.2 6.5-5.2s5.7 1.7 6.5 5.2"/>
+    </svg>
+    Profile
+  </button>
+
+  <button class="menu-item" id="createMenu">
+    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <rect x="4" y="4" width="16" height="16" rx="3"/>
+      <path d="M12 8v8M8 12h8"/>
+    </svg>
+    Create Post
+  </button>
+
+  <button class="menu-item" id="chatMenu">
+    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-4-.9L4 20l1.4-3.4A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7Z"/>
+    </svg>
+    Chat
+  </button>
+
+  <button class="menu-item" id="notificationMenu">
+    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+      <path d="M10 21h4"/>
+    </svg>
+    Notifications
+  </button>
+
+  <div class="theme-section">
+
+    <div class="theme-title">Appearance</div>
+
+    <button class="theme-option" data-theme-option="dark">
+      <span class="theme-symbol">◐</span>
+      <span>Dark</span>
+      <span class="theme-check">✓</span>
+    </button>
+
+    <button class="theme-option" data-theme-option="light">
+      <span class="theme-symbol">☀</span>
+      <span>Light</span>
+      <span class="theme-check">✓</span>
+    </button>
+
+    <button class="theme-option" data-theme-option="system">
+      <span class="theme-symbol">⚙</span>
+      <span>System</span>
+      <span class="theme-check">✓</span>
+    </button>
+
+  </div>
+
+  <button class="menu-item" id="settingsMenu">
+    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19 15.2a7.7 7.7 0 0 0 .1-6.4l-2-.8a7.6 7.6 0 0 0-1.4-1.4l.8-2a7.7 7.7 0 0 0-6.4-.1l-.8 2a7.6 7.6 0 0 0-1.9 1.1l-2-.7a7.7 7.7 0 0 0-.1 6.4l2 .8a7.6 7.6 0 0 0 1.4 1.4l-.8 2a7.7 7.7 0 0 0 6.4.1l.8-2a7.6 7.6 0 0 0 1.9-1.1z"/>
+    </svg>
+    Settings
+  </button>
+
+  <button class="menu-item logout" id="logoutButton">
+    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"/>
+      <path d="M14 8l4 4-4 4M9 12h9"/>
+    </svg>
+    Log out
+  </button>
+
+</div>
+
+
+<!-- MAIN -->
+
+<main>
+
+  <!-- PROFILE HERO -->
+
+  <section class="profile-hero">
+
+    <button class="profile-photo-button" id="profilePhotoButton" type="button" aria-label="View profile photo">
+      <span id="profileInitial">P</span>
+      <img id="profilePhoto" alt="Profile photo">
+    </button>
+
+    <div class="photo-hint" id="photoHint">Tap photo to view</div>
+
+    <h1 class="profile-name" id="profileName">Member</h1>
+
+    <div class="profile-username" id="profileUsername">@member</div>
+
+    <div class="member-badge">
+      <span class="member-badge-dot"></span>
+      Private member
+    </div>
+
+  </section>
+
+
+  <!-- MEMBER VIEW -->
+
+  <section class="card member-profile-card hidden" id="memberView">
+    <div class="card-title">About</div>
+    <div class="member-bio" id="memberBio"></div>
+  </section>
+
+
+  <!-- EDIT PROFILE -->
+
+  <section class="card" id="editCard">
+
+    <div class="card-title">Profile</div>
+    <div class="card-subtitle">Update your community profile.</div>
+
+    <!-- NAME -->
+    <div class="field">
+      <label class="field-label" for="nameInput">Full name</label>
+      <input id="nameInput" type="text" maxlength="80" autocomplete="name" placeholder="Your name">
+    </div>
+
+    <!-- USERNAME -->
+    <div class="field">
+      <label class="field-label" for="usernameInput">Username</label>
+      <input id="usernameInput" type="text" maxlength="20" autocomplete="username" placeholder="username">
+    </div>
+
+    <!-- MOBILE NUMBER -->
+    <div class="field">
+      <label class="field-label" for="phoneInput">Mobile number</label>
+      <div class="phone-row">
+        <select id="countryCode" aria-label="Country code">
+          <option value="+91">🇮🇳 +91</option>
+          <option value="+1">🇺🇸 +1</option>
+          <option value="+44">🇬🇧 +44</option>
+          <option value="+971">🇦🇪 +971</option>
+          <option value="+61">🇦🇺 +61</option>
+        </select>
+        <input id="phoneInput" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="15" placeholder="9876543210">
+      </div>
+    </div>
+
+    <!-- BIO -->
+    <div class="field">
+      <label class="field-label" for="bioInput">Bio</label>
+      <textarea id="bioInput" maxlength="180" placeholder="Tell something about yourself..."></textarea>
+    </div>
+
+    <!-- PHOTO -->
+    <div class="field">
+      <label class="field-label">Profile photo</label>
+      <div class="photo-actions">
+        <button class="secondary-button" id="choosePhotoButton" type="button">Change photo</button>
+        <button class="secondary-button" id="removePhotoButton" type="button">Remove</button>
+      </div>
+      <input id="photoInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+    </div>
+
+    <button class="primary-button" id="saveButton" type="button">Save Changes</button>
+
+  </section>
+
+
+  <!-- ACCOUNT INFORMATION -->
+
+  <section class="card">
+
+    <div class="card-title">Account</div>
+
+    <div class="info-list">
+
+      <div class="info-row">
+        <div class="info-label">Email</div>
+        <div class="info-value" id="emailValue">—</div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label">Mobile number</div>
+        <div class="info-value" id="phoneValue">—</div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label">Sign-in method</div>
+        <div class="info-value" id="signinValue">—</div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label">Member ID</div>
+        <div class="info-value" id="memberIdValue" title="Member ID">—</div>
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+<!-- BOTTOM NAVIGATION -->
+
+<nav class="bottom-nav">
+
+  <button class="nav-item" data-page="home">
+    <span class="nav-icon">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="m3 10 9-7 9 7"/>
+        <path d="M5 9.5V21h14V9.5"/>
+        <path d="M9 21v-6h6v6"/>
+      </svg>
+    </span>
+    Home
+  </button>
+
+  <button class="nav-item" data-page="chat">
+    <span class="nav-icon">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-4-.9L4 20l1.4-3.4A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7Z"/>
+      </svg>
+    </span>
+    Chat
+  </button>
+
+  <button class="nav-item" data-page="create">
+    <span class="nav-icon">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="4" y="4" width="16" height="16" rx="4"/>
+        <path d="M12 8v8M8 12h8"/>
+      </svg>
+    </span>
+    Create
+  </button>
+
+  <button class="nav-item" data-page="notifications">
+    <span class="nav-icon">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+        <path d="M10 21h4"/>
+      </svg>
+    </span>
+    Alerts
+  </button>
+
+  <button class="nav-item active" data-page="profile">
+    <span class="nav-icon">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="8" r="3"/>
+        <path d="M5 21c.7-4 3-6 7-6s6.3 2 7 6"/>
+      </svg>
+    </span>
+    Profile
+  </button>
+
+</nav>
+
+
+<!-- FULL SCREEN PHOTO VIEWER -->
+
+<div class="photo-viewer" id="photoViewer" role="dialog" aria-modal="true" aria-label="Profile photo">
+
+  <div class="viewer-stage" id="viewerStage">
+    <img class="viewer-image" id="viewerImage" alt="Profile photo" draggable="false">
+  </div>
+
+  <div class="viewer-top">
+    <button class="viewer-close" id="viewerClose" type="button" aria-label="Close photo">×</button>
+    <div class="viewer-title" id="viewerTitle"></div>
+  </div>
+
+  <div class="viewer-hint" id="viewerHint">Pinch or double-tap to zoom • Swipe down to close</div>
+
+</div>
+
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import { auth, db } from "./firebase.js";
+
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =====================================================
+   CLOUDINARY
+===================================================== */
+
+const CLOUDINARY_CLOUD_NAME = "x8v7nchp";
+const CLOUDINARY_UPLOAD_PRESET = "Private_social";
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const $ = id => document.getElementById(id);
+
+const headerProfile = $("headerProfile");
+const headerInitial = $("headerInitial");
+const headerPhoto = $("headerPhoto");
+
+const profilePhotoButton = $("profilePhotoButton");
+const profileInitial = $("profileInitial");
+const profilePhoto = $("profilePhoto");
+const profileName = $("profileName");
+const profileUsername = $("profileUsername");
+
+const editCard = $("editCard");
+const memberView = $("memberView");
+const memberBio = $("memberBio");
+
+const nameInput = $("nameInput");
+const usernameInput = $("usernameInput");
+const countryCode = $("countryCode");
+const phoneInput = $("phoneInput");
+const bioInput = $("bioInput");
+
+const photoInput = $("photoInput");
+const choosePhotoButton = $("choosePhotoButton");
+const removePhotoButton = $("removePhotoButton");
+const saveButton = $("saveButton");
+
+const emailValue = $("emailValue");
+const phoneValue = $("phoneValue");
+const signinValue = $("signinValue");
+const memberIdValue = $("memberIdValue");
+
+const menuButton = $("menuButton");
+const menuPanel = $("menuPanel");
+const profileMenu = $("profileMenu");
+const createMenu = $("createMenu");
+const chatMenu = $("chatMenu");
+const notificationMenu = $("notificationMenu");
+const settingsMenu = $("settingsMenu");
+const logoutButton = $("logoutButton");
+
+const photoViewer = $("photoViewer");
+const viewerStage = $("viewerStage");
+const viewerImage = $("viewerImage");
+const viewerTitle = $("viewerTitle");
+const viewerClose = $("viewerClose");
+const viewerHint = $("viewerHint");
+
+const toast = $("toast");
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let currentUser = null;
+let viewedUser = null;
+let isOwnProfile = true;
+let selectedPhotoFile = null;
+let removePhoto = false;
+
+
+/* =====================================================
+   INITIAL
+===================================================== */
+
+function getInitial(name){
+  if(!name){
+    return "P";
+  }
+  return name.trim().charAt(0).toUpperCase();
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimer = null;
+
+function showToast(text){
+
+  clearTimeout(toastTimer);
+
+  toast.textContent = text;
+  toast.classList.add("show");
+
+  toastTimer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2200);
+
+}
+
+
+/* =====================================================
+   THEME
+===================================================== */
+
+const themeOptions = document.querySelectorAll("[data-theme-option]");
+
+function getSavedTheme(){
+  return localStorage.getItem("private-theme") || "system";
+}
+
+function applyTheme(theme){
+
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem("private-theme", theme);
+
+  themeOptions.forEach(option => {
+    option.classList.toggle(
+      "active",
+      option.dataset.themeOption === theme
+    );
+  });
+
+}
+
+themeOptions.forEach(option => {
+  option.addEventListener("click", () => {
+    applyTheme(option.dataset.themeOption);
+    closeMenu();
+  });
+});
+
+applyTheme(getSavedTheme());
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function closeMenu(){
+  menuPanel.classList.remove("show");
+  menuButton.classList.remove("open");
+  menuButton.setAttribute("aria-expanded","false");
+}
+
+menuButton.addEventListener("click", event => {
+
+  event.stopPropagation();
+
+  const opened = menuPanel.classList.toggle("show");
+
+  menuButton.classList.toggle("open", opened);
+  menuButton.setAttribute("aria-expanded", String(opened));
+
+});
+
+document.addEventListener("click", event => {
+  if(
+    !menuPanel.contains(event.target) &&
+    event.target !== menuButton
+  ){
+    closeMenu();
+  }
+});
+
+
+/* =====================================================
+   ROUTES
+===================================================== */
+
+const routes = {
+  home:"home.html",
+  chat:"chat.html",
+  create:"create-post.html",
+  notifications:"notifications.html",
+  profile:"profile.html"
+};
+
+function goTo(page){
+
+  const destination = routes[page];
+
+  if(!destination){
+    return;
+  }
+
+  document.body.style.opacity = "0";
+  document.body.style.transform = "translateY(7px)";
+  document.body.style.transition = "opacity .18s ease, transform .18s ease";
+
+  setTimeout(() => {
+    window.location.href = destination;
+  }, 180);
+
+}
+
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => {
+    goTo(button.dataset.page);
+  });
+});
+
+
+/* HEADER PROFILE */
+
+headerProfile.addEventListener("click", () => {
+  goTo("profile");
+});
+
+
+/* MENU NAVIGATION */
+
+profileMenu.addEventListener("click", () => {
+  closeMenu();
+  goTo("profile");
+});
+
+createMenu.addEventListener("click", () => {
+  closeMenu();
+  goTo("create");
+});
+
+chatMenu.addEventListener("click", () => {
+  closeMenu();
+  goTo("chat");
+});
+
+notificationMenu.addEventListener("click", () => {
+  closeMenu();
+  goTo("notifications");
+});
+
+settingsMenu.addEventListener("click", () => {
+  closeMenu();
+  window.location.href = "settings.html";
+});
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+logoutButton.addEventListener("click", async () => {
+
+  try{
+
+    await signOut(auth);
+
+    window.location.href = "index.html";
+
+  }catch(error){
+
+    console.error("Logout error:", error);
+
+    showToast("Could not log out.");
+
+  }
+
+});
+
+
+/* =====================================================
+   PHONE HELPERS
+===================================================== */
+
+function splitPhoneNumber(value){
+
+  if(!value){
+    return;
+  }
+
+  const clean = String(value).replace(/[^\d+]/g,"");
+
+  const countryCodes = ["+971","+61","+44","+91","+1"];
+
+  const found = countryCodes.find(code => clean.startsWith(code));
+
+  if(found){
+
+    countryCode.value = found;
+
+    phoneInput.value = clean.slice(found.length).replace(/\D/g,"");
+
+  }else{
+
+    phoneInput.value = clean.replace(/\D/g,"");
+
+  }
+
+}
+
+phoneInput.addEventListener("input", () => {
+  phoneInput.value = phoneInput.value.replace(/\D/g,"").slice(0,15);
+});
+
+
+/* =====================================================
+   PHOTO UPLOAD
+===================================================== */
+
+async function uploadToCloudinary(file){
+
+  const formData = new FormData();
+
+  formData.append("file", file);
+  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+    {
+      method:"POST",
+      body:formData
+    }
+  );
+
+  if(!response.ok){
+    throw new Error("Image upload failed.");
+  }
+
+  const data = await response.json();
+
+  return data.secure_url;
+
+}
+
+
+/* =====================================================
+   PHOTO PREVIEW
+===================================================== */
+
+photoInput.addEventListener("change", () => {
+
+  const file = photoInput.files?.[0];
+
+  if(!file){
+    return;
+  }
+
+  if(file.size > 5 * 1024 * 1024){
+    showToast("Photo must be under 5 MB.");
+    photoInput.value = "";
+    return;
+  }
+
+  const allowed = ["image/jpeg","image/png","image/webp"];
+
+  if(!allowed.includes(file.type)){
+    showToast("Use JPG, PNG or WebP.");
+    photoInput.value = "";
+    return;
+  }
+
+  selectedPhotoFile = file;
+  removePhoto = false;
+
+  const reader = new FileReader();
+
+  reader.onload = event => {
+
+    profilePhoto.src = event.target.result;
+    profilePhoto.style.display = "block";
+    profileInitial.style.display = "none";
+
+    headerPhoto.src = event.target.result;
+    headerPhoto.style.display = "block";
+    headerInitial.style.display = "none";
+
+  };
+
+  reader.readAsDataURL(file);
+
+});
+
+choosePhotoButton.addEventListener("click", () => {
+  photoInput.click();
+});
+
+removePhotoButton.addEventListener("click", () => {
+
+  selectedPhotoFile = null;
+  photoInput.value = "";
+  removePhoto = true;
+
+  profilePhoto.removeAttribute("src");
+  profilePhoto.style.display = "none";
+  profileInitial.textContent = getInitial(nameInput.value);
+  profileInitial.style.display = "block";
+
+  headerPhoto.removeAttribute("src");
+  headerPhoto.style.display = "none";
+  headerInitial.textContent = getInitial(nameInput.value);
+  headerInitial.style.display = "block";
+
+  showToast("Profile photo removed.");
+
+});
+
+
+/* =====================================================
+   FULL SCREEN PHOTO VIEWER
+   - fills the whole screen
+   - pinch to zoom, drag to pan
+   - double-tap to zoom in / out
+   - swipe down to close
+   - Android back button closes the viewer
+===================================================== */
+
+const MIN_SCALE = 1;
+const MAX_SCALE = 5;
+
+let vScale = 1;
+let vX = 0;
+let vY = 0;
+
+let viewerOpen = false;
+let viewerHistoryPushed = false;
+
+const pointers = new Map();
+
+let startScale = 1;
+let startDist = 0;
+let startX = 0;
+let startY = 0;
+let startMidX = 0;
+let startMidY = 0;
+let gestureStartX = 0;
+let gestureStartY = 0;
+let moved = false;
+let dismissing = false;
+let lastTap = 0;
+let lastTapX = 0;
+let lastTapY = 0;
+
+
+function applyViewerTransform(){
+
+  viewerImage.style.transform =
+    `translate(${vX}px, ${vY}px) scale(${vScale})`;
+
+  photoViewer.classList.toggle("zoomed", vScale > 1.02);
+
+}
+
+function clampPan(){
+
+  if(vScale <= 1){
+    return;
+  }
+
+  const w = photoViewer.clientWidth;
+  const h = photoViewer.clientHeight;
+
+  const maxX = (w * vScale - w) / 2;
+  const maxY = (h * vScale - h) / 2;
+
+  vX = Math.max(-maxX, Math.min(maxX, vX));
+  vY = Math.max(-maxY, Math.min(maxY, vY));
+
+}
+
+function resetViewerTransform(){
+
+  vScale = 1;
+  vX = 0;
+  vY = 0;
+
+  photoViewer.style.setProperty("--viewer-bg","1");
+
+  applyViewerTransform();
+
+}
+
+function zoomAt(newScale, clientX, clientY){
+
+  newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+
+  const rect = photoViewer.getBoundingClientRect();
+
+  const cx = clientX - rect.left - rect.width / 2;
+  const cy = clientY - rect.top - rect.height / 2;
+
+  const ratio = newScale / vScale;
+
+  vX = cx - (cx - vX) * ratio;
+  vY = cy - (cy - vY) * ratio;
+  vScale = newScale;
+
+  if(vScale <= 1){
+    vX = 0;
+    vY = 0;
+  }
+
+  clampPan();
+  applyViewerTransform();
+
+}
+
+function pointerDistance(){
+  const [a,b] = [...pointers.values()];
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function pointerMidpoint(){
+  const [a,b] = [...pointers.values()];
+  return { x:(a.x + b.x) / 2, y:(a.y + b.y) / 2 };
+}
+
+
+function openPhotoViewer(photo, name){
+
+  if(!photo){
+    showToast("No profile photo available.");
+    return;
+  }
+
+  resetViewerTransform();
+
+  viewerImage.src = photo;
+  viewerTitle.textContent = `${name || "Profile"} photo`;
+
+  viewerHint.classList.remove("faded");
+
+  photoViewer.classList.add("show");
+  document.body.style.overflow = "hidden";
+  document.documentElement.style.overflow = "hidden";
+
+  viewerOpen = true;
+
+  /* Android back button closes viewer */
+  try{
+    history.pushState({ photoViewer:true }, "");
+    viewerHistoryPushed = true;
+  }catch(e){
+    viewerHistoryPushed = false;
+  }
+
+  clearTimeout(openPhotoViewer.hintTimer);
+
+  openPhotoViewer.hintTimer = setTimeout(() => {
+    viewerHint.classList.add("faded");
+  }, 3200);
+
+}
+
+function closePhotoViewer(fromPopState = false){
+
+  if(!viewerOpen){
+    return;
+  }
+
+  viewerOpen = false;
+
+  photoViewer.classList.remove("show","dragging","zoomed");
+
+  document.body.style.overflow = "";
+  document.documentElement.style.overflow = "";
+
+  pointers.clear();
+
+  if(viewerHistoryPushed && !fromPopState){
+    viewerHistoryPushed = false;
+    history.back();
+  }else{
+    viewerHistoryPushed = false;
+  }
+
+  setTimeout(() => {
+    if(!viewerOpen){
+      viewerImage.removeAttribute("src");
+      resetViewerTransform();
+    }
+  }, 280);
+
+}
+
+window.addEventListener("popstate", () => {
+  if(viewerOpen){
+    closePhotoViewer(true);
+  }
+});
+
+
+/* ---------- gestures ---------- */
+
+photoViewer.addEventListener("pointerdown", event => {
+
+  if(event.target.closest(".viewer-close")){
+    return;
+  }
+
+  photoViewer.setPointerCapture?.(event.pointerId);
+
+  pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+
+  photoViewer.classList.add("dragging");
+
+  if(pointers.size === 1){
+
+    gestureStartX = event.clientX;
+    gestureStartY = event.clientY;
+    startX = vX;
+    startY = vY;
+    moved = false;
+    dismissing = false;
+
+  }else if(pointers.size === 2){
+
+    startDist = pointerDistance();
+    startScale = vScale;
+
+    const mid = pointerMidpoint();
+    startMidX = mid.x;
+    startMidY = mid.y;
+    startX = vX;
+    startY = vY;
+
+    dismissing = false;
+    moved = true;
+
+    photoViewer.style.setProperty("--viewer-bg","1");
+
+  }
+
+});
+
+photoViewer.addEventListener("pointermove", event => {
+
+  if(!pointers.has(event.pointerId)){
+    return;
+  }
+
+  pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+
+  /* PINCH */
+  if(pointers.size === 2){
+
+    const dist = pointerDistance();
+    const mid = pointerMidpoint();
+
+    let newScale = startScale * (dist / startDist);
+    newScale = Math.max(MIN_SCALE * .85, Math.min(MAX_SCALE, newScale));
+
+    const rect = photoViewer.getBoundingClientRect();
+
+    const cx = startMidX - rect.left - rect.width / 2;
+    const cy = startMidY - rect.top - rect.height / 2;
+
+    const ratio = newScale / startScale;
+
+    vScale = newScale;
+    vX = cx - (cx - startX) * ratio + (mid.x - startMidX);
+    vY = cy - (cy - startY) * ratio + (mid.y - startMidY);
+
+    applyViewerTransform();
+
+    return;
+
+  }
+
+  /* SINGLE FINGER */
+  if(pointers.size === 1){
+
+    const dx = event.clientX - gestureStartX;
+    const dy = event.clientY - gestureStartY;
+
+    if(Math.abs(dx) > 6 || Math.abs(dy) > 6){
+      moved = true;
+    }
+
+    if(vScale > 1.02){
+
+      /* pan while zoomed */
+      vX = startX + dx;
+      vY = startY + dy;
+
+      clampPan();
+      applyViewerTransform();
+
+    }else if(moved){
+
+      /* swipe down to dismiss */
+      if(!dismissing && Math.abs(dy) > Math.abs(dx)){
+        dismissing = true;
+      }
+
+      if(dismissing){
+
+        vX = dx * .35;
+        vY = dy;
+
+        const fade = 1 - Math.min(Math.abs(dy) / 380, .75);
+
+        photoViewer.style.setProperty("--viewer-bg", fade.toFixed(2));
+
+        applyViewerTransform();
+
+      }
+
+    }
+
+  }
+
+});
+
+function endPointer(event){
+
+  if(!pointers.has(event.pointerId)){
+    return;
+  }
+
+  const wasSingle = pointers.size === 1;
+
+  pointers.delete(event.pointerId);
+
+  /* one finger lifted after a pinch → continue panning from here */
+  if(pointers.size === 1){
+
+    const [p] = [...pointers.values()];
+
+    gestureStartX = p.x;
+    gestureStartY = p.y;
+    startX = vX;
+    startY = vY;
+
+    return;
+
+  }
+
+  if(pointers.size > 0){
+    return;
+  }
+
+  photoViewer.classList.remove("dragging");
+
+  /* snap back if zoomed out too far */
+  if(vScale < 1){
+    vScale = 1;
+    vX = 0;
+    vY = 0;
+  }
+
+  /* DISMISS */
+  if(dismissing){
+
+    const dy = event.clientY - gestureStartY;
+
+    dismissing = false;
+
+    if(Math.abs(dy) > 120){
+
+      closePhotoViewer();
+
+      return;
+
+    }
+
+    photoViewer.style.setProperty("--viewer-bg","1");
+
+    vX = 0;
+    vY = 0;
+
+    applyViewerTransform();
+
+    return;
+
+  }
+
+  /* DOUBLE TAP */
+  if(wasSingle && !moved && event.type === "pointerup"){
+
+    const now = Date.now();
+
+    const closeEnough =
+      Math.abs(event.clientX - lastTapX) < 40 &&
+      Math.abs(event.clientY - lastTapY) < 40;
+
+    if(now - lastTap < 300 && closeEnough){
+
+      if(vScale > 1.02){
+        zoomAt(1, event.clientX, event.clientY);
+      }else{
+        zoomAt(2.5, event.clientX, event.clientY);
+      }
+
+      lastTap = 0;
+
+    }else{
+
+      lastTap = now;
+      lastTapX = event.clientX;
+      lastTapY = event.clientY;
+
+    }
+
+    return;
+
+  }
+
+  clampPan();
+  applyViewerTransform();
+
+}
+
+photoViewer.addEventListener("pointerup", endPointer);
+photoViewer.addEventListener("pointercancel", endPointer);
+
+/* mouse wheel / trackpad zoom (desktop) */
+photoViewer.addEventListener("wheel", event => {
+
+  event.preventDefault();
+
+  const factor = event.deltaY < 0 ? 1.15 : 1 / 1.15;
+
+  photoViewer.classList.remove("dragging");
+
+  zoomAt(vScale * factor, event.clientX, event.clientY);
+
+},{ passive:false });
+
+/* block native image drag / context menu on the image */
+viewerImage.addEventListener("dragstart", event => event.preventDefault());
+
+viewerClose.addEventListener("click", () => closePhotoViewer());
+
+document.addEventListener("keydown", event => {
+  if(event.key === "Escape"){
+    closePhotoViewer();
+  }
+});
+
+
+/* open from profile photo */
+
+profilePhotoButton.addEventListener("click", () => {
+
+  const photo =
+    profilePhoto.src &&
+    profilePhoto.style.display !== "none"
+      ? profilePhoto.src
+      : "";
+
+  openPhotoViewer(photo, profileName.textContent);
+
+});
+
+
+/* =====================================================
+   SHOW PROFILE PHOTO
+===================================================== */
+
+function showProfilePhoto(photo, name){
+
+  profileInitial.textContent = getInitial(name);
+  headerInitial.textContent = getInitial(name);
+
+  if(photo){
+
+    profilePhoto.src = photo;
+    profilePhoto.style.display = "block";
+    profileInitial.style.display = "none";
+
+    headerPhoto.src = photo;
+    headerPhoto.style.display = "block";
+    headerInitial.style.display = "none";
+
+    profilePhotoButton.style.cursor = "pointer";
+
+  }else{
+
+    profilePhoto.removeAttribute("src");
+    profilePhoto.style.display = "none";
+    profileInitial.style.display = "block";
+
+    headerPhoto.removeAttribute("src");
+    headerPhoto.style.display = "none";
+    headerInitial.style.display = "block";
+
+  }
+
+}
+
+
+/* =====================================================
+   LOAD OWN PROFILE
+===================================================== */
+
+async function loadOwnProfile(user){
+
+  isOwnProfile = true;
+  viewedUser = user;
+
+  editCard.classList.remove("hidden");
+  memberView.classList.add("hidden");
+
+  const profileRef = doc(db, "users", user.uid);
+
+  const snapshot = await getDoc(profileRef);
+
+  let profile = {};
+
+  if(snapshot.exists()){
+    profile = snapshot.data();
+  }
+
+  const name =
+    profile.fullName ||
+    profile.name ||
+    user.displayName ||
+    "Member";
+
+  const username = profile.username || "";
+
+  const photo =
+    profile.profilePhoto ||
+    profile.photoURL ||
+    user.photoURL ||
+    "";
+
+  const bio = profile.bio || "";
+  const phone = profile.phoneNumber || "";
+
+  profileName.textContent = name;
+
+  profileUsername.textContent = username ? `@${username}` : "No username";
+
+  nameInput.value = name;
+  usernameInput.value = username;
+  bioInput.value = bio;
+
+  splitPhoneNumber(phone);
+
+  emailValue.textContent = user.email || profile.email || "—";
+
+  phoneValue.textContent = phone || "Not added";
+
+  signinValue.textContent =
+    user.providerData?.some(
+      provider => provider.providerId === "google.com"
+    )
+      ? "Google"
+      : "Email & Password";
+
+  memberIdValue.textContent = user.uid;
+  memberIdValue.title = user.uid;
+
+  showProfilePhoto(photo, name);
+
+}
+
+
+/* =====================================================
+   LOAD OTHER MEMBER
+===================================================== */
+
+async function loadOtherMember(uid){
+
+  isOwnProfile = false;
+
+  editCard.classList.add("hidden");
+  memberView.classList.remove("hidden");
+
+  const profileRef = doc(db, "users", uid);
+
+  const snapshot = await getDoc(profileRef);
+
+  if(!snapshot.exists()){
+
+    showToast("Member profile not found.");
+
+    window.location.href = "home.html";
+
+    return;
+
+  }
+
+  const profile = snapshot.data();
+
+  viewedUser = { uid, ...profile };
+
+  const name = profile.fullName || profile.name || "Member";
+  const username = profile.username || "";
+  const photo = profile.profilePhoto || profile.photoURL || "";
+  const bio = profile.bio || "No bio added.";
+  const phone = profile.phoneNumber || "";
+
+  profileName.textContent = name;
+
+  profileUsername.textContent = username ? `@${username}` : "No username";
+
+  memberBio.textContent = bio;
+
+  emailValue.textContent = profile.email || "—";
+
+  phoneValue.textContent = phone || "Not added";
+
+  signinValue.textContent = "Private member";
+
+  memberIdValue.textContent = uid;
+  memberIdValue.title = uid;
+
+  showProfilePhoto(photo, name);
+
+}
+
+
+/* =====================================================
+   SAVE OWN PROFILE
+===================================================== */
+
+saveButton.addEventListener("click", async () => {
+
+  if(!currentUser){
+    return;
+  }
+
+  const name = nameInput.value.trim();
+
+  const username = usernameInput.value.trim().toLowerCase();
+
+  const phone = phoneInput.value.replace(/\D/g,"");
+
+  const bio = bioInput.value.trim();
+
+  if(name.length < 2){
+    showToast("Please enter your full name.");
+    return;
+  }
+
+  if(
+    username &&
+    !/^[a-z0-9._]{3,20}$/.test(username)
+  ){
+    showToast("Username must be 3–20 characters.");
+    return;
+  }
+
+  if(
+    phone &&
+    (phone.length < 7 || phone.length > 15)
+  ){
+    showToast("Please enter a valid mobile number.");
+    return;
+  }
+
+  saveButton.disabled = true;
+  saveButton.textContent = "Saving...";
+
+  try{
+
+    let photo =
+      profilePhoto.src &&
+      profilePhoto.style.display !== "none"
+        ? profilePhoto.src
+        : "";
+
+    /* Upload new photo */
+
+    if(selectedPhotoFile){
+
+      saveButton.textContent = "Uploading photo...";
+
+      photo = await uploadToCloudinary(selectedPhotoFile);
+
+    }
+
+    if(removePhoto){
+      photo = "";
+    }
+
+    const phoneNumber = phone ? `${countryCode.value}${phone}` : "";
+
+    const profileRef = doc(db, "users", currentUser.uid);
+
+    await setDoc(
+      profileRef,
+      {
+        uid:currentUser.uid,
+        name:name,
+        fullName:name,
+        username:username,
+        email:currentUser.email || "",
+        phoneNumber:phoneNumber,
+        profilePhoto:photo,
+        bio:bio,
+        updatedAt:serverTimestamp()
+      },
+      { merge:true }
+    );
+
+    selectedPhotoFile = null;
+    removePhoto = false;
+
+    profileName.textContent = name;
+
+    profileUsername.textContent = username ? `@${username}` : "No username";
+
+    phoneValue.textContent = phoneNumber || "Not added";
+
+    showProfilePhoto(photo, name);
+
+    showToast("Profile updated.");
+
+  }catch(error){
+
+    console.error("Profile update error:", error);
+
+    showToast(error.message || "Could not save profile.");
+
+  }finally{
+
+    saveButton.disabled = false;
+    saveButton.textContent = "Save Changes";
+
+  }
+
+});
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+onAuthStateChanged(auth, async user => {
+
+  if(!user){
+
+    window.location.href = "login.html";
+
+    return;
+
+  }
+
+  currentUser = user;
+
+  try{
+
+    const params = new URLSearchParams(window.location.search);
+
+    const requestedUid = params.get("uid");
+
+    if(
+      requestedUid &&
+      requestedUid !== user.uid
+    ){
+
+      await loadOtherMember(requestedUid);
+
+    }else{
+
+      await loadOwnProfile(user);
+
+    }
+
+  }catch(error){
+
+    console.error("Profile loading error:", error);
+
+    showToast("Could not load profile.");
+
+  }
+
+});
+
+</script>
+
+</body>
+
+</html>

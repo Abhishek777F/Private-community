@@ -1,0 +1,2799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Community</title>
+
+<script>
+(() => {
+  const savedTheme = localStorage.getItem("private-theme") || "system";
+  document.documentElement.dataset.theme = savedTheme;
+})();
+</script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --bg:#09090b;
+  --surface:#111114;
+  --surface2:#17171b;
+  --border:rgba(255,255,255,.08);
+  --text:#f7f4ed;
+  --muted:#999791;
+  --gold:#d8b56a;
+  --gold-light:#f0d797;
+  --danger:#e77b7b;
+  --shadow:0 25px 70px rgba(0,0,0,.25)
+}
+
+@media(prefers-color-scheme:light){
+  :root[data-theme="system"]{
+    --bg:#f5f3ee;
+    --surface:#fff;
+    --surface2:#f0eee8;
+    --border:rgba(20,20,20,.09);
+    --text:#171612;
+    --muted:#706d65;
+    --gold:#ad7e27;
+    --gold-light:#8b641e;
+    --danger:#c94f4f;
+    --shadow:0 25px 70px rgba(0,0,0,.10)
+  }
+}
+
+:root[data-theme="light"]{
+  --bg:#f5f3ee;
+  --surface:#fff;
+  --surface2:#f0eee8;
+  --border:rgba(20,20,20,.09);
+  --text:#171612;
+  --muted:#706d65;
+  --gold:#ad7e27;
+  --gold-light:#8b641e;
+  --danger:#c94f4f;
+  --shadow:0 25px 70px rgba(0,0,0,.10)
+}
+
+:root[data-theme="dark"]{
+  --bg:#09090b;
+  --surface:#111114;
+  --surface2:#17171b;
+  --border:rgba(255,255,255,.08);
+  --text:#f7f4ed;
+  --muted:#999791;
+  --gold:#d8b56a;
+  --gold-light:#f0d797;
+  --danger:#e77b7b;
+  --shadow:0 25px 70px rgba(0,0,0,.25)
+}
+
+html{
+  scroll-behavior:smooth;
+  overflow-x:hidden;
+}
+
+body{
+  min-height:100vh;
+  color:var(--text);
+  background:
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(216,181,106,.12),
+      transparent 38%
+    ),
+    var(--bg);
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+  transition:
+    background .3s ease,
+    color .3s ease;
+
+  /* IMPORTANT:
+     No transform/animation on body.
+     This keeps position:fixed working correctly on Android.
+  */
+}
+
+button,input{
+  font:inherit
+}
+
+button{
+  cursor:pointer
+}
+
+a{
+  color:inherit;
+  text-decoration:none
+}
+
+img,video{
+  max-width:100%
+}
+
+/* PAGE ENTRANCE ANIMATION
+   Applied to main instead of body so fixed bottom nav
+   is never trapped inside a transformed ancestor.
+*/
+main{
+  animation:pageEnter .42s ease both;
+}
+
+@keyframes pageEnter{
+  from{
+    opacity:0;
+    transform:translateY(8px)
+  }
+  to{
+    opacity:1;
+    transform:translateY(0)
+  }
+}
+
+header{
+  height:72px;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  padding:0 20px;
+  border-bottom:1px solid var(--border);
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px)
+}
+
+.header-left,
+.header-right{
+  display:flex;
+  align-items:center
+}
+
+.header-left{
+  justify-content:flex-start
+}
+
+.header-right{
+  justify-content:flex-end
+}
+
+.header-profile{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  overflow:hidden;
+  border:1px solid rgba(216,181,106,.38);
+  background:linear-gradient(
+    145deg,
+    rgba(216,181,106,.16),
+    rgba(255,255,255,.04)
+  );
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--gold-light);
+  font-weight:700;
+  font-size:14px;
+  padding:0
+}
+
+.header-profile img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none
+}
+
+.header-title{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+  font-size:17px;
+  font-weight:750;
+  letter-spacing:-.3px;
+  color:var(--text)
+}
+
+.header-title:before{
+  content:"";
+  width:7px;
+  height:7px;
+  margin-right:9px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 12px rgba(216,181,106,.45)
+}
+
+.menu-button{
+  width:42px;
+  height:42px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:rgba(255,255,255,.035);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  transition:.2s ease
+}
+
+.menu-button:hover{
+  border-color:rgba(216,181,106,.4);
+  color:var(--gold-light)
+}
+
+.menu-button.open{
+  transform:rotate(90deg)
+}
+
+main{
+  width:100%;
+  max-width:900px;
+  margin:auto;
+  padding:108px 20px 125px;
+}
+
+.welcome{
+  margin-bottom:25px
+}
+
+.eyebrow{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:var(--gold-light);
+  font-size:10px;
+  font-weight:750;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:10px
+}
+
+.eyebrow-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--gold)
+}
+
+.welcome h1{
+  font-size:34px;
+  letter-spacing:-1.2px;
+  line-height:1.1
+}
+
+.welcome p{
+  margin-top:8px;
+  color:var(--muted);
+  font-size:14px
+}
+
+.posts{
+  display:flex;
+  flex-direction:column;
+  gap:22px
+}
+
+.post-card{
+  overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:var(--surface);
+  box-shadow:var(--shadow);
+  animation:postEnter .45s ease both
+}
+
+@keyframes postEnter{
+  from{
+    opacity:0;
+    transform:translateY(15px)
+  }
+  to{
+    opacity:1;
+    transform:translateY(0)
+  }
+}
+
+.post-header{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:16px 16px 13px
+}
+
+.post-avatar{
+  width:42px;
+  height:42px;
+  flex-shrink:0;
+  border-radius:50%;
+  overflow:hidden;
+  border:1px solid rgba(216,181,106,.3);
+  background:rgba(216,181,106,.08);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--gold-light);
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer
+}
+
+.post-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover
+}
+
+.post-author{
+  min-width:0;
+  flex:1;
+  cursor:pointer
+}
+
+.post-author-name{
+  font-size:13px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis
+}
+
+.post-time{
+  color:var(--muted);
+  font-size:10px;
+  white-space:nowrap
+}
+
+.post-media{
+  width:100%;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  cursor:zoom-in
+}
+
+.post-media img{
+  display:block;
+  width:100%;
+  max-height:720px;
+  object-fit:contain;
+  background:#000
+}
+
+.post-media video{
+  display:block;
+  width:100%;
+  max-height:720px;
+  object-fit:contain;
+  background:#000;
+  cursor:default
+}
+
+.post-content{
+  padding:13px 16px 16px
+}
+
+.post-actions{
+  display:flex;
+  align-items:center;
+  gap:18px;
+  margin-bottom:13px
+}
+
+.action-button{
+  border:none;
+  background:none;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:0;
+  font-size:12px;
+  transition:color .2s ease,transform .15s ease
+}
+
+.action-button:hover{
+  color:var(--text)
+}
+
+.action-button:active{
+  transform:scale(.94)
+}
+
+.action-button.liked{
+  color:#c65b62
+}
+
+.action-icon{
+  width:22px;
+  height:22px
+}
+
+.post-caption{
+  color:var(--text);
+  font-size:13px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  word-break:break-word
+}
+
+.post-caption-empty{
+  color:var(--muted)
+}
+
+.comments-button{
+  margin-top:12px;
+  border:none;
+  background:none;
+  color:var(--muted);
+  font-size:11px;
+  padding:0
+}
+
+.comments-button:hover{
+  color:var(--gold-light)
+}
+
+.comments-panel{
+  display:none;
+  border-top:1px solid var(--border);
+  padding:13px 16px 16px
+}
+
+.comments-panel.show{
+  display:block
+}
+
+.comments-list{
+  display:flex;
+  flex-direction:column;
+  gap:11px;
+  max-height:240px;
+  overflow-y:auto;
+  margin-bottom:12px
+}
+
+.comment-row{
+  display:flex;
+  gap:9px
+}
+
+.comment-avatar{
+  width:28px;
+  height:28px;
+  flex-shrink:0;
+  border-radius:50%;
+  overflow:hidden;
+  background:rgba(216,181,106,.08);
+  border:1px solid rgba(216,181,106,.2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--gold-light);
+  font-size:9px;
+  font-weight:700
+}
+
+.comment-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover
+}
+
+.comment-body{
+  min-width:0;
+  flex:1
+}
+
+.comment-name{
+  font-size:11px;
+  font-weight:700
+}
+
+.comment-text{
+  margin-top:2px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.4;
+  word-break:break-word
+}
+
+.comment-empty{
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  padding:10px
+}
+
+.comment-form{
+  display:flex;
+  gap:8px
+}
+
+.comment-input{
+  min-width:0;
+  flex:1;
+  height:40px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  outline:none;
+  background:var(--surface2);
+  color:var(--text);
+  padding:0 12px;
+  font-size:11px
+}
+
+.comment-input:focus{
+  border-color:rgba(216,181,106,.45)
+}
+
+.comment-send{
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:12px;
+  background:var(--gold);
+  color:#18140d;
+  display:grid;
+  place-items:center
+}
+
+.comment-send svg{
+  width:17px;
+  height:17px
+}
+
+.loading{
+  display:flex;
+  justify-content:center;
+  padding:50px
+}
+
+.spinner{
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  border:2px solid rgba(216,181,106,.18);
+  border-top-color:var(--gold);
+  animation:spin .7s linear infinite
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg)
+  }
+}
+
+.empty-state{
+  padding:60px 20px;
+  text-align:center;
+  color:var(--muted);
+  font-size:13px
+}
+
+.empty-state-title{
+  color:var(--text);
+  font-size:17px;
+  font-weight:700;
+  margin-bottom:7px
+}
+
+.empty-state-text{
+  font-size:12px;
+  line-height:1.5
+}
+
+.menu-panel{
+  position:fixed;
+  top:82px;
+  right:20px;
+  width:245px;
+  padding:8px;
+  z-index:1500;
+  border:1px solid var(--border);
+  border-radius:17px;
+  background:var(--surface);
+  box-shadow:0 20px 60px rgba(0,0,0,.35);
+  backdrop-filter:blur(20px);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(-8px) scale(.96);
+  transform-origin:top right;
+  transition:.2s ease
+}
+
+.menu-panel.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0) scale(1)
+}
+
+.menu-item{
+  width:100%;
+  height:43px;
+  border:none;
+  border-radius:11px;
+  background:transparent;
+  color:var(--text);
+  text-align:left;
+  padding:0 12px;
+  font-size:12px;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.menu-item:hover{
+  background:rgba(255,255,255,.05)
+}
+
+.menu-icon{
+  width:18px;
+  height:18px;
+  flex-shrink:0
+}
+
+.menu-item.logout{
+  color:var(--danger)
+}
+
+.theme-section{
+  padding:9px 5px 8px;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  margin:5px 0
+}
+
+.theme-title{
+  padding:5px 8px 8px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase
+}
+
+.theme-option{
+  width:100%;
+  height:38px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:none;
+  border-radius:10px;
+  background:transparent;
+  color:var(--text);
+  padding:0 9px;
+  font-size:12px;
+  text-align:left
+}
+
+.theme-option:hover{
+  background:rgba(255,255,255,.05)
+}
+
+.theme-option.active{
+  color:var(--gold-light);
+  background:rgba(216,181,106,.07)
+}
+
+.theme-check{
+  margin-left:auto;
+  opacity:0
+}
+
+.theme-option.active .theme-check{
+  opacity:1
+}
+
+/* =====================================================
+   FIXED MOBILE BOTTOM NAVIGATION
+   IMPORTANT:
+   - Outside <main>
+   - No transformed ancestor
+   - Fixed to viewport
+   - Safe area support
+===================================================== */
+
+.bottom-nav{
+  display:none;
+
+  position:fixed !important;
+  left:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  top:auto !important;
+
+  width:100% !important;
+
+  height:72px !important;
+  min-height:72px !important;
+
+  z-index:2147483647 !important;
+
+  margin:0 !important;
+
+  border-top:1px solid var(--border);
+
+  background:
+    color-mix(
+      in srgb,
+      var(--surface) 96%,
+      transparent
+    );
+
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+
+  padding:
+    7px
+    10px
+    calc(7px + env(safe-area-inset-bottom));
+
+  grid-template-columns:repeat(5,1fr);
+
+  box-shadow:0 -10px 35px rgba(0,0,0,.12);
+
+  /* Critical Android fixed-position protection */
+  transform:none !important;
+  -webkit-transform:none !important;
+  will-change:auto !important;
+  contain:layout paint;
+}
+
+.nav-item{
+  position:relative;
+  border:none;
+  background:transparent;
+  color:var(--muted);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-size:9px;
+  font-weight:600
+}
+
+.nav-icon{
+  width:21px;
+  height:21px;
+  display:grid;
+  place-items:center
+}
+
+.nav-item.active{
+  color:var(--gold-light)
+}
+
+.nav-item.active:before{
+  content:"";
+  position:absolute;
+  top:-7px;
+  width:28px;
+  height:3px;
+  border-radius:0 0 5px 5px;
+  background:var(--gold);
+  box-shadow:0 0 12px rgba(216,181,106,.35)
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:88px;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  z-index:10000;
+  max-width:calc(100% - 30px);
+  padding:11px 16px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:var(--surface);
+  color:var(--text);
+  font-size:12px;
+  box-shadow:0 15px 40px rgba(0,0,0,.3);
+  transition:.25s ease
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0)
+}
+
+/* FULL PHOTO VIEWER */
+
+.photo-viewer{
+  position:fixed;
+  inset:0;
+  z-index:20000;
+  background:rgba(0,0,0,.96);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px
+}
+
+.photo-viewer.show{
+  display:flex
+}
+
+.photo-viewer img{
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain
+}
+
+.photo-close{
+  position:absolute;
+  top:18px;
+  right:18px;
+  width:44px;
+  height:44px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:27px;
+  line-height:1;
+  z-index:2
+}
+
+.photo-hint{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  color:rgba(255,255,255,.6);
+  font-size:11px;
+  white-space:nowrap
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:800px){
+
+  header{
+    height:68px;
+    padding:0 17px
+  }
+
+  main{
+    padding:
+      94px
+      15px
+      calc(120px + env(safe-area-inset-bottom));
+  }
+
+  .bottom-nav{
+    display:grid !important;
+
+    position:fixed !important;
+
+    left:0 !important;
+    right:0 !important;
+    bottom:0 !important;
+    top:auto !important;
+
+    width:100% !important;
+
+    z-index:2147483647 !important;
+
+    transform:none !important;
+    -webkit-transform:none !important;
+
+    margin:0 !important;
+  }
+
+  .welcome h1{
+    font-size:30px
+  }
+
+  .post-card{
+    border-radius:22px
+  }
+}
+
+@media(min-width:801px){
+  .bottom-nav{
+    display:none !important
+  }
+}
+
+@media(max-width:420px){
+
+  .header-title{
+    font-size:15px
+  }
+
+  .header-profile,
+  .menu-button{
+    width:40px;
+    height:40px
+  }
+
+  .menu-panel{
+    right:12px;
+    width:245px
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="header-profile" id="headerProfile" aria-label="Open profile">
+      <span id="headerInitial">P</span>
+      <img id="headerPhoto" alt="Profile">
+    </button>
+  </div>
+
+  <div class="header-title">
+    Private Community
+  </div>
+
+  <div class="header-right">
+    <button
+      class="menu-button"
+      id="menuButton"
+      aria-label="Menu"
+      aria-expanded="false"
+    >
+      <svg
+        width="21"
+        height="21"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+      >
+        <circle cx="12" cy="5" r="1.8"/>
+        <circle cx="12" cy="12" r="1.8"/>
+        <circle cx="12" cy="19" r="1.8"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<div class="menu-panel" id="menuPanel">
+
+  <button class="menu-item" id="profileMenu">
+    <svg
+      class="menu-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <circle cx="12" cy="8" r="3.2"/>
+      <path d="M5.5 20c.8-3.5 3-5.2 6.5-5.2s5.7 1.7 6.5 5.2"/>
+    </svg>
+    Profile
+  </button>
+
+  <button class="menu-item" id="createMenu">
+    <svg
+      class="menu-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <rect x="4" y="4" width="16" height="16" rx="3"/>
+      <path d="M12 8v8M8 12h8"/>
+    </svg>
+    Create Post
+  </button>
+
+  <button class="menu-item" id="chatMenu">
+    <svg
+      class="menu-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-4-.9L4 20l1.4-3.4A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7Z"/>
+    </svg>
+    Chat
+  </button>
+
+  <button class="menu-item" id="notificationMenu">
+    <svg
+      class="menu-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+      <path d="M10 21h4"/>
+    </svg>
+    Notifications
+  </button>
+
+  <div class="theme-section">
+
+    <div class="theme-title">
+      Appearance
+    </div>
+
+    <button
+      class="theme-option"
+      data-theme-option="dark"
+    >
+      <span>◐</span>
+      <span>Dark</span>
+      <span class="theme-check">✓</span>
+    </button>
+
+    <button
+      class="theme-option"
+      data-theme-option="light"
+    >
+      <span>☀</span>
+      <span>Light</span>
+      <span class="theme-check">✓</span>
+    </button>
+
+    <button
+      class="theme-option"
+      data-theme-option="system"
+    >
+      <span>⚙</span>
+      <span>System</span>
+      <span class="theme-check">✓</span>
+    </button>
+
+  </div>
+
+  <button class="menu-item" id="settingsMenu">
+    <svg
+      class="menu-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19 15.2a7.7 7.7 0 0 0 .1-6.4l-2-.8a7.6 7.6 0 0 0-1.4-1.4l.8-2a7.7 7.7 0 0 0-6.4-.1l-.8 2a7.6 7.6 0 0 0-1.9 1.1l-2-.7a7.7 7.7 0 0 0-.1 6.4l2 .8a7.6 7.6 0 0 0 1.4 1.4l-.8 2a7.7 7.7 0 0 0 6.4.1l.8-2a7.6 7.6 0 0 0 1.9-1.1z"/>
+    </svg>
+    Settings
+  </button>
+
+  <button class="menu-item logout" id="logoutButton">
+    <svg
+      class="menu-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <path d="M10 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H10"/>
+      <path d="M14 8l4 4-4 4M9 12h9"/>
+    </svg>
+    Log out
+  </button>
+
+</div>
+
+<main>
+
+  <section class="welcome">
+    <div class="eyebrow">
+      <span class="eyebrow-dot"></span>
+      Private Community
+    </div>
+
+    <h1 id="welcomeTitle">
+      Welcome
+    </h1>
+
+    <p>
+      Your private space, shared with your people.
+    </p>
+  </section>
+
+  <section class="posts" id="posts">
+    <div class="loading">
+      <div class="spinner"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- FIXED BOTTOM NAV -->
+<nav class="bottom-nav">
+
+  <button
+    class="nav-item active"
+    data-page="home"
+  >
+    <span class="nav-icon">
+      <svg
+        viewBox="0 0 24 24"
+        width="21"
+        height="21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+        <path d="m3 10 9-7 9 7"/>
+        <path d="M5 9.5V21h14V9.5"/>
+        <path d="M9 21v-6h6v6"/>
+      </svg>
+    </span>
+    Home
+  </button>
+
+  <button
+    class="nav-item"
+    data-page="chat"
+  >
+    <span class="nav-icon">
+      <svg
+        viewBox="0 0 24 24"
+        width="21"
+        height="21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+        <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-4-.9L4 20l1.4-3.4A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7Z"/>
+      </svg>
+    </span>
+    Chat
+  </button>
+
+  <button
+    class="nav-item"
+    data-page="create"
+  >
+    <span class="nav-icon">
+      <svg
+        viewBox="0 0 24 24"
+        width="21"
+        height="21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+        <rect x="4" y="4" width="16" height="16" rx="4"/>
+        <path d="M12 8v8M8 12h8"/>
+      </svg>
+    </span>
+    Create
+  </button>
+
+  <button
+    class="nav-item"
+    data-page="notifications"
+  >
+    <span class="nav-icon">
+      <svg
+        viewBox="0 0 24 24"
+        width="21"
+        height="21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+        <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+        <path d="M10 21h4"/>
+      </svg>
+    </span>
+    Alerts
+  </button>
+
+  <button
+    class="nav-item"
+    data-page="profile"
+  >
+    <span class="nav-icon">
+      <svg
+        viewBox="0 0 24 24"
+        width="21"
+        height="21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+      >
+        <circle cx="12" cy="8" r="3"/>
+        <path d="M5 21c.7-4 3-6 7-6s6.3 2 7 6"/>
+      </svg>
+    </span>
+    Profile
+  </button>
+
+</nav>
+
+<div
+  class="photo-viewer"
+  id="photoViewer"
+  aria-hidden="true"
+>
+  <button
+    class="photo-close"
+    id="photoClose"
+    aria-label="Close photo viewer"
+  >
+    ×
+  </button>
+
+  <img
+    id="viewerImage"
+    alt="Full photo"
+  >
+
+  <div class="photo-hint">
+    Tap outside or × to close
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+
+import { auth, db } from "./firebase.js";
+
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  doc,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+const welcomeTitle =
+  document.getElementById("welcomeTitle");
+
+const headerProfile =
+  document.getElementById("headerProfile");
+
+const headerInitial =
+  document.getElementById("headerInitial");
+
+const headerPhoto =
+  document.getElementById("headerPhoto");
+
+const postsContainer =
+  document.getElementById("posts");
+
+const menuButton =
+  document.getElementById("menuButton");
+
+const menuPanel =
+  document.getElementById("menuPanel");
+
+const profileMenu =
+  document.getElementById("profileMenu");
+
+const createMenu =
+  document.getElementById("createMenu");
+
+const chatMenu =
+  document.getElementById("chatMenu");
+
+const notificationMenu =
+  document.getElementById("notificationMenu");
+
+const settingsMenu =
+  document.getElementById("settingsMenu");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+const toast =
+  document.getElementById("toast");
+
+const photoViewer =
+  document.getElementById("photoViewer");
+
+const viewerImage =
+  document.getElementById("viewerImage");
+
+const photoClose =
+  document.getElementById("photoClose");
+
+
+let currentUser = null;
+let currentProfile = null;
+let unsubscribePosts = null;
+let unsubscribeComments = {};
+let toastTimer = null;
+
+
+const themeOptions =
+  document.querySelectorAll("[data-theme-option]");
+
+
+function applyTheme(theme){
+
+  document.documentElement.dataset.theme = theme;
+
+  localStorage.setItem(
+    "private-theme",
+    theme
+  );
+
+  themeOptions.forEach(option => {
+    option.classList.toggle(
+      "active",
+      option.dataset.themeOption === theme
+    );
+  });
+}
+
+
+themeOptions.forEach(option => {
+
+  option.addEventListener("click", () => {
+
+    applyTheme(
+      option.dataset.themeOption
+    );
+
+    closeMenu();
+
+  });
+
+});
+
+
+applyTheme(
+  localStorage.getItem("private-theme") || "system"
+);
+
+
+function showToast(message){
+
+  clearTimeout(toastTimer);
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  toastTimer = setTimeout(
+    () => toast.classList.remove("show"),
+    2200
+  );
+}
+
+
+function getInitial(name){
+
+  return (
+    name?.trim()?.charAt(0)?.toUpperCase()
+    || "P"
+  );
+
+}
+
+
+function formatTime(timestamp){
+
+  if(!timestamp)
+    return "Just now";
+
+  const date =
+    timestamp.toDate
+      ? timestamp.toDate()
+      : new Date(timestamp);
+
+  const diff =
+    Math.max(
+      0,
+      Date.now() - date.getTime()
+    );
+
+  const minutes =
+    Math.floor(diff / 60000);
+
+  if(minutes < 1)
+    return "Just now";
+
+  if(minutes < 60)
+    return `${minutes}m`;
+
+  const hours =
+    Math.floor(minutes / 60);
+
+  if(hours < 24)
+    return `${hours}h`;
+
+  const days =
+    Math.floor(hours / 24);
+
+  if(days < 7)
+    return `${days}d`;
+
+  return date.toLocaleDateString(
+    undefined,
+    {
+      day:"numeric",
+      month:"short"
+    }
+  );
+
+}
+
+
+async function loadCurrentProfile(user){
+
+  const snapshot =
+    await getDoc(
+      doc(db,"users",user.uid)
+    );
+
+  const data =
+    snapshot.exists()
+      ? snapshot.data()
+      : {};
+
+  currentProfile = {
+
+    uid:user.uid,
+
+    fullName:
+      data.fullName
+      || data.name
+      || user.displayName
+      || "Member",
+
+    profilePhoto:
+      data.profilePhoto
+      || data.photoURL
+      || user.photoURL
+      || ""
+
+  };
+
+  welcomeTitle.textContent =
+    `Welcome, ${currentProfile.fullName}`;
+
+  headerInitial.textContent =
+    getInitial(
+      currentProfile.fullName
+    );
+
+  if(currentProfile.profilePhoto){
+
+    headerPhoto.src =
+      currentProfile.profilePhoto;
+
+    headerPhoto.style.display =
+      "block";
+
+    headerInitial.style.display =
+      "none";
+
+  }else{
+
+    headerPhoto.style.display =
+      "none";
+
+    headerInitial.style.display =
+      "block";
+
+  }
+
+}
+
+
+function loadPosts(){
+
+  if(unsubscribePosts)
+    unsubscribePosts();
+
+  postsContainer.innerHTML =
+    `<div class="loading">
+      <div class="spinner"></div>
+    </div>`;
+
+  const postsQuery =
+    query(
+      collection(db,"posts"),
+      orderBy("createdAt","desc")
+    );
+
+  unsubscribePosts =
+    onSnapshot(
+      postsQuery,
+
+      snapshot => {
+
+        const posts =
+          snapshot.docs.map(
+            d => ({
+              id:d.id,
+              ...d.data()
+            })
+          );
+
+        renderPosts(posts);
+
+      },
+
+      error => {
+
+        console.error(
+          "Posts error:",
+          error
+        );
+
+        postsContainer.innerHTML =
+          `<div class="empty-state">
+            <div class="empty-state-title">
+              Posts could not load
+            </div>
+            <div class="empty-state-text">
+              Please check your Firestore rules and try again.
+            </div>
+          </div>`;
+
+      }
+    );
+
+}
+
+
+function renderPosts(posts){
+
+  Object.values(
+    unsubscribeComments
+  ).forEach(
+    unsub =>
+      typeof unsub === "function"
+      && unsub()
+  );
+
+  unsubscribeComments = {};
+
+  if(!posts.length){
+
+    postsContainer.innerHTML =
+      `<div class="empty-state">
+        <div class="empty-state-title">
+          No posts yet
+        </div>
+        <div class="empty-state-text">
+          Your community has not shared anything yet.
+        </div>
+      </div>`;
+
+    return;
+  }
+
+  postsContainer.innerHTML = "";
+
+  posts.forEach(post => {
+
+    postsContainer.appendChild(
+      createPostCard(post)
+    );
+
+  });
+
+}
+
+
+function createPostCard(post){
+
+  const card =
+    document.createElement("article");
+
+  card.className =
+    "post-card";
+
+
+  const authorName =
+    post.fullName
+    || post.name
+    || "Member";
+
+  const profilePhoto =
+    post.profilePhoto
+    || post.photoURL
+    || "";
+
+  const likedBy =
+    Array.isArray(post.likedBy)
+      ? post.likedBy
+      : [];
+
+  const isLiked =
+    !!currentUser
+    && likedBy.includes(
+      currentUser.uid
+    );
+
+  const likesCount =
+    typeof post.likesCount === "number"
+      ? post.likesCount
+      : likedBy.length;
+
+  const commentsCount =
+    typeof post.commentsCount === "number"
+      ? post.commentsCount
+      : 0;
+
+
+  const header =
+    document.createElement("div");
+
+  header.className =
+    "post-header";
+
+
+  const avatar =
+    document.createElement("div");
+
+  avatar.className =
+    "post-avatar";
+
+  avatar.title =
+    "Message this person";
+
+
+  if(profilePhoto){
+
+    const img =
+      document.createElement("img");
+
+    img.src =
+      profilePhoto;
+
+    img.alt =
+      "";
+
+    img.loading =
+      "lazy";
+
+    img.onerror = () => {
+
+      img.remove();
+
+      avatar.textContent =
+        getInitial(authorName);
+
+    };
+
+    avatar.appendChild(img);
+
+  }else{
+
+    avatar.textContent =
+      getInitial(authorName);
+
+  }
+
+
+  const author =
+    document.createElement("div");
+
+  author.className =
+    "post-author";
+
+  author.title =
+    "Message this person";
+
+
+  const nameEl =
+    document.createElement("div");
+
+  nameEl.className =
+    "post-author-name";
+
+  nameEl.textContent =
+    authorName;
+
+  author.appendChild(nameEl);
+
+
+  const time =
+    document.createElement("div");
+
+  time.className =
+    "post-time";
+
+  time.textContent =
+    formatTime(post.createdAt);
+
+
+  const openPersonChat = () => {
+
+    if(!post.uid){
+
+      showToast(
+        "This member cannot be opened."
+      );
+
+      return;
+    }
+
+    if(
+      post.uid === currentUser?.uid
+    ){
+
+      goTo("profile");
+
+      return;
+    }
+
+    window.location.href =
+      `chat.html?user=${encodeURIComponent(post.uid)}`;
+
+  };
+
+
+  avatar.addEventListener(
+    "click",
+    openPersonChat
+  );
+
+  author.addEventListener(
+    "click",
+    openPersonChat
+  );
+
+
+  header.append(
+    avatar,
+    author,
+    time
+  );
+
+  card.appendChild(header);
+
+
+  if(post.mediaURL){
+
+    const media =
+      document.createElement("div");
+
+    media.className =
+      "post-media";
+
+
+    if(post.mediaType === "video"){
+
+      const video =
+        document.createElement("video");
+
+      video.src =
+        post.mediaURL;
+
+      video.controls =
+        true;
+
+      video.playsInline =
+        true;
+
+      video.preload =
+        "metadata";
+
+      media.appendChild(video);
+
+    }else{
+
+      const image =
+        document.createElement("img");
+
+      image.src =
+        post.mediaURL;
+
+      image.alt =
+        post.caption
+        || "Community post";
+
+      image.loading =
+        "lazy";
+
+      image.addEventListener(
+        "click",
+        () =>
+          openPhoto(
+            image.src,
+            image.alt
+          )
+      );
+
+      media.appendChild(image);
+
+    }
+
+    card.appendChild(media);
+
+  }
+
+
+  const content =
+    document.createElement("div");
+
+  content.className =
+    "post-content";
+
+
+  const actions =
+    document.createElement("div");
+
+  actions.className =
+    "post-actions";
+
+
+  const likeButton =
+    document.createElement("button");
+
+  likeButton.type =
+    "button";
+
+  likeButton.className =
+    `action-button${isLiked ? " liked" : ""}`;
+
+  likeButton.innerHTML =
+    `<svg
+      class="action-icon"
+      viewBox="0 0 24 24"
+      fill="${isLiked ? "currentColor" : "none"}"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <path d="M20.8 8.7c0 5.4-8.8 10.2-8.8 10.2S3.2 14.1 3.2 8.7A4.7 4.7 0 0 1 12 6.1a4.7 4.7 0 0 1 8.8 2.6Z"/>
+    </svg>
+    <span>${likesCount}</span>`;
+
+
+  likeButton.addEventListener(
+    "click",
+    () => toggleLike(post)
+  );
+
+
+  const commentButton =
+    document.createElement("button");
+
+  commentButton.type =
+    "button";
+
+  commentButton.className =
+    "action-button";
+
+  commentButton.innerHTML =
+    `<svg
+      class="action-icon"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.5 8.5 0 0 1-4-.9L4 20l1.4-3.4A7.2 7.2 0 0 1 4.5 12 7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 8 7Z"/>
+    </svg>
+    <span>${commentsCount}</span>`;
+
+
+  actions.append(
+    likeButton,
+    commentButton
+  );
+
+  content.appendChild(actions);
+
+
+  const caption =
+    document.createElement("div");
+
+  caption.className =
+    "post-caption";
+
+  caption.textContent =
+    post.caption
+    || "Private Community";
+
+  if(!post.caption)
+    caption.classList.add(
+      "post-caption-empty"
+    );
+
+  content.appendChild(caption);
+
+
+  const commentsLink =
+    document.createElement("button");
+
+  commentsLink.type =
+    "button";
+
+  commentsLink.className =
+    "comments-button";
+
+  commentsLink.textContent =
+    commentsCount > 0
+      ? `View ${commentsCount} comment${commentsCount === 1 ? "" : "s"}`
+      : "Add a comment";
+
+  content.appendChild(
+    commentsLink
+  );
+
+  card.appendChild(content);
+
+
+  const commentsPanel =
+    document.createElement("div");
+
+  commentsPanel.className =
+    "comments-panel";
+
+
+  const commentsList =
+    document.createElement("div");
+
+  commentsList.className =
+    "comments-list";
+
+
+  const commentForm =
+    document.createElement("div");
+
+  commentForm.className =
+    "comment-form";
+
+
+  const commentInput =
+    document.createElement("input");
+
+  commentInput.className =
+    "comment-input";
+
+  commentInput.type =
+    "text";
+
+  commentInput.placeholder =
+    "Write a comment...";
+
+  commentInput.maxLength =
+    500;
+
+
+  const commentSend =
+    document.createElement("button");
+
+  commentSend.type =
+    "button";
+
+  commentSend.className =
+    "comment-send";
+
+  commentSend.innerHTML =
+    `<svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <path d="m4 4 16 8-16 8 3-8-3-8Z"/>
+      <path d="M7 12h13"/>
+    </svg>`;
+
+
+  commentForm.append(
+    commentInput,
+    commentSend
+  );
+
+  commentsPanel.append(
+    commentsList,
+    commentForm
+  );
+
+  card.appendChild(
+    commentsPanel
+  );
+
+
+  const openComments = () => {
+
+    commentsPanel.classList.toggle(
+      "show"
+    );
+
+    if(
+      commentsPanel.classList.contains(
+        "show"
+      )
+    ){
+
+      loadComments(
+        post.id,
+        commentsList,
+        commentsLink,
+        commentButton
+      );
+
+      setTimeout(
+        () => commentInput.focus(),
+        100
+      );
+
+    }
+
+  };
+
+
+  commentButton.addEventListener(
+    "click",
+    openComments
+  );
+
+  commentsLink.addEventListener(
+    "click",
+    openComments
+  );
+
+
+  async function submitComment(){
+
+    const text =
+      commentInput.value.trim();
+
+    if(!text)
+      return;
+
+    if(!currentUser){
+
+      showToast(
+        "Please log in first."
+      );
+
+      return;
+    }
+
+    commentSend.disabled =
+      true;
+
+    try{
+
+      await addDoc(
+        collection(
+          db,
+          "posts",
+          post.id,
+          "comments"
+        ),
+        {
+          uid:currentUser.uid,
+
+          fullName:
+            currentProfile?.fullName
+            || currentUser.displayName
+            || "Member",
+
+          profilePhoto:
+            currentProfile?.profilePhoto
+            || currentUser.photoURL
+            || "",
+
+          text,
+
+          createdAt:
+            serverTimestamp()
+        }
+      );
+
+      commentInput.value =
+        "";
+
+      showToast(
+        "Comment added"
+      );
+
+    }catch(error){
+
+      console.error(
+        "Comment error:",
+        error
+      );
+
+      showToast(
+        "Could not add comment."
+      );
+
+    }finally{
+
+      commentSend.disabled =
+        false;
+
+    }
+
+  }
+
+
+  commentSend.addEventListener(
+    "click",
+    submitComment
+  );
+
+
+  commentInput.addEventListener(
+    "keydown",
+    e => {
+
+      if(e.key === "Enter"){
+
+        e.preventDefault();
+
+        submitComment();
+
+      }
+
+    }
+  );
+
+
+  return card;
+
+}
+
+
+async function toggleLike(post){
+
+  if(!currentUser){
+
+    showToast(
+      "Please log in first."
+    );
+
+    return;
+  }
+
+  const postRef =
+    doc(
+      db,
+      "posts",
+      post.id
+    );
+
+  const likedBy =
+    Array.isArray(post.likedBy)
+      ? post.likedBy
+      : [];
+
+  const alreadyLiked =
+    likedBy.includes(
+      currentUser.uid
+    );
+
+
+  try{
+
+    if(alreadyLiked){
+
+      await updateDoc(
+        postRef,
+        {
+          likedBy:
+            arrayRemove(
+              currentUser.uid
+            ),
+
+          likesCount:
+            Math.max(
+              0,
+              (
+                typeof post.likesCount === "number"
+                  ? post.likesCount
+                  : likedBy.length
+              ) - 1
+            )
+        }
+      );
+
+    }else{
+
+      await updateDoc(
+        postRef,
+        {
+          likedBy:
+            arrayUnion(
+              currentUser.uid
+            ),
+
+          likesCount:
+            (
+              typeof post.likesCount === "number"
+                ? post.likesCount
+                : likedBy.length
+            ) + 1
+        }
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "Like error:",
+      error
+    );
+
+    showToast(
+      "Could not update like."
+    );
+
+  }
+
+}
+
+
+function loadComments(
+  postId,
+  listElement,
+  commentsButton,
+  commentActionButton
+){
+
+  if(
+    unsubscribeComments[postId]
+  ){
+
+    unsubscribeComments[postId]();
+
+  }
+
+
+  const commentsQuery =
+    query(
+      collection(
+        db,
+        "posts",
+        postId,
+        "comments"
+      ),
+      orderBy(
+        "createdAt",
+        "asc"
+      )
+    );
+
+
+  unsubscribeComments[postId] =
+    onSnapshot(
+      commentsQuery,
+
+      snapshot => {
+
+        const count =
+          snapshot.size;
+
+        commentActionButton
+          .querySelector("span")
+          .textContent =
+          count;
+
+
+        commentsButton.textContent =
+          count > 0
+            ? `View ${count} comment${count === 1 ? "" : "s"}`
+            : "Add a comment";
+
+
+        if(snapshot.empty){
+
+          listElement.innerHTML =
+            `<div class="comment-empty">
+              No comments yet.
+            </div>`;
+
+          return;
+
+        }
+
+
+        listElement.innerHTML =
+          "";
+
+
+        snapshot.forEach(
+          commentDoc => {
+
+            const comment =
+              commentDoc.data();
+
+
+            const row =
+              document.createElement(
+                "div"
+              );
+
+            row.className =
+              "comment-row";
+
+
+            const avatar =
+              document.createElement(
+                "div"
+              );
+
+            avatar.className =
+              "comment-avatar";
+
+
+            const photo =
+              comment.profilePhoto
+              || comment.photoURL
+              || "";
+
+            const name =
+              comment.fullName
+              || comment.name
+              || "Member";
+
+
+            if(photo){
+
+              const image =
+                document.createElement(
+                  "img"
+                );
+
+              image.src =
+                photo;
+
+              image.alt =
+                "";
+
+              image.onerror =
+                () => {
+
+                  image.remove();
+
+                  avatar.textContent =
+                    getInitial(name);
+
+                };
+
+              avatar.appendChild(
+                image
+              );
+
+            }else{
+
+              avatar.textContent =
+                getInitial(name);
+
+            }
+
+
+            const body =
+              document.createElement(
+                "div"
+              );
+
+            body.className =
+              "comment-body";
+
+
+            const nameEl =
+              document.createElement(
+                "div"
+              );
+
+            nameEl.className =
+              "comment-name";
+
+            nameEl.textContent =
+              name;
+
+
+            const textEl =
+              document.createElement(
+                "div"
+              );
+
+            textEl.className =
+              "comment-text";
+
+            textEl.textContent =
+              comment.text
+              || "";
+
+
+            body.append(
+              nameEl,
+              textEl
+            );
+
+            row.append(
+              avatar,
+              body
+            );
+
+            listElement.appendChild(
+              row
+            );
+
+          }
+        );
+
+      },
+
+      error => {
+
+        console.error(
+          "Comments error:",
+          error
+        );
+
+        listElement.innerHTML =
+          `<div class="comment-empty">
+            Comments could not load.
+          </div>`;
+
+      }
+    );
+
+}
+
+
+/* FULL-SCREEN PHOTO VIEWER */
+
+function openPhoto(
+  src,
+  alt="Community photo"
+){
+
+  viewerImage.src =
+    src;
+
+  viewerImage.alt =
+    alt;
+
+  photoViewer.classList.add(
+    "show"
+  );
+
+  photoViewer.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body.style.overflow =
+    "hidden";
+
+}
+
+
+function closePhoto(){
+
+  photoViewer.classList.remove(
+    "show"
+  );
+
+  photoViewer.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  viewerImage.removeAttribute(
+    "src"
+  );
+
+  document.body.style.overflow =
+    "";
+
+}
+
+
+photoClose.addEventListener(
+  "click",
+  closePhoto
+);
+
+
+photoViewer.addEventListener(
+  "click",
+  e => {
+
+    if(
+      e.target === photoViewer
+    ){
+
+      closePhoto();
+
+    }
+
+  }
+);
+
+
+document.addEventListener(
+  "keydown",
+  e => {
+
+    if(e.key === "Escape")
+      closePhoto();
+
+  }
+);
+
+
+/* MENU */
+
+function closeMenu(){
+
+  menuPanel.classList.remove(
+    "show"
+  );
+
+  menuButton.classList.remove(
+    "open"
+  );
+
+  menuButton.setAttribute(
+    "aria-expanded",
+    "false"
+  );
+
+}
+
+
+menuButton.addEventListener(
+  "click",
+  e => {
+
+    e.stopPropagation();
+
+    const opened =
+      menuPanel.classList.toggle(
+        "show"
+      );
+
+    menuButton.classList.toggle(
+      "open",
+      opened
+    );
+
+    menuButton.setAttribute(
+      "aria-expanded",
+      String(opened)
+    );
+
+  }
+);
+
+
+document.addEventListener(
+  "click",
+  e => {
+
+    if(
+      !menuPanel.contains(e.target)
+      && e.target !== menuButton
+    ){
+
+      closeMenu();
+
+    }
+
+  }
+);
+
+
+/* NAVIGATION */
+
+const routes = {
+  home:"home.html",
+  chat:"chat.html",
+  create:"create-post.html",
+  notifications:"notifications.html",
+  profile:"profile.html"
+};
+
+
+function goTo(page){
+
+  const destination =
+    routes[page];
+
+  if(destination)
+    window.location.href =
+      destination;
+
+}
+
+
+document
+  .querySelectorAll("[data-page]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () =>
+        goTo(
+          button.dataset.page
+        )
+    );
+
+  });
+
+
+headerProfile.addEventListener(
+  "click",
+  () =>
+    goTo("profile")
+);
+
+
+profileMenu.addEventListener(
+  "click",
+  () => {
+
+    closeMenu();
+
+    goTo("profile");
+
+  }
+);
+
+
+createMenu.addEventListener(
+  "click",
+  () => {
+
+    closeMenu();
+
+    goTo("create");
+
+  }
+);
+
+
+chatMenu.addEventListener(
+  "click",
+  () => {
+
+    closeMenu();
+
+    goTo("chat");
+
+  }
+);
+
+
+notificationMenu.addEventListener(
+  "click",
+  () => {
+
+    closeMenu();
+
+    goTo("notifications");
+
+  }
+);
+
+
+settingsMenu.addEventListener(
+  "click",
+  () => {
+
+    closeMenu();
+
+    window.location.href =
+      "settings.html";
+
+  }
+);
+
+
+/* LOGOUT */
+
+logoutButton.addEventListener(
+  "click",
+  async () => {
+
+    try{
+
+      await signOut(auth);
+
+      window.location.href =
+        "index.html";
+
+    }catch(error){
+
+      console.error(
+        "Logout error:",
+        error
+      );
+
+      showToast(
+        "Could not log out."
+      );
+
+    }
+
+  }
+);
+
+
+/* AUTH */
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    if(!user){
+
+      window.location.href =
+        "login.html";
+
+      return;
+    }
+
+    currentUser =
+      user;
+
+    try{
+
+      await loadCurrentProfile(
+        user
+      );
+
+      loadPosts();
+
+    }catch(error){
+
+      console.error(
+        "Home error:",
+        error
+      );
+
+      showToast(
+        "Could not load your account."
+      );
+
+    }
+
+  }
+);
+
+</script>
+
+</body>
+</html>

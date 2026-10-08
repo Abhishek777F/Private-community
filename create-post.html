@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b0c">
+<title>Create Post • Private Community</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0b0b0c;--surface:#131315;--surface2:#19191c;--text:#f5f2eb;
+  --muted:#aaa6a0;--border:rgba(255,255,255,.09);--gold:#d8b56d;
+  --gold2:#f0d49a;--danger:#ff7777;--shadow:0 18px 50px rgba(0,0,0,.22);
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f6f4ef;--surface:#fffefa;--surface2:#f2eee5;--text:#201d18;
+  --muted:#777168;--border:rgba(39,32,22,.12);--gold:#9c762e;
+  --gold2:#76571e;--danger:#bd3c3c;--shadow:0 18px 45px rgba(54,43,23,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;transition:background .2s,color .2s}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.topbar{height:72px;position:fixed;inset:0 0 auto;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.topbar-inner{height:100%;max-width:1320px;padding:0 26px;margin:auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.top-left{display:flex;align-items:center;gap:12px;min-width:0}
+.avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:13px;overflow:hidden;flex-shrink:0}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.brand{font-size:12px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.brand-center{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:650;letter-spacing:.02em;white-space:nowrap}
+.gold-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px color-mix(in srgb,var(--gold) 55%,transparent)}
+.top-right{display:flex;justify-content:flex-end;align-items:center;position:relative}
+.icon-btn{width:42px;height:42px;border:1px solid var(--border);border-radius:50%;background:var(--surface);color:var(--text);display:grid;place-items:center;transition:.2s}
+.icon-btn:hover{border-color:var(--gold);transform:translateY(-1px)}
+svg{display:block}
+.menu{position:absolute;right:0;top:51px;width:220px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:8px;box-shadow:var(--shadow);display:none}
+.menu.open{display:block;animation:pop .16s ease-out}
+.menu-label{padding:9px 10px 5px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.menu button,.menu a{width:100%;border:0;background:transparent;color:var(--text);display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:10px;text-align:left;font-size:13px}
+.menu button:hover,.menu a:hover,.menu .selected{background:var(--surface2);color:var(--gold)}
+.menu-separator{height:1px;background:var(--border);margin:5px 3px}
+main{max-width:900px;margin:0 auto;padding:108px 24px 110px}
+.page-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:26px}
+.eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:800;margin-bottom:9px}
+h1{font-size:clamp(28px,4vw,39px);letter-spacing:-.045em;margin:0;font-weight:650}
+.subtitle{color:var(--muted);font-size:13px;line-height:1.65;margin:10px 0 0}
+.step-pill{border:1px solid var(--border);border-radius:99px;padding:9px 12px;color:var(--muted);font-size:11px;white-space:nowrap}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}
+.card-top{padding:22px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:13px}
+.author-avatar{width:44px;height:44px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);overflow:hidden;display:grid;place-items:center;color:var(--gold);font-weight:750;flex-shrink:0}
+.author-avatar img{width:100%;height:100%;object-fit:cover}
+.author-meta{min-width:0;flex:1}
+.author-name{font-size:14px;font-weight:700;overflow-wrap:anywhere}
+.author-handle{font-size:12px;color:var(--muted);margin-top:4px}
+.visibility{font-size:11px;color:var(--gold);display:flex;align-items:center;gap:6px;white-space:nowrap}
+.card-body{padding:24px}
+.field-label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:11px}
+.caption-input{width:100%;min-height:118px;resize:vertical;border:1px solid var(--border);border-radius:15px;background:var(--surface2);color:var(--text);padding:16px;outline:none;line-height:1.65;font-size:14px;transition:border .2s}
+.caption-input:focus{border-color:color-mix(in srgb,var(--gold) 70%,transparent)}
+.caption-input::placeholder{color:var(--muted);opacity:.78}
+.caption-foot{display:flex;justify-content:space-between;gap:12px;margin-top:8px;color:var(--muted);font-size:11px}
+.media-section{margin-top:26px}
+.media-picker{width:100%;min-height:260px;border:1px dashed color-mix(in srgb,var(--gold) 45%,var(--border));border-radius:18px;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 5%,var(--surface2)),var(--surface2));position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;transition:border .2s,background .2s}
+.media-picker:hover,.media-picker:focus-visible{border-color:var(--gold);outline:none}
+.media-empty{padding:35px 20px;text-align:center;max-width:360px}
+.upload-icon{width:54px;height:54px;margin:0 auto 16px;border-radius:17px;background:color-mix(in srgb,var(--gold) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 30%,var(--border));display:grid;place-items:center;color:var(--gold)}
+.media-empty strong{display:block;font-size:14px;margin-bottom:8px}
+.media-empty p{font-size:12px;color:var(--muted);line-height:1.6;margin:0}
+.media-empty .formats{margin-top:14px;font-size:10px;letter-spacing:.05em}
+.preview-media{display:none;width:100%;max-height:560px;object-fit:contain;background:#080808}
+.remove-media{position:absolute;right:12px;top:12px;width:36px;height:36px;border:1px solid rgba(255,255,255,.2);border-radius:50%;background:rgba(0,0,0,.72);color:white;display:none;place-items:center;font-size:22px;z-index:3;line-height:1}
+.media-picker.has-media{border-style:solid;border-color:var(--border);background:#080808;min-height:180px}
+.media-note{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.6}
+.upload-progress{display:none;margin-top:15px}
+.progress-row{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);margin-bottom:8px}
+.progress-track{height:5px;background:var(--surface2);border-radius:20px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .2s}
+.actions{display:flex;gap:11px;justify-content:flex-end;margin-top:25px;padding-top:21px;border-top:1px solid var(--border)}
+.btn{min-height:46px;padding:0 19px;border-radius:12px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:9px;transition:.2s}
+.btn:hover{transform:translateY(-1px);border-color:var(--gold)}
+.btn-primary{background:var(--gold);border-color:var(--gold);color:#21190c}
+.btn-primary:hover{background:var(--gold2);border-color:var(--gold2)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.notice{display:none;margin-bottom:18px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.55}
+.notice.error{display:block;color:var(--danger);background:color-mix(in srgb,var(--danger) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--danger) 25%,transparent)}
+.notice.success{display:block;color:var(--gold);background:color-mix(in srgb,var(--gold) 8%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 25%,transparent)}
+.bottom-nav{display:none}
+.nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;color:var(--muted);font-size:10px;position:relative;padding:7px 0}
+.nav-item svg{width:21px;height:21px}
+.nav-item.active{color:var(--gold)}
+.nav-item.active:before{content:"";position:absolute;top:-8px;width:20px;height:2px;background:var(--gold);border-radius:2px;box-shadow:0 0 10px color-mix(in srgb,var(--gold) 40%,transparent)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:100;max-width:calc(100% - 30px);padding:12px 16px;border:1px solid var(--border);border-radius:13px;background:var(--surface);color:var(--text);box-shadow:var(--shadow);font-size:12px;transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@keyframes pop{from{opacity:0;transform:translateY(-5px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:640px){
+ .topbar-inner{padding:0 15px;grid-template-columns:1fr auto 1fr}
+ .top-left .brand{display:none}
+ .avatar{width:35px;height:35px}
+ .brand-center{font-size:13px;gap:7px}
+ .icon-btn{width:38px;height:38px}
+ main{padding:96px 15px 105px}
+ .page-heading{align-items:flex-start;margin-bottom:21px}
+ .step-pill{display:none}
+ h1{font-size:30px}
+ .subtitle{font-size:12px}
+ .card{border-radius:18px}
+ .card-top{padding:18px}
+ .card-body{padding:17px}
+ .media-picker{min-height:230px}
+ .preview-media{max-height:430px}
+ .actions{display:grid;grid-template-columns:1fr 1.2fr}
+ .btn{padding:0 12px}
+ .bottom-nav{position:fixed;z-index:25;bottom:0;left:0;right:0;height:67px;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;padding:4px 10px max(5px,env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(18px);border-top:1px solid var(--border)}
+ .toast{bottom:82px}
+}
+@media(min-width:641px){.card{max-width:760px;margin:auto}.page-heading{max-width:760px;margin-left:auto;margin-right:auto}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="top-left">
+      <div class="avatar" id="headerAvatar"><span id="headerInitial">P</span></div>
+      <span class="brand">Private</span>
+    </div>
+    <div class="brand-center"><span class="gold-dot"></span><span>Private Community</span></div>
+    <div class="top-right">
+      <button class="icon-btn" id="menuButton" aria-label="Open menu" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg>
+      </button>
+      <div class="menu" id="menuPanel">
+        <div class="menu-label">Appearance</div>
+        <button type="button" data-theme-choice="dark" id="darkTheme">◐ <span>Dark theme</span></button>
+        <button type="button" data-theme-choice="light" id="lightTheme">☼ <span>Light theme</span></button>
+        <button type="button" data-theme-choice="system" id="systemTheme">◉ <span>System default</span></button>
+        <div class="menu-separator"></div>
+        <a href="home.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+        <a href="chat.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg>Chat</a>
+        <a href="profile.html"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>My profile</a>
+        <button type="button" id="logoutButton"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>Log out</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">Your space · Your story</div>
+      <h1>Create a post</h1>
+      <p class="subtitle">Share a moment with your private community.</p>
+    </div>
+    <div class="step-pill">01 <span style="color:var(--gold)">/</span> Create</div>
+  </div>
+
+  <div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+  <section class="card">
+    <div class="card-top">
+      <div class="author-avatar" id="authorAvatar"><span id="authorInitial">P</span></div>
+      <div class="author-meta">
+        <div class="author-name" id="authorName">Loading your profile…</div>
+        <div class="author-handle" id="authorHandle">Please wait</div>
+      </div>
+      <div class="visibility"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M8 5V3m8 2V3"/></svg> Community</div>
+    </div>
+    <div class="card-body">
+      <label class="field-label" for="captionInput">Caption</label>
+      <textarea class="caption-input" id="captionInput" maxlength="2200" placeholder="What would you like to share? Write a caption…"></textarea>
+      <div class="caption-foot"><span>Make it personal.</span><span id="captionCount">0 / 2,200</span></div>
+
+      <div class="media-section">
+        <span class="field-label">Photo or video <span style="letter-spacing:0;text-transform:none;font-weight:500">(optional)</span></span>
+        <div class="media-picker" id="mediaPicker" role="button" tabindex="0" aria-label="Choose a photo or video">
+          <div class="media-empty" id="mediaEmpty">
+            <div class="upload-icon"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+            <strong>Add a photo or video</strong>
+            <p>Choose a moment from your device to share with the community.</p>
+            <p class="formats">JPG · PNG · WEBP · MP4 · WEBM · MOV</p>
+          </div>
+          <img class="preview-media" id="imagePreview" alt="Selected image preview">
+          <video class="preview-media" id="videoPreview" controls playsinline preload="metadata"></video>
+          <button class="remove-media" id="removeMedia" type="button" aria-label="Remove selected media">×</button>
+        </div>
+        <input id="mediaInput" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime" hidden>
+        <div class="media-note">Images up to 15 MB · Videos up to 100 MB. Your selected media uploads when you publish.</div>
+        <div class="upload-progress" id="uploadProgress">
+          <div class="progress-row"><span id="progressLabel">Uploading media…</span><span id="progressPercent">0%</span></div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="cancelButton" type="button">Cancel</button>
+        <button class="btn btn-primary" id="publishButton" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          Publish post
+        </button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom-nav" aria-label="Main navigation">
+  <a class="nav-item" href="home.html" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a>
+  <a class="nav-item" href="chat.html" aria-label="Chat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/></svg><span>Chat</span></a>
+  <a class="nav-item active" href="create-post.html" aria-label="Create post"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><path d="M12 8v8M8 12h8"/></svg><span>Create</span></a>
+  <a class="nav-item" href="notifications.html" aria-label="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg><span>Alerts</span></a>
+  <a class="nav-item" href="profile.html" aria-label="Profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg><span>Profile</span></a>
+</nav>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module">
+import { auth, db, googleProvider } from "./firebase.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const CLOUDINARY_CLOUD_NAME = "x8v7nchp";
+const CLOUDINARY_UPLOAD_PRESET = "Private_social";
+
+const $ = (id) => document.getElementById(id);
+const menuButton = $("menuButton");
+const menuPanel = $("menuPanel");
+const mediaPicker = $("mediaPicker");
+const mediaInput = $("mediaInput");
+const imagePreview = $("imagePreview");
+const videoPreview = $("videoPreview");
+const mediaEmpty = $("mediaEmpty");
+const removeMedia = $("removeMedia");
+const publishButton = $("publishButton");
+const notice = $("notice");
+let currentUser = null;
+let currentProfile = {};
+let selectedFile = null;
+let previewURL = null;
+let isPublishing = false;
+
+function showToast(message) {
+  const toast = $("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.remove("show"), 2800);
+}
+function showNotice(message, type = "error") {
+  notice.textContent = message;
+  notice.className = "notice " + type;
+}
+function clearNotice() {
+  notice.textContent = "";
+  notice.className = "notice";
+}
+function initials(name) {
+  return (name || "P").trim().split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase() || "P";
+}
+function setAvatar(container, initialElement, url, name) {
+  container.replaceChildren();
+  const safeInitial = initials(name);
+  if (url) {
+    const img = document.createElement("img");
+    img.src = url;
+    img.alt = name ? `${name} profile photo` : "Profile photo";
+    img.referrerPolicy = "no-referrer";
+    img.onerror = () => {
+      container.replaceChildren();
+      container.textContent = safeInitial;
+    };
+    container.appendChild(img);
+  } else {
+    container.textContent = safeInitial;
+  }
+}
+function applyTheme(theme) {
+  const chosen = ["dark", "light", "system"].includes(theme) ? theme : "system";
+  const resolved = chosen === "system"
+    ? (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+    : chosen;
+  document.documentElement.dataset.theme = resolved;
+  localStorage.setItem("private-theme", chosen);
+  ["darkTheme", "lightTheme", "systemTheme"].forEach(id => $(id).classList.remove("selected"));
+  const selectedId = chosen === "dark" ? "darkTheme" : chosen === "light" ? "lightTheme" : "systemTheme";
+  $(selectedId).classList.add("selected");
+}
+applyTheme(localStorage.getItem("private-theme") || "system");
+window.matchMedia("(prefers-color-scheme: light)").addEventListener?.("change", () => {
+  if ((localStorage.getItem("private-theme") || "system") === "system") applyTheme("system");
+});
+document.querySelectorAll("[data-theme-choice]").forEach(button => {
+  button.addEventListener("click", () => {
+    applyTheme(button.dataset.themeChoice);
+    menuPanel.classList.remove("open");
+    menuButton.setAttribute("aria-expanded", "false");
+  });
+});
+
+menuButton.addEventListener("click", (event) => {
+  event.stopPropagation();
+  const open = menuPanel.classList.toggle("open");
+  menuButton.setAttribute("aria-expanded", String(open));
+});
+document.addEventListener("click", (event) => {
+  if (!menuPanel.contains(event.target) && !menuButton.contains(event.target)) {
+    menuPanel.classList.remove("open");
+    menuButton.setAttribute("aria-expanded", "false");
+  }
+});
+$("logoutButton").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+    location.replace("index.html");
+  } catch (error) {
+    showToast("Could not log out. Please try again.");
+  }
+});
+
+$("captionInput").addEventListener("input", () => {
+  $("captionCount").textContent = `${$("captionInput").value.length.toLocaleString()} / 2,200`;
+});
+
+function openFilePicker() {
+  if (!isPublishing) mediaInput.click();
+}
+mediaPicker.addEventListener("click", (event) => {
+  if (event.target.closest("#removeMedia")) return;
+  if (event.target.closest("video")) return;
+  openFilePicker();
+});
+mediaPicker.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === " ") {
+    if (event.target === mediaPicker) {
+      event.preventDefault();
+      openFilePicker();
+    }
+  }
+});
+function resetPreview() {
+  selectedFile = null;
+  mediaInput.value = "";
+  imagePreview.removeAttribute("src");
+  videoPreview.pause();
+  videoPreview.removeAttribute("src");
+  videoPreview.load();
+  imagePreview.style.display = "none";
+  videoPreview.style.display = "none";
+  mediaEmpty.style.display = "block";
+  removeMedia.style.display = "none";
+  mediaPicker.classList.remove("has-media");
+  if (previewURL) {
+    URL.revokeObjectURL(previewURL);
+    previewURL = null;
+  }
+}
+removeMedia.addEventListener("click", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  resetPreview();
+  showToast("Media removed");
+});
+mediaInput.addEventListener("change", () => {
+  clearNotice();
+  const file = mediaInput.files?.[0];
+  if (!file) return;
+  const isImage = file.type.startsWith("image/");
+  const isVideo = file.type.startsWith("video/");
+  const maxSize = isImage ? 15 * 1024 * 1024 : 100 * 1024 * 1024;
+  if ((!isImage && !isVideo) || file.size > maxSize) {
+    mediaInput.value = "";
+    showNotice(!isImage && !isVideo
+      ? "Choose a supported image or video file."
+      : `This ${isImage ? "image" : "video"} is too large. Maximum size is ${isImage ? "15 MB" : "100 MB"}.`);
+    return;
+  }
+  if (previewURL) URL.revokeObjectURL(previewURL);
+  selectedFile = file;
+  previewURL = URL.createObjectURL(file);
+  mediaEmpty.style.display = "none";
+  removeMedia.style.display = "grid";
+  mediaPicker.classList.add("has-media");
+  if (isImage) {
+    videoPreview.pause();
+    videoPreview.removeAttribute("src");
+    videoPreview.load();
+    videoPreview.style.display = "none";
+    imagePreview.onload = () => {};
+    imagePreview.src = previewURL;
+    imagePreview.style.display = "block";
+  } else {
+    imagePreview.removeAttribute("src");
+    imagePreview.style.display = "none";
+    videoPreview.src = previewURL;
+    videoPreview.style.display = "block";
+    videoPreview.load();
+  }
+});
+
+function uploadToCloudinary(file) {
+  return new Promise((resolve, reject) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`);
+    xhr.upload.addEventListener("progress", event => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100);
+        $("progressFill").style.width = `${percent}%`;
+        $("progressPercent").textContent = `${percent}%`;
+        $("progressLabel").textContent = percent >= 100 ? "Finishing upload…" : "Uploading media…";
+      }
+    });
+    xhr.addEventListener("load", () => {
+      let data = {};
+      try { data = JSON.parse(xhr.responseText || "{}"); } catch {}
+      if (xhr.status >= 200 && xhr.status < 300 && data.secure_url) resolve(data);
+      else reject(new Error(data.error?.message || "Media upload failed. Check Cloudinary preset settings."));
+    });
+    xhr.addEventListener("error", () => reject(new Error("Network error while uploading media.")));
+    xhr.addEventListener("abort", () => reject(new Error("Media upload was cancelled.")));
+    xhr.send(formData);
+  });
+}
+
+function getDisplayName() {
+  return currentProfile.fullName || currentProfile.name || currentUser?.displayName || currentUser?.email?.split("@")[0] || "Private member";
+}
+function updateProfileUI() {
+  const name = getDisplayName();
+  const username = currentProfile.username ? "@" + String(currentProfile.username).replace(/^@/, "") : (currentUser?.email || "Community member");
+  const photo = currentProfile.profilePhoto || currentProfile.photoURL || currentUser?.photoURL || "";
+  $("authorName").textContent = name;
+  $("authorHandle").textContent = username;
+  setAvatar($("headerAvatar"), $("headerInitial"), photo, name);
+  setAvatar($("authorAvatar"), $("authorInitial"), photo, name);
+}
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    location.replace("index.html");
+    return;
+  }
+  currentUser = user;
+  try {
+    const userSnap = await getDoc(doc(db, "users", user.uid));
+    currentProfile = userSnap.exists() ? userSnap.data() : {};
+    updateProfileUI();
+  } catch (error) {
+    console.error("Profile load error:", error);
+    updateProfileUI();
+    showNotice("Your profile details could not be loaded. You can still try creating a post.", "error");
+  }
+});
+
+function setPublishing(value) {
+  isPublishing = value;
+  publishButton.disabled = value;
+  $("cancelButton").disabled = value;
+  mediaInput.disabled = value;
+  publishButton.innerHTML = value
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4m0 12v4m10-10h-4M6 12H2m17.07-7.07-2.83 2.83M7.76 16.24l-2.83 2.83m14.14 0-2.83-2.83M7.76 7.76 4.93 4.93"/></svg> Publishing…'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg> Publish post';
+}
+publishButton.addEventListener("click", async () => {
+  if (isPublishing) return;
+  clearNotice();
+  if (!currentUser) {
+    showNotice("Please log in before creating a post.");
+    return;
+  }
+  const caption = $("captionInput").value.trim();
+  if (!caption && !selectedFile) {
+    showNotice("Write a caption or choose a photo/video before publishing.");
+    return;
+  }
+  setPublishing(true);
+  $("uploadProgress").style.display = selectedFile ? "block" : "none";
+  $("progressFill").style.width = "0%";
+  $("progressPercent").textContent = "0%";
+  let uploadData = null;
+  try {
+    if (selectedFile) uploadData = await uploadToCloudinary(selectedFile);
+    const displayName = getDisplayName();
+    const mediaType = uploadData ? (uploadData.resource_type === "video" ? "video" : "image") : null;
+    const post = {
+      uid: currentUser.uid,
+      fullName: displayName,
+      username: currentProfile.username || "",
+      profilePhoto: currentProfile.profilePhoto || currentProfile.photoURL || currentUser.photoURL || "",
+      caption,
+      mediaURL: uploadData?.secure_url || "",
+      mediaType: mediaType || "",
+      cloudinaryPublicId: uploadData?.public_id || "",
+      mediaFormat: uploadData?.format || "",
+      width: uploadData?.width || null,
+      height: uploadData?.height || null,
+      duration: uploadData?.duration || null,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    await addDoc(collection(db, "posts"), post);
+    showToast("Post published");
+    $("captionInput").value = "";
+    $("captionCount").textContent = "0 / 2,200";
+    resetPreview();
+    location.href = "home.html";
+  } catch (error) {
+    console.error("Publish post error:", error);
+    showNotice(error?.message || "Your post could not be published. Check your connection and Firestore rules.");
+    showToast("Could not publish post");
+  } finally {
+    setPublishing(false);
+    $("uploadProgress").style.display = "none";
+  }
+});
+$("cancelButton").addEventListener("click", () => {
+  if (isPublishing) return;
+  if ($("captionInput").value.trim() || selectedFile) {
+    const confirmed = window.confirm("Discard this post draft?");
+    if (!confirmed) return;
+  }
+  location.href = "home.html";
+});
+</script>
+</body>
+</html>

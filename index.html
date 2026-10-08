@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Private</title>
+
+  <meta
+    name="description"
+    content="A private social space for your community."
+  >
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg: #09090b;
+      --surface: #111114;
+      --surface-2: #17171b;
+      --border: rgba(255,255,255,.09);
+      --text: #f7f4ed;
+      --muted: #999791;
+      --gold: #d8b56a;
+      --gold-light: #f0d797;
+    }
+
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(
+          circle at 50% 0%,
+          rgba(216,181,106,.12),
+          transparent 38%
+        ),
+        var(--bg);
+
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+    }
+
+    /* =========================
+       HEADER
+    ========================== */
+
+    header {
+      height: 72px;
+      padding: 0 6%;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      border-bottom: 1px solid var(--border);
+
+      background: rgba(9,9,11,.75);
+
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: .4px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border: 1px solid rgba(216,181,106,.4);
+      border-radius: 10px;
+
+      color: var(--gold-light);
+
+      font-weight: 800;
+    }
+
+    .login-button {
+      border: 0;
+      background: transparent;
+
+      color: #ddd9d0;
+
+      padding: 10px;
+
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .login-button:hover {
+      color: var(--gold-light);
+    }
+
+    /* =========================
+       HERO
+    ========================== */
+
+    main {
+      min-height: 100vh;
+    }
+
+    .hero {
+      min-height: 100vh;
+
+      max-width: 1200px;
+
+      margin: auto;
+
+      padding:
+        150px 6% 80px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 780px;
+    }
+
+    .label {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+
+      padding: 8px 13px;
+
+      border: 1px solid rgba(216,181,106,.2);
+
+      border-radius: 30px;
+
+      color: var(--gold-light);
+
+      background: rgba(216,181,106,.06);
+
+      font-size: 11px;
+      font-weight: 700;
+
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+
+      margin-bottom: 27px;
+    }
+
+    .label-dot {
+      width: 6px;
+      height: 6px;
+
+      border-radius: 50%;
+
+      background: var(--gold);
+    }
+
+    h1 {
+      font-size: clamp(48px, 8vw, 86px);
+
+      line-height: .98;
+
+      letter-spacing: -4px;
+
+      font-weight: 750;
+    }
+
+    h1 span {
+      color: var(--gold-light);
+    }
+
+    .description {
+      max-width: 600px;
+
+      margin: 28px auto 0;
+
+      color: var(--muted);
+
+      font-size: 17px;
+      line-height: 1.75;
+    }
+
+    /* =========================
+       BUTTONS
+    ========================== */
+
+    .actions {
+      margin-top: 36px;
+
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+
+      flex-wrap: wrap;
+    }
+
+    .primary {
+      min-height: 52px;
+
+      padding: 0 27px;
+
+      border-radius: 14px;
+
+      border: 1px solid rgba(216,181,106,.5);
+
+      background:
+        linear-gradient(
+          135deg,
+          #e5c274,
+          #c79d4e
+        );
+
+      color: #15120c;
+
+      font-size: 14px;
+      font-weight: 750;
+
+      box-shadow:
+        0 12px 35px rgba(216,181,106,.12);
+    }
+
+    .secondary {
+      min-height: 52px;
+
+      padding: 0 27px;
+
+      border-radius: 14px;
+
+      border: 1px solid var(--border);
+
+      background: rgba(255,255,255,.04);
+
+      color: var(--text);
+
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .primary:hover {
+      transform: translateY(-1px);
+    }
+
+    .secondary:hover {
+      background: rgba(255,255,255,.07);
+    }
+
+    /* =========================
+       REAL APP PREVIEW
+       NO FAKE DATA
+    ========================== */
+
+    .preview {
+      max-width: 900px;
+
+      margin: 0 auto 100px;
+
+      padding: 0 6%;
+    }
+
+    .preview-card {
+      min-height: 330px;
+
+      border: 1px solid var(--border);
+
+      border-radius: 28px;
+
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.055),
+          rgba(255,255,255,.018)
+        );
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+
+      padding: 40px;
+    }
+
+    .preview-content {
+      max-width: 500px;
+    }
+
+    .preview-icon {
+      width: 62px;
+      height: 62px;
+
+      margin: 0 auto 20px;
+
+      border-radius: 18px;
+
+      border: 1px solid rgba(216,181,106,.25);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: var(--gold-light);
+
+      font-size: 25px;
+
+      background: rgba(216,181,106,.07);
+    }
+
+    .preview-card h2 {
+      font-size: 25px;
+
+      margin-bottom: 10px;
+    }
+
+    .preview-card p {
+      color: var(--muted);
+
+      font-size: 14px;
+
+      line-height: 1.7;
+    }
+
+    /* =========================
+       FEATURES
+    ========================== */
+
+    .features {
+      max-width: 1100px;
+
+      margin: auto;
+
+      padding: 0 6% 100px;
+    }
+
+    .section-title {
+      text-align: center;
+
+      font-size: 32px;
+
+      letter-spacing: -1px;
+    }
+
+    .section-description {
+      text-align: center;
+
+      color: var(--muted);
+
+      font-size: 14px;
+
+      margin-top: 10px;
+    }
+
+    .feature-grid {
+      margin-top: 35px;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap: 15px;
+    }
+
+    .feature {
+      padding: 25px;
+
+      min-height: 180px;
+
+      border-radius: 20px;
+
+      border: 1px solid var(--border);
+
+      background: var(--surface);
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 12px;
+
+      color: var(--gold-light);
+
+      background: rgba(216,181,106,.08);
+
+      margin-bottom: 20px;
+    }
+
+    .feature h3 {
+      font-size: 16px;
+
+      margin-bottom: 9px;
+    }
+
+    .feature p {
+      color: var(--muted);
+
+      font-size: 13px;
+
+      line-height: 1.65;
+    }
+
+    /* =========================
+       FOOTER
+    ========================== */
+
+    footer {
+      border-top: 1px solid var(--border);
+
+      padding: 28px 6%;
+
+      text-align: center;
+
+      color: #66645f;
+
+      font-size: 11px;
+    }
+
+    /* =========================
+       MOBILE
+    ========================== */
+
+    @media (max-width: 700px) {
+
+      header {
+        padding: 0 20px;
+      }
+
+      .hero {
+        padding:
+          125px 20px 65px;
+      }
+
+      h1 {
+        font-size: 51px;
+        letter-spacing: -2.5px;
+      }
+
+      .description {
+        font-size: 15px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .primary,
+      .secondary {
+        width: 100%;
+      }
+
+      .preview {
+        padding: 0 20px 70px;
+      }
+
+      .preview-card {
+        min-height: 290px;
+
+        padding: 30px 20px;
+
+        border-radius: 23px;
+      }
+
+      .features {
+        padding: 0 20px 70px;
+      }
+
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+
+    <div class="brand">
+      <div class="brand-icon">P</div>
+      <span>Private</span>
+    </div>
+
+    <button
+      class="login-button"
+      id="loginButton"
+    >
+      Login
+    </button>
+
+  </header>
+
+
+  <!-- HERO -->
+
+  <main>
+
+    <section class="hero">
+
+      <div class="hero-content">
+
+        <div class="label">
+          <span class="label-dot"></span>
+          Private community
+        </div>
+
+        <h1>
+          Your people.<br>
+          Your <span>space.</span>
+        </h1>
+
+        <p class="description">
+          A private place to connect with your community,
+          share moments, chat with friends and create memories.
+        </p>
+
+        <div class="actions">
+
+          <button
+            class="primary"
+            id="createAccountButton"
+          >
+            Create Account
+          </button>
+
+          <button
+            class="secondary"
+            id="memberLoginButton"
+          >
+            I'm already a member
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- EMPTY / REAL APP PREVIEW -->
+
+    <section class="preview">
+
+      <div class="preview-card">
+
+        <div class="preview-content">
+
+          <div class="preview-icon">
+            ✦
+          </div>
+
+          <h2>
+            Your private space
+          </h2>
+
+          <p>
+            Your conversations, profiles, photos and posts
+            will appear here after you create an account
+            and join the community.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- FEATURES -->
+
+    <section class="features">
+
+      <h2 class="section-title">
+        Built for your community
+      </h2>
+
+      <p class="section-description">
+        Real accounts. Real people. Real connections.
+      </p>
+
+
+      <div class="feature-grid">
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            ◇
+          </div>
+
+          <h3>
+            Private Chat
+          </h3>
+
+          <p>
+            Send private messages to other members.
+            Conversations will use real Firebase data.
+          </p>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            ◎
+          </div>
+
+          <h3>
+            Photos & Videos
+          </h3>
+
+          <p>
+            Upload and share your own media using
+            Cloudinary.
+          </p>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            ✦
+          </div>
+
+          <h3>
+            Member Profiles
+          </h3>
+
+          <p>
+            Create your own profile with a username,
+            profile photo and bio.
+          </p>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            ♢
+          </div>
+
+          <h3>
+            Posts
+          </h3>
+
+          <p>
+            Create real posts that are stored in
+            your private community.
+          </p>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            ◌
+          </div>
+
+          <h3>
+            Notifications
+          </h3>
+
+          <p>
+            Receive notifications for real activity
+            inside your community.
+          </p>
+
+        </div>
+
+
+        <div class="feature">
+
+          <div class="feature-icon">
+            +
+          </div>
+
+          <h3>
+            Memories & Events
+          </h3>
+
+          <p>
+            Build shared memories and organize real
+            community events.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer>
+    Private • Members only
+  </footer>
+
+
+  <!-- NAVIGATION -->
+
+  <script>
+
+    document
+      .getElementById("createAccountButton")
+      .addEventListener("click", () => {
+        window.location.href = "create-account.html";
+      });
+
+    document
+      .getElementById("loginButton")
+      .addEventListener("click", () => {
+        window.location.href = "login.html";
+      });
+
+    document
+      .getElementById("memberLoginButton")
+      .addEventListener("click", () => {
+        window.location.href = "login.html";
+      });
+
+  </script>
+
+</body>
+</html>

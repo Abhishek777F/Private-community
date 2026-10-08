@@ -1,0 +1,2603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b0b0c">
+<title>Privacy & Security • Private Community</title>
+
+<style>
+:root{
+  color-scheme:dark;
+
+  --bg:#0b0b0c;
+  --surface:#131315;
+  --surface2:#19191c;
+  --text:#f5f2eb;
+  --muted:#aaa6a0;
+  --border:rgba(255,255,255,.09);
+
+  --gold:#d8b56d;
+  --gold2:#f0d49a;
+
+  --danger:#ff7777;
+
+  --header-bg:rgba(11,11,12,.88);
+
+  --shadow:0 18px 50px rgba(0,0,0,.22);
+}
+
+:root[data-theme="light"]{
+  color-scheme:light;
+
+  --bg:#f6f4ef;
+  --surface:#fffefa;
+  --surface2:#f2eee5;
+  --text:#201d18;
+  --muted:#777168;
+  --border:rgba(39,32,22,.12);
+
+  --gold:#9c762e;
+  --gold2:#76571e;
+
+  --danger:#bd3c3c;
+
+  --header-bg:rgba(246,244,239,.90);
+
+  --shadow:0 18px 45px rgba(54,43,23,.08);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,
+body{
+  margin:0;
+  min-height:100%;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  transition:
+    background .2s,
+    color .2s;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+svg{
+  display:block;
+}
+
+
+/* =====================================================
+   TOP HEADER
+===================================================== */
+
+.topbar{
+  height:72px;
+
+  position:fixed;
+  inset:0 0 auto 0;
+
+  z-index:100;
+
+  background:var(--header-bg);
+
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+
+  border-bottom:1px solid var(--border);
+}
+
+.topbar-inner{
+  height:100%;
+  width:100%;
+
+  padding:0 26px;
+
+  display:grid;
+
+  grid-template-columns:1fr auto 1fr;
+
+  align-items:center;
+
+  gap:12px;
+}
+
+.top-left{
+  display:flex;
+  align-items:center;
+
+  gap:12px;
+
+  min-width:0;
+}
+
+.avatar{
+  width:38px;
+  height:38px;
+
+  border-radius:50%;
+
+  overflow:hidden;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  flex-shrink:0;
+
+  background:var(--surface2);
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--gold) 60%,
+      transparent
+    );
+
+  color:var(--gold);
+
+  font-size:13px;
+  font-weight:750;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.brand{
+  color:var(--muted);
+
+  font-size:12px;
+  font-weight:800;
+
+  letter-spacing:.19em;
+
+  text-transform:uppercase;
+
+  white-space:nowrap;
+}
+
+.brand-center{
+  display:flex;
+  align-items:center;
+
+  gap:9px;
+
+  font-size:15px;
+  font-weight:650;
+
+  white-space:nowrap;
+}
+
+.gold-dot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:var(--gold);
+
+  box-shadow:
+    0 0 12px
+    color-mix(
+      in srgb,
+      var(--gold) 55%,
+      transparent
+    );
+}
+
+.top-right{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+
+  position:relative;
+}
+
+.icon-btn{
+  width:42px;
+  height:42px;
+
+  border:1px solid var(--border);
+  border-radius:50%;
+
+  background:var(--surface);
+  color:var(--text);
+
+  display:grid;
+  place-items:center;
+
+  transition:.2s;
+}
+
+.icon-btn:hover{
+  border-color:var(--gold);
+  transform:translateY(-1px);
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.menu{
+  position:absolute;
+
+  right:0;
+  top:51px;
+
+  width:225px;
+
+  padding:8px;
+
+  background:var(--surface);
+
+  border:1px solid var(--border);
+  border-radius:16px;
+
+  box-shadow:var(--shadow);
+
+  display:none;
+}
+
+.menu.open{
+  display:block;
+
+  animation:menuPop .16s ease-out;
+}
+
+@keyframes menuPop{
+  from{
+    opacity:0;
+    transform:
+      translateY(-5px)
+      scale(.98);
+  }
+
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+.menu-label{
+  padding:9px 10px 5px;
+
+  color:var(--muted);
+
+  font-size:10px;
+  font-weight:800;
+
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.menu button,
+.menu a{
+  width:100%;
+
+  border:0;
+
+  background:transparent;
+
+  color:var(--text);
+
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+  padding:11px 10px;
+
+  border-radius:10px;
+
+  text-align:left;
+
+  font-size:13px;
+}
+
+.menu button:hover,
+.menu a:hover,
+.menu .selected{
+  background:var(--surface2);
+  color:var(--gold);
+}
+
+.menu-separator{
+  height:1px;
+
+  background:var(--border);
+
+  margin:5px 3px;
+}
+
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.page{
+  width:min(900px,100%);
+
+  margin:0 auto;
+
+  padding:
+    104px
+    20px
+    100px;
+}
+
+.page-heading{
+  margin-bottom:24px;
+}
+
+.eyebrow{
+  color:var(--gold);
+
+  font-size:10px;
+  font-weight:800;
+
+  letter-spacing:.16em;
+
+  text-transform:uppercase;
+
+  margin-bottom:8px;
+}
+
+.page-title{
+  margin:0;
+
+  font-size:28px;
+  line-height:1.15;
+
+  letter-spacing:-.035em;
+}
+
+.page-subtitle{
+  margin:9px 0 0;
+
+  max-width:600px;
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.7;
+}
+
+
+/* =====================================================
+   SECTION
+===================================================== */
+
+.section{
+  margin-top:22px;
+}
+
+.section-title{
+  margin:
+    0
+    0
+    9px
+    4px;
+
+  color:var(--muted);
+
+  font-size:10px;
+  font-weight:800;
+
+  letter-spacing:.14em;
+
+  text-transform:uppercase;
+}
+
+
+/* =====================================================
+   SETTINGS CARD
+===================================================== */
+
+.settings-card{
+  overflow:hidden;
+
+  background:var(--surface);
+
+  border:1px solid var(--border);
+
+  border-radius:20px;
+
+  box-shadow:var(--shadow);
+}
+
+.setting-row{
+  min-height:68px;
+
+  display:flex;
+  align-items:center;
+
+  gap:14px;
+
+  padding:
+    14px
+    16px;
+
+  border-bottom:1px solid var(--border);
+}
+
+.setting-row:last-child{
+  border-bottom:0;
+}
+
+.setting-icon{
+  width:40px;
+  height:40px;
+
+  flex-shrink:0;
+
+  border-radius:13px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--gold) 9%,
+      var(--surface2)
+    );
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--gold) 18%,
+      var(--border)
+    );
+
+  color:var(--gold);
+
+  display:grid;
+  place-items:center;
+}
+
+.setting-content{
+  min-width:0;
+  flex:1;
+}
+
+.setting-title{
+  font-size:13px;
+  font-weight:700;
+}
+
+.setting-description{
+  color:var(--muted);
+
+  font-size:11px;
+
+  line-height:1.55;
+
+  margin-top:4px;
+}
+
+.setting-value{
+  color:var(--muted);
+
+  font-size:11px;
+
+  white-space:nowrap;
+}
+
+
+/* =====================================================
+   TOGGLE
+===================================================== */
+
+.toggle{
+  width:45px;
+  height:25px;
+
+  flex-shrink:0;
+
+  position:relative;
+
+  border:1px solid var(--border);
+
+  border-radius:30px;
+
+  background:var(--surface2);
+
+  transition:.2s;
+}
+
+.toggle input{
+  position:absolute;
+
+  opacity:0;
+
+  pointer-events:none;
+}
+
+.toggle-slider{
+  position:absolute;
+
+  top:3px;
+  left:3px;
+
+  width:17px;
+  height:17px;
+
+  border-radius:50%;
+
+  background:var(--muted);
+
+  transition:.2s;
+}
+
+.toggle input:checked
+~ .toggle-slider{
+  transform:translateX(20px);
+
+  background:var(--gold);
+}
+
+.toggle:has(input:checked){
+  border-color:
+    color-mix(
+      in srgb,
+      var(--gold) 55%,
+      var(--border)
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--gold) 13%,
+      var(--surface2)
+    );
+}
+
+
+/* =====================================================
+   PROFILE PREVIEW
+===================================================== */
+
+.profile-card{
+  display:flex;
+
+  align-items:center;
+
+  gap:13px;
+
+  padding:17px;
+}
+
+.profile-avatar{
+  width:50px;
+  height:50px;
+
+  border-radius:50%;
+
+  overflow:hidden;
+
+  flex-shrink:0;
+
+  display:grid;
+  place-items:center;
+
+  background:var(--surface2);
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--gold) 45%,
+      var(--border)
+    );
+
+  color:var(--gold);
+
+  font-size:14px;
+  font-weight:800;
+}
+
+.profile-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.profile-details{
+  min-width:0;
+}
+
+.profile-name{
+  font-size:14px;
+  font-weight:750;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.profile-username{
+  color:var(--muted);
+
+  font-size:11px;
+
+  margin-top:4px;
+}
+
+.profile-link{
+  margin-left:auto;
+
+  width:36px;
+  height:36px;
+
+  border:1px solid var(--border);
+
+  border-radius:50%;
+
+  background:var(--surface2);
+
+  color:var(--text);
+
+  display:grid;
+  place-items:center;
+
+  flex-shrink:0;
+
+  transition:.2s;
+}
+
+.profile-link:hover{
+  color:var(--gold);
+
+  border-color:var(--gold);
+}
+
+
+/* =====================================================
+   DANGER
+===================================================== */
+
+.danger-row{
+  color:var(--danger);
+}
+
+.danger-row .setting-icon{
+  color:var(--danger);
+
+  background:
+    color-mix(
+      in srgb,
+      var(--danger) 8%,
+      var(--surface2)
+    );
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--danger) 20%,
+      var(--border)
+    );
+}
+
+
+/* =====================================================
+   NOTICE / TOAST
+===================================================== */
+
+.toast{
+  position:fixed;
+
+  left:50%;
+  bottom:28px;
+
+  z-index:200;
+
+  transform:
+    translate(-50%,20px);
+
+  opacity:0;
+
+  pointer-events:none;
+
+  max-width:
+    calc(100% - 30px);
+
+  padding:
+    12px
+    16px;
+
+  border:1px solid var(--border);
+
+  border-radius:13px;
+
+  background:var(--surface);
+
+  color:var(--text);
+
+  box-shadow:var(--shadow);
+
+  font-size:12px;
+
+  transition:.25s;
+}
+
+.toast.show{
+  opacity:1;
+
+  transform:
+    translate(-50%,0);
+}
+
+
+/* =====================================================
+   CONFIRM OVERLAY
+===================================================== */
+
+.confirm-overlay{
+  position:fixed;
+
+  inset:0;
+
+  z-index:300;
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:20px;
+
+  background:rgba(0,0,0,.55);
+
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+
+.confirm-overlay.open{
+  display:flex;
+}
+
+.confirm-box{
+  width:min(390px,100%);
+
+  padding:22px;
+
+  background:var(--surface);
+
+  border:1px solid var(--border);
+
+  border-radius:20px;
+
+  box-shadow:var(--shadow);
+}
+
+.confirm-box h3{
+  margin:0;
+
+  font-size:17px;
+}
+
+.confirm-box p{
+  margin:9px 0 19px;
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  line-height:1.65;
+}
+
+.confirm-actions{
+  display:flex;
+
+  justify-content:flex-end;
+
+  gap:8px;
+}
+
+.confirm-btn{
+  min-height:40px;
+
+  padding:
+    0
+    15px;
+
+  border-radius:11px;
+
+  border:1px solid var(--border);
+
+  background:var(--surface2);
+
+  color:var(--text);
+
+  font-size:12px;
+}
+
+.confirm-btn.primary{
+  background:var(--gold);
+
+  border-color:var(--gold);
+
+  color:#21190c;
+}
+
+.confirm-btn.danger{
+  background:var(--danger);
+
+  border-color:var(--danger);
+
+  color:#fff;
+}
+
+
+/* =====================================================
+   BOTTOM NAV
+===================================================== */
+
+.bottom-nav{
+  display:none;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:720px){
+
+  .topbar-inner{
+    padding:0 15px;
+  }
+
+  .top-left .brand{
+    display:none;
+  }
+
+  .avatar{
+    width:35px;
+    height:35px;
+  }
+
+  .brand-center{
+    font-size:13px;
+  }
+
+  .icon-btn{
+    width:38px;
+    height:38px;
+  }
+
+  .page{
+    padding:
+      94px
+      15px
+      90px;
+  }
+
+  .page-title{
+    font-size:25px;
+  }
+
+  .page-heading{
+    margin-bottom:20px;
+  }
+
+  .setting-row{
+    min-height:66px;
+
+    padding:
+      13px;
+  }
+
+  .setting-icon{
+    width:38px;
+    height:38px;
+  }
+
+  .setting-description{
+    font-size:10.5px;
+  }
+
+  .setting-value{
+    display:none;
+  }
+
+  .profile-card{
+    padding:15px;
+  }
+
+  .bottom-nav{
+    position:fixed;
+
+    z-index:120;
+
+    bottom:0;
+    left:0;
+    right:0;
+
+    height:67px;
+
+    display:grid;
+
+    grid-template-columns:
+      repeat(5,1fr);
+
+    align-items:center;
+
+    padding:
+      4px
+      10px
+      max(5px,env(safe-area-inset-bottom));
+
+    background:
+      color-mix(
+        in srgb,
+        var(--bg) 92%,
+        transparent
+      );
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border-top:1px solid var(--border);
+  }
+
+  .nav-item{
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    gap:5px;
+
+    color:var(--muted);
+
+    font-size:10px;
+
+    position:relative;
+
+    padding:7px 0;
+  }
+
+  .nav-item svg{
+    width:21px;
+    height:21px;
+  }
+
+  .nav-item.active{
+    color:var(--gold);
+  }
+
+  .nav-item.active:before{
+    content:"";
+
+    position:absolute;
+
+    top:-8px;
+
+    width:20px;
+    height:2px;
+
+    border-radius:2px;
+
+    background:var(--gold);
+
+    box-shadow:
+      0 0 10px
+      color-mix(
+        in srgb,
+        var(--gold) 40%,
+        transparent
+      );
+  }
+
+  .toast{
+    bottom:82px;
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="topbar">
+
+  <div class="topbar-inner">
+
+    <div class="top-left">
+
+      <div
+        class="avatar"
+        id="headerAvatar"
+      >
+        <span>P</span>
+      </div>
+
+      <span class="brand">
+        Private
+      </span>
+
+    </div>
+
+
+    <div class="brand-center">
+
+      <span class="gold-dot"></span>
+
+      <span>
+        Private Community
+      </span>
+
+    </div>
+
+
+    <div class="top-right">
+
+      <button
+        class="icon-btn"
+        id="menuButton"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <circle cx="12" cy="5" r="1.7"/>
+          <circle cx="12" cy="12" r="1.7"/>
+          <circle cx="12" cy="19" r="1.7"/>
+        </svg>
+
+      </button>
+
+
+      <div
+        class="menu"
+        id="menuPanel"
+      >
+
+        <div class="menu-label">
+          Appearance
+        </div>
+
+        <button
+          type="button"
+          id="darkTheme"
+          data-theme-choice="dark"
+        >
+          ◐
+          <span>Dark theme</span>
+        </button>
+
+        <button
+          type="button"
+          id="lightTheme"
+          data-theme-choice="light"
+        >
+          ☼
+          <span>Light theme</span>
+        </button>
+
+        <button
+          type="button"
+          id="systemTheme"
+          data-theme-choice="system"
+        >
+          ◉
+          <span>System default</span>
+        </button>
+
+        <div class="menu-separator"></div>
+
+        <a href="home.html">
+          <svg width="17" height="17" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>
+          </svg>
+          Home
+        </a>
+
+        <a href="chat.html">
+          <svg width="17" height="17" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.5 8.5 0 0 1 8 8z"/>
+          </svg>
+          Chat
+        </a>
+
+        <a href="create-post.html">
+          <svg width="17" height="17" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.7">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <path d="M12 8v8M8 12h8"/>
+          </svg>
+          Create post
+        </a>
+
+        <a href="notifications.html">
+          <svg width="17" height="17" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+            <path d="M10 21h4"/>
+          </svg>
+          Notifications
+        </a>
+
+        <a href="profile.html">
+          <svg width="17" height="17" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.7">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M5 21a7 7 0 0 1 14 0"/>
+          </svg>
+          My profile
+        </a>
+
+        <a href="settings.html">
+          <svg width="17" height="17" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.7">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V20h-2.5v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H5v-2.5h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1L8 6.7l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V5h2.5v.6a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1V14h-.1a1.7 1.7 0 0 0-1.5 1z"/>
+          </svg>
+          Settings
+        </a>
+
+        <button
+          type="button"
+          id="logoutButton"
+        >
+          <svg width="17" height="17" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.7">
+            <path d="M10 17l5-5-5-5M15 12H3"/>
+            <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>
+          </svg>
+          Log out
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     PAGE
+===================================================== -->
+
+<main class="page">
+
+  <div class="page-heading">
+
+    <div class="eyebrow">
+      Account protection
+    </div>
+
+    <h1 class="page-title">
+      Privacy & Security
+    </h1>
+
+    <p class="page-subtitle">
+      Manage how your profile and activity are visible
+      inside the Private Community.
+    </p>
+
+  </div>
+
+
+
+  <!-- PROFILE -->
+
+  <section class="section">
+
+    <div class="section-title">
+      Your account
+    </div>
+
+    <div class="settings-card">
+
+      <div class="profile-card">
+
+        <div
+          class="profile-avatar"
+          id="profileAvatar"
+        >
+          P
+        </div>
+
+        <div class="profile-details">
+
+          <div
+            class="profile-name"
+            id="profileName"
+          >
+            Loading...
+          </div>
+
+          <div
+            class="profile-username"
+            id="profileUsername"
+          >
+            Loading profile
+          </div>
+
+        </div>
+
+        <a
+          class="profile-link"
+          href="profile.html"
+          aria-label="Open profile"
+        >
+          <svg width="18" height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7">
+            <path d="M9 18l6-6-6-6"/>
+          </svg>
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- PRIVACY -->
+
+  <section class="section">
+
+    <div class="section-title">
+      Privacy
+    </div>
+
+    <div class="settings-card">
+
+
+      <div class="setting-row">
+
+        <div class="setting-icon">
+
+          <svg width="19" height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+
+        </div>
+
+        <div class="setting-content">
+
+          <div class="setting-title">
+            Profile visibility
+          </div>
+
+          <div class="setting-description">
+            Control whether other community members can view
+            your profile information.
+          </div>
+
+        </div>
+
+        <div class="setting-value">
+          Community
+        </div>
+
+      </div>
+
+
+
+      <div class="setting-row">
+
+        <div class="setting-icon">
+
+          <svg width="19" height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M3 12h18"/>
+            <path d="M12 3c2.3 2.5 3.5 5.5 3.5 9s-1.2 6.5-3.5 9c-2.3-2.5-3.5-5.5-3.5-9S9.7 5.5 12 3Z"/>
+          </svg>
+
+        </div>
+
+        <div class="setting-content">
+
+          <div class="setting-title">
+            Profile photo visibility
+          </div>
+
+          <div class="setting-description">
+            Your profile photo can be displayed to signed-in
+            community members.
+          </div>
+
+        </div>
+
+        <label class="toggle">
+
+          <input
+            type="checkbox"
+            id="photoVisibility"
+            checked
+          >
+
+          <span class="toggle-slider"></span>
+
+        </label>
+
+      </div>
+
+
+
+      <div class="setting-row">
+
+        <div class="setting-icon">
+
+          <svg width="19" height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+            <path d="M10 21h4"/>
+          </svg>
+
+        </div>
+
+        <div class="setting-content">
+
+          <div class="setting-title">
+            Activity notifications
+          </div>
+
+          <div class="setting-description">
+            Allow the community to send notifications about
+            relevant activity.
+          </div>
+
+        </div>
+
+        <label class="toggle">
+
+          <input
+            type="checkbox"
+            id="activityNotifications"
+            checked
+          >
+
+          <span class="toggle-slider"></span>
+
+        </label>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- SECURITY -->
+
+  <section class="section">
+
+    <div class="section-title">
+      Security
+    </div>
+
+    <div class="settings-card">
+
+
+      <div class="setting-row">
+
+        <div class="setting-icon">
+
+          <svg width="19" height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7">
+            <rect x="4" y="10" width="16" height="11" rx="2"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+          </svg>
+
+        </div>
+
+        <div class="setting-content">
+
+          <div class="setting-title">
+            Account authentication
+          </div>
+
+          <div class="setting-description">
+            Your account is protected through Firebase
+            Authentication.
+          </div>
+
+        </div>
+
+        <div
+          class="setting-value"
+          id="authProvider"
+        >
+          —
+        </div>
+
+      </div>
+
+
+
+      <div class="setting-row">
+
+        <div class="setting-icon">
+
+          <svg width="19" height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7">
+            <path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6l-7-3Z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+
+        </div>
+
+        <div class="setting-content">
+
+          <div class="setting-title">
+            Account UID
+          </div>
+
+          <div class="setting-description">
+            Your unique Firebase account identifier.
+          </div>
+
+        </div>
+
+        <div
+          class="setting-value"
+          id="accountUid"
+        >
+          —
+        </div>
+
+      </div>
+
+
+
+      <div class="setting-row">
+
+        <div class="setting-icon">
+
+          <svg width="19" height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7">
+            <path d="M4 7h16"/>
+            <path d="M7 7V5h10v2"/>
+            <path d="M6 7l1 13h10l1-13"/>
+            <path d="M10 11v5M14 11v5"/>
+          </svg>
+
+        </div>
+
+        <div class="setting-content">
+
+          <div class="setting-title">
+            Sign out
+          </div>
+
+          <div class="setting-description">
+            Sign out from this device.
+          </div>
+
+        </div>
+
+        <button
+          class="confirm-btn"
+          id="signOutButton"
+          type="button"
+        >
+          Sign out
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- DANGER -->
+
+  <section class="section">
+
+    <div class="section-title">
+      Account actions
+    </div>
+
+    <div class="settings-card">
+
+      <button
+        class="setting-row danger-row"
+        id="deleteAccountButton"
+        type="button"
+        style="width:100%;border-left:0;border-right:0;border-top:0;text-align:left;background:transparent;"
+      >
+
+        <div class="setting-icon">
+
+          <svg width="19" height="19"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7">
+            <path d="M4 7h16"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M6 7l1 14h10l1-14"/>
+            <path d="M9 7V4h6v3"/>
+          </svg>
+
+        </div>
+
+        <div class="setting-content">
+
+          <div class="setting-title">
+            Delete account
+          </div>
+
+          <div class="setting-description">
+            Permanently remove your authentication account.
+          </div>
+
+        </div>
+
+        <svg width="18" height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+
+<!-- =====================================================
+     MOBILE NAV
+===================================================== -->
+
+<nav
+  class="bottom-nav"
+  aria-label="Main navigation"
+>
+
+  <a class="nav-item" href="home.html">
+
+    <svg viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7">
+      <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>
+    </svg>
+
+    <span>Home</span>
+
+  </a>
+
+
+  <a class="nav-item" href="chat.html">
+
+    <svg viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7">
+      <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
+    </svg>
+
+    <span>Chat</span>
+
+  </a>
+
+
+  <a class="nav-item" href="create-post.html">
+
+    <svg viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7">
+      <rect x="3" y="3" width="18" height="18" rx="5"/>
+      <path d="M12 8v8M8 12h8"/>
+    </svg>
+
+    <span>Create</span>
+
+  </a>
+
+
+  <a class="nav-item" href="notifications.html">
+
+    <svg viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+      <path d="M10 21h4"/>
+    </svg>
+
+    <span>Alerts</span>
+
+  </a>
+
+
+  <a class="nav-item active" href="profile.html">
+
+    <svg viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7">
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M5 21a7 7 0 0 1 14 0"/>
+    </svg>
+
+    <span>Profile</span>
+
+  </a>
+
+</nav>
+
+
+
+<!-- =====================================================
+     CONFIRM
+===================================================== -->
+
+<div
+  class="confirm-overlay"
+  id="confirmOverlay"
+>
+
+  <div class="confirm-box">
+
+    <h3 id="confirmTitle">
+      Confirm action
+    </h3>
+
+    <p id="confirmText">
+      Are you sure?
+    </p>
+
+    <div class="confirm-actions">
+
+      <button
+        class="confirm-btn"
+        id="cancelConfirm"
+        type="button"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="confirm-btn danger"
+        id="confirmAction"
+        type="button"
+      >
+        Confirm
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script type="module">
+
+import {
+  auth,
+  db
+} from "./firebase.js";
+
+
+import {
+  onAuthStateChanged,
+  signOut,
+  deleteUser
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+  doc,
+  getDoc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const $ = id =>
+  document.getElementById(id);
+
+const menuButton =
+  $("menuButton");
+
+const menuPanel =
+  $("menuPanel");
+
+const confirmOverlay =
+  $("confirmOverlay");
+
+const confirmTitle =
+  $("confirmTitle");
+
+const confirmText =
+  $("confirmText");
+
+const confirmAction =
+  $("confirmAction");
+
+const cancelConfirm =
+  $("cancelConfirm");
+
+const toast =
+  $("toast");
+
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let currentUser = null;
+
+let currentProfile = {};
+
+let pendingAction = null;
+
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message){
+
+  toast.textContent =
+    message;
+
+  toast.classList.add("show");
+
+  clearTimeout(
+    showToast.timer
+  );
+
+  showToast.timer =
+    setTimeout(
+      () => {
+        toast.classList.remove("show");
+      },
+      2800
+    );
+
+}
+
+
+
+/* =====================================================
+   THEME
+===================================================== */
+
+function applyTheme(theme){
+
+  const chosen =
+    ["dark","light","system"]
+      .includes(theme)
+      ? theme
+      : "system";
+
+  const resolved =
+    chosen === "system"
+      ? (
+          window.matchMedia(
+            "(prefers-color-scheme: light)"
+          ).matches
+            ? "light"
+            : "dark"
+        )
+      : chosen;
+
+  document.documentElement.dataset.theme =
+    resolved;
+
+  localStorage.setItem(
+    "private-theme",
+    chosen
+  );
+
+  [
+    "darkTheme",
+    "lightTheme",
+    "systemTheme"
+  ].forEach(id => {
+
+    $(id).classList.remove(
+      "selected"
+    );
+
+  });
+
+  const selectedId =
+    chosen === "dark"
+      ? "darkTheme"
+      : chosen === "light"
+        ? "lightTheme"
+        : "systemTheme";
+
+  $(selectedId).classList.add(
+    "selected"
+  );
+
+}
+
+
+applyTheme(
+  localStorage.getItem(
+    "private-theme"
+  ) || "system"
+);
+
+
+window
+  .matchMedia(
+    "(prefers-color-scheme: light)"
+  )
+  .addEventListener?.(
+    "change",
+    () => {
+
+      if(
+        (
+          localStorage.getItem(
+            "private-theme"
+          ) || "system"
+        ) === "system"
+      ){
+
+        applyTheme("system");
+
+      }
+
+    }
+  );
+
+
+document
+  .querySelectorAll(
+    "[data-theme-choice]"
+  )
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        applyTheme(
+          button.dataset.themeChoice
+        );
+
+        menuPanel.classList.remove(
+          "open"
+        );
+
+        menuButton.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+      }
+    );
+
+  });
+
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+menuButton.addEventListener(
+  "click",
+  event => {
+
+    event.stopPropagation();
+
+    const open =
+      menuPanel.classList.toggle(
+        "open"
+      );
+
+    menuButton.setAttribute(
+      "aria-expanded",
+      String(open)
+    );
+
+  }
+);
+
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if(
+      !menuPanel.contains(
+        event.target
+      )
+      &&
+      !menuButton.contains(
+        event.target
+      )
+    ){
+
+      menuPanel.classList.remove(
+        "open"
+      );
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+  }
+);
+
+
+
+/* =====================================================
+   PROFILE HELPERS
+===================================================== */
+
+function getName(
+  profile = {},
+  user = null
+){
+
+  return (
+
+    profile.fullName
+    ||
+    profile.name
+    ||
+    user?.displayName
+    ||
+    user?.email?.split("@")[0]
+    ||
+    "Private member"
+
+  );
+
+}
+
+
+function getPhoto(
+  profile = {},
+  user = null
+){
+
+  return (
+
+    profile.profilePhoto
+    ||
+    profile.photoURL
+    ||
+    user?.photoURL
+    ||
+    ""
+
+  );
+
+}
+
+
+function initials(name){
+
+  return (
+
+    String(name || "P")
+      .trim()
+      .split(/\s+/)
+      .slice(0,2)
+      .map(
+        part => part[0] || ""
+      )
+      .join("")
+      .toUpperCase()
+    ||
+    "P"
+
+  );
+
+}
+
+
+function setAvatar(
+  element,
+  photo,
+  name
+){
+
+  element.replaceChildren();
+
+  const fallback =
+    initials(name);
+
+  if(photo){
+
+    const img =
+      document.createElement(
+        "img"
+      );
+
+    img.src =
+      photo;
+
+    img.alt =
+      `${name} profile photo`;
+
+    img.referrerPolicy =
+      "no-referrer";
+
+    img.onerror =
+      () => {
+
+        element.replaceChildren();
+
+        element.textContent =
+          fallback;
+
+      };
+
+    element.appendChild(
+      img
+    );
+
+  }else{
+
+    element.textContent =
+      fallback;
+
+  }
+
+}
+
+
+
+/* =====================================================
+   LOAD PROFILE
+===================================================== */
+
+function renderProfile(){
+
+  const name =
+    getName(
+      currentProfile,
+      currentUser
+    );
+
+  const username =
+    currentProfile.username
+      ? "@" +
+        String(
+          currentProfile.username
+        ).replace(
+          /^@/,
+          ""
+        )
+      : "Community member";
+
+  const photo =
+    getPhoto(
+      currentProfile,
+      currentUser
+    );
+
+  setAvatar(
+    $("headerAvatar"),
+    photo,
+    name
+  );
+
+  setAvatar(
+    $("profileAvatar"),
+    photo,
+    name
+  );
+
+  $("profileName").textContent =
+    name;
+
+  $("profileUsername").textContent =
+    username;
+
+  $("accountUid").textContent =
+    currentUser?.uid
+      ? currentUser.uid.slice(0,8) + "…"
+      : "—";
+
+  if(currentUser){
+
+    const providers =
+      currentUser.providerData
+        ?.map(
+          provider =>
+            provider.providerId
+        )
+        || [];
+
+    if(
+      providers.includes(
+        "google.com"
+      )
+    ){
+
+      $("authProvider").textContent =
+        "Google";
+
+    }else if(
+      providers.includes(
+        "password"
+      )
+    ){
+
+      $("authProvider").textContent =
+        "Email";
+
+    }else{
+
+      $("authProvider").textContent =
+        "Firebase";
+
+    }
+
+  }
+
+}
+
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    if(!user){
+
+      location.replace(
+        "index.html"
+      );
+
+      return;
+
+    }
+
+    currentUser =
+      user;
+
+    try{
+
+      const profileSnap =
+        await getDoc(
+          doc(
+            db,
+            "users",
+            user.uid
+          )
+        );
+
+      currentProfile =
+        profileSnap.exists()
+          ? profileSnap.data()
+          : {};
+
+      renderProfile();
+
+    }catch(error){
+
+      console.error(
+        "Profile loading error:",
+        error
+      );
+
+      renderProfile();
+
+      showToast(
+        "Profile information could not be loaded."
+      );
+
+    }
+
+  }
+);
+
+
+
+/* =====================================================
+   LOCAL PRIVACY SETTINGS
+===================================================== */
+
+function loadLocalSettings(){
+
+  const photo =
+    localStorage.getItem(
+      "private-photo-visibility"
+    );
+
+  const notifications =
+    localStorage.getItem(
+      "private-activity-notifications"
+    );
+
+  $("photoVisibility").checked =
+    photo !== "false";
+
+  $("activityNotifications").checked =
+    notifications !== "false";
+
+}
+
+
+loadLocalSettings();
+
+
+$("photoVisibility")
+  .addEventListener(
+    "change",
+    event => {
+
+      localStorage.setItem(
+        "private-photo-visibility",
+        String(
+          event.target.checked
+        )
+      );
+
+      showToast(
+        event.target.checked
+          ? "Profile photo visibility enabled."
+          : "Profile photo visibility disabled on this device."
+      );
+
+    }
+  );
+
+
+$("activityNotifications")
+  .addEventListener(
+    "change",
+    event => {
+
+      localStorage.setItem(
+        "private-activity-notifications",
+        String(
+          event.target.checked
+        )
+      );
+
+      showToast(
+        event.target.checked
+          ? "Activity notifications enabled."
+          : "Activity notifications disabled on this device."
+      );
+
+    }
+  );
+
+
+
+/* =====================================================
+   CONFIRM MODAL
+===================================================== */
+
+function openConfirm(
+  title,
+  text,
+  action,
+  danger = true
+){
+
+  confirmTitle.textContent =
+    title;
+
+  confirmText.textContent =
+    text;
+
+  pendingAction =
+    action;
+
+  confirmAction.textContent =
+    danger
+      ? "Confirm"
+      : "Continue";
+
+  confirmAction.classList.toggle(
+    "danger",
+    danger
+  );
+
+  confirmOverlay.classList.add(
+    "open"
+  );
+
+}
+
+
+function closeConfirm(){
+
+  confirmOverlay.classList.remove(
+    "open"
+  );
+
+  pendingAction =
+    null;
+
+}
+
+
+cancelConfirm.addEventListener(
+  "click",
+  closeConfirm
+);
+
+
+confirmOverlay.addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target ===
+      confirmOverlay
+    ){
+
+      closeConfirm();
+
+    }
+
+  }
+);
+
+
+confirmAction.addEventListener(
+  "click",
+  async () => {
+
+    if(!pendingAction){
+
+      return;
+
+    }
+
+    const action =
+      pendingAction;
+
+    closeConfirm();
+
+    await action();
+
+  }
+);
+
+
+
+/* =====================================================
+   SIGN OUT
+===================================================== */
+
+async function performSignOut(){
+
+  try{
+
+    await signOut(auth);
+
+    location.replace(
+      "index.html"
+    );
+
+  }catch(error){
+
+    console.error(
+      error
+    );
+
+    showToast(
+      "Could not sign out."
+    );
+
+  }
+
+}
+
+
+$("signOutButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      openConfirm(
+        "Sign out?",
+        "You will need to sign in again to access your Private Community account.",
+        performSignOut,
+        false
+      );
+
+    }
+  );
+
+
+$("logoutButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      openConfirm(
+        "Sign out?",
+        "You will need to sign in again to access your account.",
+        performSignOut,
+        false
+      );
+
+    }
+  );
+
+
+
+/* =====================================================
+   DELETE ACCOUNT
+===================================================== */
+
+$("deleteAccountButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      openConfirm(
+        "Delete account?",
+        "This action permanently deletes your Firebase Authentication account. This cannot be undone.",
+        performDeleteAccount,
+        true
+      );
+
+    }
+  );
+
+
+async function performDeleteAccount(){
+
+  if(!currentUser){
+
+    return;
+
+  }
+
+  try{
+
+    await deleteUser(
+      currentUser
+    );
+
+    location.replace(
+      "index.html"
+    );
+
+  }catch(error){
+
+    console.error(
+      "Delete account error:",
+      error
+    );
+
+    if(
+      error.code ===
+      "auth/requires-recent-login"
+    ){
+
+      showToast(
+        "For security, please sign in again before deleting your account."
+      );
+
+    }else{
+
+      showToast(
+        "Account could not be deleted."
+      );
+
+    }
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>

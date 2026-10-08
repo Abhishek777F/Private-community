@@ -1,0 +1,3543 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<meta
+  name="theme-color"
+  content="#0b0b0c"
+>
+
+<title>Alerts • Private Community</title>
+
+
+<style>
+
+/* =====================================================
+   ROOT
+===================================================== */
+
+:root{
+  color-scheme:dark;
+
+  --bg:#0b0b0c;
+  --surface:#131315;
+  --surface2:#19191c;
+  --text:#f5f2eb;
+  --muted:#aaa6a0;
+  --border:rgba(255,255,255,.09);
+
+  --gold:#d8b56d;
+  --gold2:#f0d49a;
+
+  --danger:#ff7777;
+
+  --header-bg:rgba(11,11,12,.88);
+
+  --shadow:0 18px 50px rgba(0,0,0,.22);
+}
+
+
+:root[data-theme="light"]{
+  color-scheme:light;
+
+  --bg:#f6f4ef;
+  --surface:#fffefa;
+  --surface2:#f2eee5;
+  --text:#201d18;
+  --muted:#777168;
+  --border:rgba(39,32,22,.12);
+
+  --gold:#9c762e;
+  --gold2:#76571e;
+
+  --danger:#bd3c3c;
+
+  --header-bg:rgba(246,244,239,.90);
+
+  --shadow:0 18px 45px rgba(54,43,23,.08);
+}
+
+
+*{
+  box-sizing:border-box;
+}
+
+
+html,
+body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+}
+
+
+body{
+  background:var(--bg);
+  color:var(--text);
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+  min-height:100vh;
+
+  transition:
+    background .2s,
+    color .2s;
+}
+
+
+button,
+input{
+  font:inherit;
+}
+
+
+button{
+  cursor:pointer;
+}
+
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+
+svg{
+  display:block;
+}
+
+
+/* =====================================================
+   TOP HEADER
+===================================================== */
+
+.topbar{
+  height:72px;
+
+  position:fixed;
+  inset:0 0 auto 0;
+
+  z-index:100;
+
+  background:var(--header-bg);
+
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+
+  border-bottom:1px solid var(--border);
+}
+
+
+.topbar-inner{
+  height:100%;
+  width:100%;
+
+  padding:0 26px;
+
+  display:grid;
+
+  grid-template-columns:1fr auto 1fr;
+
+  align-items:center;
+
+  gap:12px;
+}
+
+
+.top-left{
+  display:flex;
+  align-items:center;
+
+  gap:12px;
+
+  min-width:0;
+}
+
+
+.avatar{
+  width:38px;
+  height:38px;
+
+  border-radius:50%;
+
+  overflow:hidden;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  flex-shrink:0;
+
+  background:var(--surface2);
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--gold) 60%,
+      transparent
+    );
+
+  color:var(--gold);
+
+  font-size:13px;
+  font-weight:750;
+}
+
+
+.avatar img{
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+}
+
+
+.brand{
+  color:var(--muted);
+
+  font-size:12px;
+  font-weight:800;
+
+  letter-spacing:.19em;
+
+  text-transform:uppercase;
+
+  white-space:nowrap;
+}
+
+
+.brand-center{
+  display:flex;
+  align-items:center;
+
+  gap:9px;
+
+  font-size:15px;
+  font-weight:650;
+
+  white-space:nowrap;
+}
+
+
+.gold-dot{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:var(--gold);
+
+  box-shadow:
+    0 0 12px
+    color-mix(
+      in srgb,
+      var(--gold) 55%,
+      transparent
+    );
+}
+
+
+.top-right{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+
+  position:relative;
+}
+
+
+.icon-btn{
+  width:42px;
+  height:42px;
+
+  border:1px solid var(--border);
+  border-radius:50%;
+
+  background:var(--surface);
+  color:var(--text);
+
+  display:grid;
+  place-items:center;
+
+  transition:.2s;
+}
+
+
+.icon-btn:hover{
+  border-color:var(--gold);
+
+  transform:translateY(-1px);
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+.menu{
+  position:absolute;
+
+  right:0;
+  top:51px;
+
+  width:225px;
+
+  padding:8px;
+
+  background:var(--surface);
+
+  border:1px solid var(--border);
+  border-radius:16px;
+
+  box-shadow:var(--shadow);
+
+  display:none;
+}
+
+
+.menu.open{
+  display:block;
+
+  animation:menuPop .16s ease-out;
+}
+
+
+@keyframes menuPop{
+
+  from{
+    opacity:0;
+    transform:
+      translateY(-5px)
+      scale(.98);
+  }
+
+  to{
+    opacity:1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+}
+
+
+.menu-label{
+  padding:9px 10px 5px;
+
+  color:var(--muted);
+
+  font-size:10px;
+  font-weight:800;
+
+  letter-spacing:.14em;
+
+  text-transform:uppercase;
+}
+
+
+.menu button,
+.menu a{
+  width:100%;
+
+  border:0;
+
+  background:transparent;
+
+  color:var(--text);
+
+  display:flex;
+  align-items:center;
+
+  gap:10px;
+
+  padding:11px 10px;
+
+  border-radius:10px;
+
+  text-align:left;
+
+  font-size:13px;
+}
+
+
+.menu button:hover,
+.menu a:hover,
+.menu .selected{
+  background:var(--surface2);
+  color:var(--gold);
+}
+
+
+.menu-separator{
+  height:1px;
+
+  background:var(--border);
+
+  margin:5px 3px;
+}
+
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.page{
+  width:100%;
+
+  min-height:100vh;
+
+  padding:
+    108px
+    24px
+    100px;
+}
+
+
+.page-inner{
+  width:100%;
+  max-width:900px;
+
+  margin:0 auto;
+}
+
+
+/* =====================================================
+   PAGE HEADER
+===================================================== */
+
+.page-heading{
+  display:flex;
+
+  align-items:flex-end;
+  justify-content:space-between;
+
+  gap:20px;
+
+  margin-bottom:36px;
+}
+
+
+.page-heading-text{
+  min-width:0;
+}
+
+
+.eyebrow{
+  color:var(--gold);
+
+  font-size:11px;
+  font-weight:800;
+
+  letter-spacing:.18em;
+
+  text-transform:uppercase;
+
+  margin-bottom:10px;
+}
+
+
+.page-title{
+  margin:0;
+
+  font-size:
+    clamp(34px,5vw,48px);
+
+  line-height:1.05;
+
+  letter-spacing:-.045em;
+
+  font-weight:750;
+}
+
+
+.page-subtitle{
+  margin:
+    12px
+    0
+    0;
+
+  color:var(--muted);
+
+  font-size:14px;
+
+  line-height:1.6;
+}
+
+
+.mark-all-btn{
+  width:46px;
+  height:46px;
+
+  flex-shrink:0;
+
+  border:1px solid var(--border);
+
+  border-radius:15px;
+
+  background:var(--surface);
+
+  color:var(--text);
+
+  display:grid;
+  place-items:center;
+
+  transition:.2s;
+}
+
+
+.mark-all-btn:hover{
+  color:var(--gold);
+
+  border-color:var(--gold);
+
+  transform:translateY(-1px);
+}
+
+
+.mark-all-btn:disabled{
+  opacity:.4;
+
+  cursor:not-allowed;
+
+  transform:none;
+}
+
+
+/* =====================================================
+   NOTIFICATIONS CARD
+===================================================== */
+
+.notifications-card{
+  background:var(--surface);
+
+  border:1px solid var(--border);
+
+  border-radius:24px;
+
+  overflow:hidden;
+
+  box-shadow:var(--shadow);
+}
+
+
+.card-header{
+  min-height:100px;
+
+  padding:
+    20px
+    28px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:16px;
+
+  border-bottom:1px solid var(--border);
+}
+
+
+.card-icon{
+  width:58px;
+  height:58px;
+
+  flex-shrink:0;
+
+  border-radius:18px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--gold) 11%,
+      var(--surface2)
+    );
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--gold) 35%,
+      var(--border)
+    );
+
+  color:var(--gold);
+
+  display:grid;
+  place-items:center;
+}
+
+
+.card-heading{
+  min-width:0;
+
+  flex:1;
+}
+
+
+.card-title{
+  font-size:18px;
+  font-weight:700;
+
+  letter-spacing:-.02em;
+}
+
+
+.card-subtitle{
+  color:var(--muted);
+
+  font-size:12px;
+
+  margin-top:5px;
+}
+
+
+.unread-count{
+  min-width:38px;
+  height:30px;
+
+  padding:0 10px;
+
+  border-radius:999px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--gold) 15%,
+      var(--surface2)
+    );
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--gold) 30%,
+      var(--border)
+    );
+
+  color:var(--gold);
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:12px;
+  font-weight:800;
+}
+
+
+/* =====================================================
+   NOTIFICATION LIST
+===================================================== */
+
+.notification-list{
+  min-height:360px;
+}
+
+
+.notification-item{
+  width:100%;
+
+  display:flex;
+
+  align-items:flex-start;
+
+  gap:15px;
+
+  padding:
+    20px
+    28px;
+
+  border:0;
+
+  border-bottom:1px solid var(--border);
+
+  background:transparent;
+
+  color:var(--text);
+
+  text-align:left;
+
+  transition:.18s;
+}
+
+
+.notification-item:last-child{
+  border-bottom:0;
+}
+
+
+.notification-item:hover{
+  background:var(--surface2);
+}
+
+
+.notification-item.unread{
+  background:
+    color-mix(
+      in srgb,
+      var(--gold) 5%,
+      transparent
+    );
+}
+
+
+.notification-icon{
+  width:46px;
+  height:46px;
+
+  flex-shrink:0;
+
+  border-radius:15px;
+
+  display:grid;
+  place-items:center;
+
+  background:var(--surface2);
+
+  border:1px solid var(--border);
+
+  color:var(--gold);
+}
+
+
+.notification-content{
+  min-width:0;
+
+  flex:1;
+}
+
+
+.notification-top{
+  display:flex;
+
+  align-items:flex-start;
+
+  justify-content:space-between;
+
+  gap:12px;
+}
+
+
+.notification-title{
+  font-size:14px;
+  font-weight:750;
+
+  line-height:1.4;
+}
+
+
+.notification-time{
+  flex-shrink:0;
+
+  color:var(--muted);
+
+  font-size:10px;
+}
+
+
+.notification-message{
+  margin-top:5px;
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  line-height:1.6;
+
+  word-break:break-word;
+}
+
+
+.unread-dot{
+  width:7px;
+  height:7px;
+
+  margin-top:6px;
+
+  border-radius:50%;
+
+  flex-shrink:0;
+
+  background:var(--gold);
+
+  box-shadow:
+    0 0 10px
+    color-mix(
+      in srgb,
+      var(--gold) 60%,
+      transparent
+    );
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.empty-state{
+  min-height:430px;
+
+  padding:60px 25px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  justify-content:center;
+
+  text-align:center;
+}
+
+
+.empty-icon{
+  width:76px;
+  height:76px;
+
+  margin-bottom:22px;
+
+  border-radius:23px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--gold) 10%,
+      var(--surface2)
+    );
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--gold) 28%,
+      var(--border)
+    );
+
+  color:var(--gold);
+
+  display:grid;
+  place-items:center;
+}
+
+
+.empty-title{
+  margin:0;
+
+  font-size:20px;
+  font-weight:750;
+
+  letter-spacing:-.02em;
+}
+
+
+.empty-text{
+  max-width:420px;
+
+  margin:
+    9px
+    auto
+    0;
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.7;
+}
+
+
+/* =====================================================
+   ERROR STATE
+===================================================== */
+
+.error-state{
+  min-height:430px;
+
+  padding:60px 25px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  justify-content:center;
+
+  text-align:center;
+}
+
+
+.error-icon{
+  width:76px;
+  height:76px;
+
+  margin-bottom:22px;
+
+  border-radius:23px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--danger) 9%,
+      var(--surface2)
+    );
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--danger) 30%,
+      var(--border)
+    );
+
+  color:var(--danger);
+
+  display:grid;
+  place-items:center;
+}
+
+
+.error-title{
+  margin:0;
+
+  font-size:20px;
+  font-weight:750;
+}
+
+
+.error-text{
+  max-width:480px;
+
+  margin:
+    9px
+    auto
+    0;
+
+  color:var(--muted);
+
+  font-size:13px;
+
+  line-height:1.7;
+}
+
+
+.retry-btn{
+  margin-top:20px;
+
+  height:42px;
+
+  padding:
+    0
+    17px;
+
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--gold) 45%,
+      var(--border)
+    );
+
+  border-radius:12px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--gold) 9%,
+      var(--surface)
+    );
+
+  color:var(--gold);
+
+  font-size:12px;
+  font-weight:700;
+}
+
+
+.retry-btn:hover{
+  background:
+    color-mix(
+      in srgb,
+      var(--gold) 15%,
+      var(--surface)
+    );
+}
+
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading-state{
+  min-height:430px;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  justify-content:center;
+
+  color:var(--muted);
+
+  font-size:12px;
+}
+
+
+.loader{
+  width:27px;
+  height:27px;
+
+  margin-bottom:15px;
+
+  border-radius:50%;
+
+  border:
+    2px solid var(--border);
+
+  border-top-color:var(--gold);
+
+  animation:
+    spin .75s linear infinite;
+}
+
+
+@keyframes spin{
+
+  to{
+    transform:rotate(360deg);
+  }
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast{
+  position:fixed;
+
+  left:50%;
+  bottom:28px;
+
+  z-index:200;
+
+  transform:
+    translate(-50%,20px);
+
+  opacity:0;
+
+  pointer-events:none;
+
+  max-width:
+    calc(100% - 30px);
+
+  padding:
+    12px
+    16px;
+
+  border:1px solid var(--border);
+
+  border-radius:13px;
+
+  background:var(--surface);
+
+  color:var(--text);
+
+  box-shadow:var(--shadow);
+
+  font-size:12px;
+
+  transition:.25s;
+}
+
+
+.toast.show{
+  opacity:1;
+
+  transform:
+    translate(-50%,0);
+}
+
+
+/* =====================================================
+   NOTICE
+===================================================== */
+
+.notice{
+  position:fixed;
+
+  top:87px;
+  left:50%;
+
+  z-index:150;
+
+  transform:
+    translateX(-50%)
+    translateY(-10px);
+
+  opacity:0;
+
+  pointer-events:none;
+
+  max-width:
+    calc(100% - 30px);
+
+  padding:
+    11px
+    15px;
+
+  border-radius:12px;
+
+  background:var(--surface);
+
+  border:1px solid var(--border);
+
+  box-shadow:var(--shadow);
+
+  color:var(--danger);
+
+  font-size:12px;
+
+  transition:.2s;
+}
+
+
+.notice.show{
+  opacity:1;
+
+  transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+/* =====================================================
+   BOTTOM NAV
+===================================================== */
+
+.bottom-nav{
+  display:none;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:720px){
+
+  .topbar-inner{
+    padding:0 15px;
+  }
+
+
+  .top-left .brand{
+    display:none;
+  }
+
+
+  .avatar{
+    width:35px;
+    height:35px;
+  }
+
+
+  .brand-center{
+    font-size:13px;
+  }
+
+
+  .icon-btn{
+    width:38px;
+    height:38px;
+  }
+
+
+  .page{
+    padding:
+      98px
+      15px
+      88px;
+  }
+
+
+  .page-inner{
+    max-width:none;
+  }
+
+
+  .page-heading{
+    align-items:flex-start;
+
+    margin-bottom:25px;
+  }
+
+
+  .eyebrow{
+    margin-bottom:8px;
+  }
+
+
+  .page-title{
+    font-size:37px;
+  }
+
+
+  .page-subtitle{
+    font-size:13px;
+
+    margin-top:9px;
+  }
+
+
+  .mark-all-btn{
+    width:45px;
+    height:45px;
+
+    margin-top:25px;
+  }
+
+
+  .notifications-card{
+    border-radius:22px;
+  }
+
+
+  .card-header{
+    min-height:94px;
+
+    padding:
+      17px
+      16px;
+
+    gap:12px;
+  }
+
+
+  .card-icon{
+    width:50px;
+    height:50px;
+
+    border-radius:16px;
+  }
+
+
+  .card-title{
+    font-size:17px;
+  }
+
+
+  .card-subtitle{
+    font-size:11px;
+  }
+
+
+  .unread-count{
+    min-width:34px;
+    height:28px;
+  }
+
+
+  .notification-item{
+    padding:
+      17px
+      16px;
+
+    gap:12px;
+  }
+
+
+  .notification-icon{
+    width:42px;
+    height:42px;
+
+    border-radius:14px;
+  }
+
+
+  .notification-top{
+    gap:7px;
+  }
+
+
+  .notification-title{
+    font-size:13px;
+  }
+
+
+  .notification-time{
+    font-size:9px;
+  }
+
+
+  .notification-message{
+    font-size:11px;
+  }
+
+
+  .empty-state,
+  .error-state{
+    min-height:430px;
+
+    padding:
+      45px
+      20px;
+  }
+
+
+  .empty-icon,
+  .error-icon{
+    width:70px;
+    height:70px;
+  }
+
+
+  .empty-title,
+  .error-title{
+    font-size:19px;
+  }
+
+
+  .empty-text,
+  .error-text{
+    font-size:12px;
+  }
+
+
+  .bottom-nav{
+    position:fixed;
+
+    z-index:120;
+
+    bottom:0;
+    left:0;
+    right:0;
+
+    height:67px;
+
+    display:grid;
+
+    grid-template-columns:
+      repeat(5,1fr);
+
+    align-items:center;
+
+    padding:
+      4px
+      10px
+      max(5px,env(safe-area-inset-bottom));
+
+    background:
+      color-mix(
+        in srgb,
+        var(--bg) 92%,
+        transparent
+      );
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border-top:1px solid var(--border);
+  }
+
+
+  .nav-item{
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    gap:5px;
+
+    color:var(--muted);
+
+    font-size:10px;
+
+    position:relative;
+
+    padding:7px 0;
+  }
+
+
+  .nav-item svg{
+    width:21px;
+    height:21px;
+  }
+
+
+  .nav-item.active{
+    color:var(--gold);
+  }
+
+
+  .nav-item.active:before{
+    content:"";
+
+    position:absolute;
+
+    top:-8px;
+
+    width:20px;
+    height:2px;
+
+    border-radius:2px;
+
+    background:var(--gold);
+
+    box-shadow:
+      0 0 10px
+      color-mix(
+        in srgb,
+        var(--gold) 40%,
+        transparent
+      );
+  }
+
+
+  .toast{
+    bottom:82px;
+  }
+
+
+  .notice{
+    top:84px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media(max-width:380px){
+
+  .brand-center{
+    font-size:12px;
+  }
+
+
+  .page-title{
+    font-size:34px;
+  }
+
+
+  .card-header{
+    padding:
+      15px
+      13px;
+  }
+
+
+  .notification-item{
+    padding:
+      15px
+      13px;
+  }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="topbar">
+
+  <div class="topbar-inner">
+
+
+    <div class="top-left">
+
+      <div
+        class="avatar"
+        id="headerAvatar"
+      >
+        <span>P</span>
+      </div>
+
+
+      <span class="brand">
+        Private
+      </span>
+
+    </div>
+
+
+
+    <div class="brand-center">
+
+      <span class="gold-dot"></span>
+
+      <span>
+        Private Community
+      </span>
+
+    </div>
+
+
+
+    <div class="top-right">
+
+      <button
+        class="icon-btn"
+        id="menuButton"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+      >
+
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+
+          <circle
+            cx="12"
+            cy="5"
+            r="1.7"
+          />
+
+          <circle
+            cx="12"
+            cy="12"
+            r="1.7"
+          />
+
+          <circle
+            cx="12"
+            cy="19"
+            r="1.7"
+          />
+
+        </svg>
+
+      </button>
+
+
+
+      <div
+        class="menu"
+        id="menuPanel"
+      >
+
+
+        <div class="menu-label">
+          Appearance
+        </div>
+
+
+        <button
+          type="button"
+          id="darkTheme"
+          data-theme-choice="dark"
+        >
+          ◐
+          <span>
+            Dark theme
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          id="lightTheme"
+          data-theme-choice="light"
+        >
+          ☼
+          <span>
+            Light theme
+          </span>
+        </button>
+
+
+        <button
+          type="button"
+          id="systemTheme"
+          data-theme-choice="system"
+        >
+          ◉
+          <span>
+            System default
+          </span>
+        </button>
+
+
+        <div class="menu-separator"></div>
+
+
+        <a href="home.html">
+
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          >
+            <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>
+          </svg>
+
+          Home
+
+        </a>
+
+
+        <a href="chat.html">
+
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          >
+            <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
+          </svg>
+
+          Chat
+
+        </a>
+
+
+        <a href="create-post.html">
+
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          >
+
+            <rect
+              x="3"
+              y="3"
+              width="18"
+              height="18"
+              rx="5"
+            />
+
+            <path d="M12 8v8M8 12h8"/>
+
+          </svg>
+
+          Create post
+
+        </a>
+
+
+        <a
+          href="notifications.html"
+          class="selected"
+        >
+
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          >
+
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+
+            <path d="M10 21h4"/>
+
+          </svg>
+
+          Notifications
+
+        </a>
+
+
+        <a href="profile.html">
+
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          >
+
+            <circle
+              cx="12"
+              cy="8"
+              r="4"
+            />
+
+            <path d="M5 21a7 7 0 0 1 14 0"/>
+
+          </svg>
+
+          My profile
+
+        </a>
+
+
+        <button
+          type="button"
+          id="logoutButton"
+        >
+
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          >
+
+            <path d="M10 17l5-5-5-5M15 12H3"/>
+
+            <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>
+
+          </svg>
+
+          Log out
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     PAGE
+===================================================== -->
+
+<main class="page">
+
+  <div class="page-inner">
+
+
+    <section class="page-heading">
+
+
+      <div class="page-heading-text">
+
+        <div class="eyebrow">
+          Private Community
+        </div>
+
+
+        <h1 class="page-title">
+          Alerts
+        </h1>
+
+
+        <p class="page-subtitle">
+          Your latest community activity and notifications.
+        </p>
+
+      </div>
+
+
+
+      <button
+        class="mark-all-btn"
+        id="markAllButton"
+        type="button"
+        aria-label="Mark all notifications as read"
+        title="Mark all as read"
+        disabled
+      >
+
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+        >
+
+          <path d="M5 12.5 9.5 17 19 7.5"/>
+
+          <path d="M4 12.5a8 8 0 1 0 16 0"/>
+
+        </svg>
+
+      </button>
+
+    </section>
+
+
+
+    <!-- =================================================
+         NOTIFICATIONS CARD
+    ================================================== -->
+
+    <section class="notifications-card">
+
+
+      <div class="card-header">
+
+
+        <div class="card-icon">
+
+          <svg
+            width="27"
+            height="27"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+          >
+
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+
+            <path d="M10 21h4"/>
+
+          </svg>
+
+        </div>
+
+
+
+        <div class="card-heading">
+
+          <div class="card-title">
+            Notifications
+          </div>
+
+          <div class="card-subtitle">
+            Activity connected to your account
+          </div>
+
+        </div>
+
+
+
+        <div
+          class="unread-count"
+          id="unreadCount"
+        >
+          0
+        </div>
+
+      </div>
+
+
+
+      <div
+        class="notification-list"
+        id="notificationList"
+      >
+
+        <div class="loading-state">
+
+          <div class="loader"></div>
+
+          Loading your notifications...
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>
+
+
+
+<!-- =====================================================
+     MOBILE NAV
+===================================================== -->
+
+<nav
+  class="bottom-nav"
+  aria-label="Main navigation"
+>
+
+
+  <a
+    class="nav-item"
+    href="home.html"
+  >
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+    >
+
+      <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>
+
+    </svg>
+
+    <span>
+      Home
+    </span>
+
+  </a>
+
+
+
+  <a
+    class="nav-item"
+    href="chat.html"
+  >
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+    >
+
+      <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
+
+    </svg>
+
+    <span>
+      Chat
+    </span>
+
+  </a>
+
+
+
+  <a
+    class="nav-item"
+    href="create-post.html"
+  >
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+    >
+
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="5"
+      />
+
+      <path d="M12 8v8M8 12h8"/>
+
+    </svg>
+
+    <span>
+      Create
+    </span>
+
+  </a>
+
+
+
+  <a
+    class="nav-item active"
+    href="notifications.html"
+  >
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+    >
+
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+
+      <path d="M10 21h4"/>
+
+    </svg>
+
+    <span>
+      Alerts
+    </span>
+
+  </a>
+
+
+
+  <a
+    class="nav-item"
+    href="profile.html"
+  >
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+    >
+
+      <circle
+        cx="12"
+        cy="8"
+        r="4"
+      />
+
+      <path d="M5 21a7 7 0 0 1 14 0"/>
+
+    </svg>
+
+    <span>
+      Profile
+    </span>
+
+  </a>
+
+</nav>
+
+
+
+<div
+  class="notice"
+  id="notice"
+></div>
+
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script type="module">
+
+
+import {
+  auth,
+  db
+} from "./firebase.js";
+
+
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+  collection,
+  doc,
+  getDoc,
+  query,
+  where,
+  onSnapshot,
+  writeBatch
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+const menuButton =
+  $("menuButton");
+
+const menuPanel =
+  $("menuPanel");
+
+const notificationList =
+  $("notificationList");
+
+const unreadCount =
+  $("unreadCount");
+
+const markAllButton =
+  $("markAllButton");
+
+const notice =
+  $("notice");
+
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let currentUser = null;
+
+let currentProfile = {};
+
+let notificationDocs = [];
+
+let unsubscribeNotifications = null;
+
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message){
+
+  const toast =
+    $("toast");
+
+  toast.textContent =
+    message;
+
+  toast.classList.add("show");
+
+  clearTimeout(
+    showToast.timer
+  );
+
+  showToast.timer =
+    setTimeout(
+      () => {
+
+        toast.classList.remove(
+          "show"
+        );
+
+      },
+      2800
+    );
+
+}
+
+
+
+/* =====================================================
+   NOTICE
+===================================================== */
+
+function showNotice(message){
+
+  notice.textContent =
+    message;
+
+  notice.classList.add("show");
+
+  clearTimeout(
+    showNotice.timer
+  );
+
+  showNotice.timer =
+    setTimeout(
+      () => {
+
+        notice.classList.remove(
+          "show"
+        );
+
+      },
+      5000
+    );
+
+}
+
+
+
+/* =====================================================
+   THEME
+===================================================== */
+
+function applyTheme(theme){
+
+  const chosen =
+    ["dark","light","system"].includes(theme)
+      ? theme
+      : "system";
+
+
+  const resolved =
+    chosen === "system"
+
+      ? (
+          window.matchMedia(
+            "(prefers-color-scheme: light)"
+          ).matches
+            ? "light"
+            : "dark"
+        )
+
+      : chosen;
+
+
+  document.documentElement.dataset.theme =
+    resolved;
+
+
+  localStorage.setItem(
+    "private-theme",
+    chosen
+  );
+
+
+  [
+    "darkTheme",
+    "lightTheme",
+    "systemTheme"
+  ].forEach(id => {
+
+    $(id).classList.remove(
+      "selected"
+    );
+
+  });
+
+
+  const selectedId =
+    chosen === "dark"
+      ? "darkTheme"
+      : chosen === "light"
+        ? "lightTheme"
+        : "systemTheme";
+
+
+  $(selectedId).classList.add(
+    "selected"
+  );
+
+}
+
+
+applyTheme(
+  localStorage.getItem(
+    "private-theme"
+  ) || "system"
+);
+
+
+window
+  .matchMedia(
+    "(prefers-color-scheme: light)"
+  )
+  .addEventListener?.(
+    "change",
+    () => {
+
+      if(
+        (
+          localStorage.getItem(
+            "private-theme"
+          ) || "system"
+        ) === "system"
+      ){
+
+        applyTheme("system");
+
+      }
+
+    }
+  );
+
+
+document
+  .querySelectorAll(
+    "[data-theme-choice]"
+  )
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        applyTheme(
+          button.dataset.themeChoice
+        );
+
+        menuPanel.classList.remove(
+          "open"
+        );
+
+        menuButton.setAttribute(
+          "aria-expanded",
+          "false"
+        );
+
+      }
+    );
+
+  });
+
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+menuButton.addEventListener(
+  "click",
+  event => {
+
+    event.stopPropagation();
+
+    const open =
+      menuPanel.classList.toggle(
+        "open"
+      );
+
+    menuButton.setAttribute(
+      "aria-expanded",
+      String(open)
+    );
+
+  }
+);
+
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if(
+      !menuPanel.contains(
+        event.target
+      )
+      &&
+      !menuButton.contains(
+        event.target
+      )
+    ){
+
+      menuPanel.classList.remove(
+        "open"
+      );
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+  }
+);
+
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+$("logoutButton")
+  .addEventListener(
+    "click",
+    async () => {
+
+      try{
+
+        await signOut(auth);
+
+        location.replace(
+          "index.html"
+        );
+
+      }catch(error){
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+        showToast(
+          "Could not log out."
+        );
+
+      }
+
+    }
+  );
+
+
+
+/* =====================================================
+   PROFILE HELPERS
+===================================================== */
+
+function getName(
+  profile = {},
+  user = null
+){
+
+  return (
+
+    profile.fullName
+
+    ||
+
+    profile.name
+
+    ||
+
+    user?.displayName
+
+    ||
+
+    user?.email
+      ?.split("@")[0]
+
+    ||
+
+    "Private member"
+
+  );
+
+}
+
+
+function getPhoto(
+  profile = {},
+  user = null
+){
+
+  return (
+
+    profile.profilePhoto
+
+    ||
+
+    profile.photoURL
+
+    ||
+
+    user?.photoURL
+
+    ||
+
+    ""
+
+  );
+
+}
+
+
+function initials(name){
+
+  return (
+
+    String(name || "P")
+      .trim()
+      .split(/\s+/)
+      .slice(0,2)
+      .map(
+        part =>
+          part[0] || ""
+      )
+      .join("")
+      .toUpperCase()
+
+    ||
+
+    "P"
+
+  );
+
+}
+
+
+function setAvatar(
+  element,
+  photo,
+  name
+){
+
+  element.replaceChildren();
+
+  const fallback =
+    initials(name);
+
+
+  if(photo){
+
+    const img =
+      document.createElement(
+        "img"
+      );
+
+    img.src =
+      photo;
+
+    img.alt =
+      `${name} profile photo`;
+
+    img.referrerPolicy =
+      "no-referrer";
+
+
+    img.onerror =
+      () => {
+
+        element.replaceChildren();
+
+        element.textContent =
+          fallback;
+
+      };
+
+
+    element.appendChild(
+      img
+    );
+
+  }else{
+
+    element.textContent =
+      fallback;
+
+  }
+
+}
+
+
+
+/* =====================================================
+   HEADER PROFILE
+===================================================== */
+
+function updateHeader(){
+
+  const name =
+    getName(
+      currentProfile,
+      currentUser
+    );
+
+
+  const photo =
+    getPhoto(
+      currentProfile,
+      currentUser
+    );
+
+
+  setAvatar(
+    $("headerAvatar"),
+    photo,
+    name
+  );
+
+}
+
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    if(!user){
+
+      location.replace(
+        "index.html"
+      );
+
+      return;
+
+    }
+
+
+    currentUser =
+      user;
+
+
+    try{
+
+      const profileSnap =
+        await getDoc(
+          doc(
+            db,
+            "users",
+            user.uid
+          )
+        );
+
+
+      currentProfile =
+        profileSnap.exists()
+          ? profileSnap.data()
+          : {};
+
+
+      updateHeader();
+
+
+      subscribeNotifications();
+
+
+    }catch(error){
+
+      console.error(
+        "Profile loading error:",
+        error
+      );
+
+
+      updateHeader();
+
+
+      subscribeNotifications();
+
+    }
+
+  }
+);
+
+
+
+/* =====================================================
+   NOTIFICATION ICON
+===================================================== */
+
+function getNotificationIcon(type){
+
+  const value =
+    String(
+      type || ""
+    ).toLowerCase();
+
+
+  if(
+    value.includes("message")
+    ||
+    value.includes("chat")
+  ){
+
+    return `
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+      >
+        <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
+      </svg>
+    `;
+
+  }
+
+
+  if(
+    value.includes("post")
+    ||
+    value.includes("like")
+    ||
+    value.includes("comment")
+  ){
+
+    return `
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+      >
+        <rect
+          x="3"
+          y="3"
+          width="18"
+          height="18"
+          rx="5"
+        />
+        <path d="M8 12h8"/>
+      </svg>
+    `;
+
+  }
+
+
+  if(
+    value.includes("profile")
+    ||
+    value.includes("follow")
+    ||
+    value.includes("account")
+  ){
+
+    return `
+      <svg
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+      >
+        <circle
+          cx="12"
+          cy="8"
+          r="4"
+        />
+        <path d="M5 21a7 7 0 0 1 14 0"/>
+      </svg>
+    `;
+
+  }
+
+
+  return `
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+    >
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+      <path d="M10 21h4"/>
+    </svg>
+  `;
+
+}
+
+
+
+/* =====================================================
+   FORMAT TIME
+===================================================== */
+
+function formatTime(timestamp){
+
+  if(!timestamp){
+
+    return "Recently";
+
+  }
+
+
+  try{
+
+    const date =
+      timestamp.toDate
+        ? timestamp.toDate()
+        : new Date(timestamp);
+
+
+    const now =
+      new Date();
+
+
+    const diff =
+      now.getTime() -
+      date.getTime();
+
+
+    const minute =
+      60 * 1000;
+
+
+    const hour =
+      60 * minute;
+
+
+    const day =
+      24 * hour;
+
+
+    if(diff < minute){
+
+      return "Just now";
+
+    }
+
+
+    if(diff < hour){
+
+      return (
+        Math.floor(
+          diff / minute
+        ) +
+        "m ago"
+      );
+
+    }
+
+
+    if(diff < day){
+
+      return (
+        Math.floor(
+          diff / hour
+        ) +
+        "h ago"
+      );
+
+    }
+
+
+    if(diff < 7 * day){
+
+      return (
+        Math.floor(
+          diff / day
+        ) +
+        "d ago"
+      );
+
+    }
+
+
+    return date.toLocaleDateString(
+      [],
+      {
+        day:"numeric",
+        month:"short",
+        year:"numeric"
+      }
+    );
+
+  }catch{
+
+    return "Recently";
+
+  }
+
+}
+
+
+
+/* =====================================================
+   TIMESTAMP VALUE
+===================================================== */
+
+function timestampValue(timestamp){
+
+  if(!timestamp){
+
+    return 0;
+
+  }
+
+
+  try{
+
+    if(
+      typeof timestamp.toMillis ===
+      "function"
+    ){
+
+      return timestamp.toMillis();
+
+    }
+
+
+    if(
+      typeof timestamp.toDate ===
+      "function"
+    ){
+
+      return timestamp.toDate().getTime();
+
+    }
+
+
+    const value =
+      new Date(timestamp).getTime();
+
+
+    return Number.isFinite(value)
+      ? value
+      : 0;
+
+  }catch{
+
+    return 0;
+
+  }
+
+}
+
+
+
+/* =====================================================
+   SUBSCRIBE NOTIFICATIONS
+===================================================== */
+
+function subscribeNotifications(){
+
+  if(!currentUser){
+
+    return;
+
+  }
+
+
+  if(unsubscribeNotifications){
+
+    unsubscribeNotifications();
+
+    unsubscribeNotifications =
+      null;
+
+  }
+
+
+  notificationList.innerHTML = `
+
+    <div class="loading-state">
+
+      <div class="loader"></div>
+
+      Loading your notifications...
+
+    </div>
+
+  `;
+
+
+  /*
+   * IMPORTANT:
+   *
+   * We query only documents belonging
+   * to the currently authenticated user.
+   *
+   * This matches:
+   *
+   * recipientId == request.auth.uid
+   *
+   * in Firestore rules.
+   *
+   * We intentionally do NOT use orderBy()
+   * here. The results are sorted locally,
+   * avoiding unnecessary composite-index
+   * requirements.
+   */
+
+  const notificationsQuery =
+    query(
+      collection(
+        db,
+        "notifications"
+      ),
+      where(
+        "recipientId",
+        "==",
+        currentUser.uid
+      )
+    );
+
+
+  unsubscribeNotifications =
+    onSnapshot(
+
+      notificationsQuery,
+
+      snapshot => {
+
+        notificationDocs =
+          [];
+
+
+        snapshot.forEach(
+          notificationDoc => {
+
+            notificationDocs.push({
+
+              id:
+                notificationDoc.id,
+
+              ...notificationDoc.data()
+
+            });
+
+          }
+        );
+
+
+        notificationDocs.sort(
+          (a,b) => {
+
+            return (
+              timestampValue(
+                b.createdAt
+              )
+              -
+              timestampValue(
+                a.createdAt
+              )
+            );
+
+          }
+        );
+
+
+        renderNotifications();
+
+      },
+
+      error => {
+
+        console.error(
+          "Notifications listener error:",
+          error
+        );
+
+
+        notificationDocs =
+          [];
+
+
+        unreadCount.textContent =
+          "0";
+
+
+        markAllButton.disabled =
+          true;
+
+
+        notificationList.innerHTML = `
+
+          <div class="error-state">
+
+            <div class="error-icon">
+
+              <svg
+                width="31"
+                height="31"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+              >
+
+                <path d="M12 3 2.8 20h18.4L12 3Z"/>
+
+                <path d="M12 9v5"/>
+
+                <circle
+                  cx="12"
+                  cy="17.5"
+                  r=".8"
+                  fill="currentColor"
+                  stroke="none"
+                />
+
+              </svg>
+
+            </div>
+
+
+            <h2 class="error-title">
+              Alerts could not load
+            </h2>
+
+
+            <p class="error-text">
+              ${
+                error?.code ===
+                "permission-denied"
+
+                  ? "Firestore denied access to your notifications. Make sure the latest Firestore rules are published and your notification documents contain recipientId."
+
+                  : "There was a problem loading your notifications. Please try again."
+              }
+            </p>
+
+
+            <button
+              class="retry-btn"
+              id="retryNotifications"
+              type="button"
+            >
+              Try again
+            </button>
+
+          </div>
+
+        `;
+
+
+        $("retryNotifications")
+          ?.addEventListener(
+            "click",
+            () => {
+
+              subscribeNotifications();
+
+            }
+          );
+
+
+        showNotice(
+          "Could not load your notifications."
+        );
+
+      }
+
+    );
+
+}
+
+
+
+/* =====================================================
+   RENDER NOTIFICATIONS
+===================================================== */
+
+function renderNotifications(){
+
+  const unread =
+    notificationDocs.filter(
+      notification =>
+        notification.read !== true
+    );
+
+
+  unreadCount.textContent =
+    unread.length > 99
+      ? "99+"
+      : String(
+          unread.length
+        );
+
+
+  markAllButton.disabled =
+    unread.length === 0;
+
+
+  notificationList.innerHTML =
+    "";
+
+
+  if(!notificationDocs.length){
+
+    notificationList.innerHTML = `
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+
+          <svg
+            width="34"
+            height="34"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+          >
+
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+
+            <path d="M10 21h4"/>
+
+          </svg>
+
+        </div>
+
+
+        <h2 class="empty-title">
+          No alerts yet
+        </h2>
+
+
+        <p class="empty-text">
+          When there is real activity connected to your account, it will appear here.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  notificationDocs.forEach(
+    notification => {
+
+      const item =
+        document.createElement(
+          "button"
+        );
+
+
+      item.type =
+        "button";
+
+
+      item.className =
+        "notification-item";
+
+
+      if(
+        notification.read !== true
+      ){
+
+        item.classList.add(
+          "unread"
+        );
+
+      }
+
+
+      const icon =
+        document.createElement(
+          "div"
+        );
+
+
+      icon.className =
+        "notification-icon";
+
+
+      icon.innerHTML =
+        getNotificationIcon(
+          notification.type
+        );
+
+
+      const content =
+        document.createElement(
+          "div"
+        );
+
+
+      content.className =
+        "notification-content";
+
+
+      const top =
+        document.createElement(
+          "div"
+        );
+
+
+      top.className =
+        "notification-top";
+
+
+      const title =
+        document.createElement(
+          "div"
+        );
+
+
+      title.className =
+        "notification-title";
+
+
+      title.textContent =
+        notification.title ||
+        "Community notification";
+
+
+      const time =
+        document.createElement(
+          "div"
+        );
+
+
+      time.className =
+        "notification-time";
+
+
+      time.textContent =
+        formatTime(
+          notification.createdAt
+        );
+
+
+      top.appendChild(
+        title
+      );
+
+      top.appendChild(
+        time
+      );
+
+
+      const message =
+        document.createElement(
+          "div"
+        );
+
+
+      message.className =
+        "notification-message";
+
+
+      message.textContent =
+        notification.message ||
+        "You have new community activity.";
+
+
+      content.appendChild(
+        top
+      );
+
+      content.appendChild(
+        message
+      );
+
+
+      item.appendChild(
+        icon
+      );
+
+
+      item.appendChild(
+        content
+      );
+
+
+      if(
+        notification.read !== true
+      ){
+
+        const dot =
+          document.createElement(
+            "div"
+          );
+
+
+        dot.className =
+          "unread-dot";
+
+
+        item.appendChild(
+          dot
+        );
+
+      }
+
+
+      item.addEventListener(
+        "click",
+        () => {
+
+          markNotificationRead(
+            notification.id
+          );
+
+        }
+      );
+
+
+      notificationList.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+
+/* =====================================================
+   MARK ONE READ
+===================================================== */
+
+async function markNotificationRead(
+  notificationId
+){
+
+  if(!currentUser){
+
+    return;
+
+  }
+
+
+  const notification =
+    notificationDocs.find(
+      item =>
+        item.id ===
+        notificationId
+    );
+
+
+  if(!notification){
+
+    return;
+
+  }
+
+
+  if(
+    notification.read === true
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    /*
+     * Rules allow a user to update
+     * only their own notification.
+     */
+
+    const batch =
+      writeBatch(db);
+
+
+    batch.update(
+      doc(
+        db,
+        "notifications",
+        notificationId
+      ),
+      {
+        read:true
+      }
+    );
+
+
+    await batch.commit();
+
+  }catch(error){
+
+    console.error(
+      "Mark notification read error:",
+      error
+    );
+
+
+    showToast(
+      "Could not update notification."
+    );
+
+  }
+
+}
+
+
+
+/* =====================================================
+   MARK ALL READ
+===================================================== */
+
+markAllButton.addEventListener(
+  "click",
+  async () => {
+
+    const unread =
+      notificationDocs.filter(
+        notification =>
+          notification.read !== true
+      );
+
+
+    if(!unread.length){
+
+      return;
+
+    }
+
+
+    markAllButton.disabled =
+      true;
+
+
+    try{
+
+      const batch =
+        writeBatch(db);
+
+
+      unread.forEach(
+        notification => {
+
+          batch.update(
+            doc(
+              db,
+              "notifications",
+              notification.id
+            ),
+            {
+              read:true
+            }
+          );
+
+        }
+      );
+
+
+      await batch.commit();
+
+
+      showToast(
+        "All alerts marked as read."
+      );
+
+    }catch(error){
+
+      console.error(
+        "Mark all read error:",
+        error
+      );
+
+
+      showToast(
+        "Could not update alerts."
+      );
+
+
+      markAllButton.disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+
+</script>
+
+</body>
+</html>
