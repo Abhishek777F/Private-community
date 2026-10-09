@@ -2,764 +2,855 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#09090b">
+  <title>Private – Your people. Your space.</title>
+  <meta name="description" content="A private social space for your community. Chat, share photos and videos, and keep memories with people you trust.">
+  <meta property="og:title" content="Private – Your people. Your space.">
+  <meta property="og:description" content="A members-only community with private chat, posts, photos and events.">
+  <meta property="og:type" content="website">
 
-  <title>Private</title>
 
-  <meta
-    name="description"
-    content="A private social space for your community."
-  >
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-512.webp" type="image/webp">
+<link rel="apple-touch-icon" href="./icon-512.webp">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Private Community">
+<meta name="mobile-web-app-capable" content="yes">
 
+  
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html{scroll-behavior:smooth;scroll-padding-top:84px}
+
+    :root{
+      --bg:#09090b;
+      --surface:#111114;
+      --surface-2:#17171b;
+      --border:rgba(255,255,255,.09);
+      --text:#f7f4ed;
+      --muted:#a09e97;
+      --gold:#d8b56a;
+      --gold-light:#f0d797;
+      --radius:20px;
     }
 
-    :root {
-      --bg: #09090b;
-      --surface: #111114;
-      --surface-2: #17171b;
-      --border: rgba(255,255,255,.09);
-      --text: #f7f4ed;
-      --muted: #999791;
-      --gold: #d8b56a;
-      --gold-light: #f0d797;
-    }
-
-    body {
-      min-height: 100vh;
-      color: var(--text);
+    body{
+      min-height:100vh;
+      color:var(--text);
       background:
-        radial-gradient(
-          circle at 50% 0%,
-          rgba(216,181,106,.12),
-          transparent 38%
-        ),
+        radial-gradient(circle at 50% 0%,rgba(216,181,106,.12),transparent 38%),
         var(--bg);
-
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      line-height:1.5;
+      overflow-x:hidden;
     }
+    button{font:inherit;cursor:pointer;color:inherit}
+    a{color:inherit;text-decoration:none}
+    :focus-visible{outline:2px solid var(--gold-light);outline-offset:3px;border-radius:8px}
 
-    button {
-      font: inherit;
-      cursor: pointer;
+    /* ---------- progress bar ---------- */
+    .progress{position:fixed;top:0;left:0;height:2px;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-light));z-index:200}
+
+    /* ---------- header ---------- */
+    header{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      height:72px;padding:0 6%;
+      display:flex;align-items:center;justify-content:space-between;
+      border-bottom:1px solid transparent;
+      transition:background .3s,border-color .3s;
     }
-
-    /* =========================
-       HEADER
-    ========================== */
-
-    header {
-      height: 72px;
-      padding: 0 6%;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      border-bottom: 1px solid var(--border);
-
-      background: rgba(9,9,11,.75);
-
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-
-      z-index: 100;
+    header.scrolled{
+      background:rgba(9,9,11,.78);
+      border-bottom-color:var(--border);
+      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: .4px;
+    .brand{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;letter-spacing:.4px}
+    .brand-icon{
+      width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+      border:1px solid rgba(216,181,106,.4);border-radius:10px;color:var(--gold-light);font-weight:800;
     }
-
-    .brand-icon {
-      width: 34px;
-      height: 34px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border: 1px solid rgba(216,181,106,.4);
-      border-radius: 10px;
-
-      color: var(--gold-light);
-
-      font-weight: 800;
+    nav{display:flex;align-items:center;gap:26px}
+    nav a.link{font-size:14px;color:#cfccc3;font-weight:500;transition:color .2s}
+    nav a.link:hover{color:var(--gold-light)}
+    .login-button{
+      border:1px solid var(--border);background:rgba(255,255,255,.04);
+      padding:9px 18px;border-radius:12px;font-size:14px;font-weight:600;transition:.2s;
     }
+    .login-button:hover{color:var(--gold-light);border-color:rgba(216,181,106,.4)}
+    .menu-toggle{display:none;background:none;border:0;width:40px;height:40px;font-size:22px}
 
-    .login-button {
-      border: 0;
-      background: transparent;
-
-      color: #ddd9d0;
-
-      padding: 10px;
-
-      font-size: 14px;
-      font-weight: 600;
+    /* ---------- hero ---------- */
+    .hero{
+      min-height:100vh;max-width:1200px;margin:auto;
+      padding:150px 6% 80px;
+      display:flex;align-items:center;justify-content:center;text-align:center;
     }
-
-    .login-button:hover {
-      color: var(--gold-light);
+    .hero-content{max-width:800px}
+    .label{
+      display:inline-flex;align-items:center;gap:9px;padding:8px 14px;
+      border:1px solid rgba(216,181,106,.2);border-radius:30px;
+      color:var(--gold-light);background:rgba(216,181,106,.06);
+      font-size:13px;font-weight:600;margin-bottom:27px;
     }
+    .label-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2.4s infinite}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(216,181,106,.5)}50%{box-shadow:0 0 0 7px rgba(216,181,106,0)}}
 
-    /* =========================
-       HERO
-    ========================== */
-
-    main {
-      min-height: 100vh;
+    h1{font-size:clamp(48px,8vw,86px);line-height:.98;letter-spacing:-4px;font-weight:750}
+    h1 .gold{
+      background:linear-gradient(120deg,var(--gold-light),var(--gold),var(--gold-light));
+      background-size:200% auto;
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      animation:shine 6s linear infinite;
     }
+    @keyframes shine{to{background-position:200% center}}
 
-    .hero {
-      min-height: 100vh;
+    .description{max-width:600px;margin:28px auto 0;color:var(--muted);font-size:17px;line-height:1.75}
 
-      max-width: 1200px;
-
-      margin: auto;
-
-      padding:
-        150px 6% 80px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      text-align: center;
+    .actions{margin-top:36px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    .primary,.secondary{min-height:52px;padding:0 27px;border-radius:14px;font-size:14px;transition:.2s}
+    .primary{
+      border:1px solid rgba(216,181,106,.5);
+      background:linear-gradient(135deg,#e5c274,#c79d4e);
+      color:#15120c;font-weight:750;box-shadow:0 12px 35px rgba(216,181,106,.14);
     }
+    .secondary{border:1px solid var(--border);background:rgba(255,255,255,.04);font-weight:650}
+    .primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(216,181,106,.22)}
+    .secondary:hover{background:rgba(255,255,255,.08)}
 
-    .hero-content {
-      max-width: 780px;
+    .trust{
+      margin-top:34px;display:flex;justify-content:center;gap:22px;flex-wrap:wrap;
+      color:var(--muted);font-size:13px;
     }
+    .trust span::before{content:"✓";color:var(--gold);margin-right:7px;font-weight:700}
 
-    .label {
-      display: inline-flex;
-      align-items: center;
-      gap: 9px;
+    /* ---------- section base ---------- */
+    section.block{max-width:1100px;margin:auto;padding:0 6% 110px}
+    .section-title{text-align:center;font-size:clamp(28px,4vw,38px);letter-spacing:-1px;font-weight:700}
+    .section-description{text-align:center;color:var(--muted);font-size:15px;margin:12px auto 0;max-width:520px}
 
-      padding: 8px 13px;
-
-      border: 1px solid rgba(216,181,106,.2);
-
-      border-radius: 30px;
-
-      color: var(--gold-light);
-
-      background: rgba(216,181,106,.06);
-
-      font-size: 11px;
-      font-weight: 700;
-
-      letter-spacing: 1.8px;
-      text-transform: uppercase;
-
-      margin-bottom: 27px;
+    /* ---------- app preview ---------- */
+    .preview{max-width:980px;margin:0 auto;padding:0 6% 110px}
+    .device{
+      display:grid;grid-template-columns:1.1fr 1fr;gap:0;
+      border:1px solid var(--border);border-radius:28px;overflow:hidden;
+      background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
     }
-
-    .label-dot {
-      width: 6px;
-      height: 6px;
-
-      border-radius: 50%;
-
-      background: var(--gold);
+    .device-text{padding:48px 40px;display:flex;flex-direction:column;justify-content:center}
+    .device-text h2{font-size:28px;letter-spacing:-.6px;margin-bottom:12px}
+    .device-text p{color:var(--muted);font-size:15px;line-height:1.7}
+    .device-screen{
+      background:var(--surface);border-left:1px solid var(--border);
+      padding:26px;display:flex;flex-direction:column;gap:14px;min-height:340px;
     }
-
-    h1 {
-      font-size: clamp(48px, 8vw, 86px);
-
-      line-height: .98;
-
-      letter-spacing: -4px;
-
-      font-weight: 750;
+    .tabs{display:flex;gap:6px;background:var(--surface-2);padding:5px;border-radius:12px}
+    .tab{
+      flex:1;border:0;background:transparent;padding:9px 6px;border-radius:9px;
+      font-size:13px;font-weight:600;color:var(--muted);transition:.2s;
     }
-
-    h1 span {
-      color: var(--gold-light);
+    .tab[aria-selected="true"]{background:rgba(216,181,106,.14);color:var(--gold-light)}
+    .screen-body{
+      flex:1;border:1px dashed rgba(255,255,255,.12);border-radius:16px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:24px;gap:8px;
     }
-
-    .description {
-      max-width: 600px;
-
-      margin: 28px auto 0;
-
-      color: var(--muted);
-
-      font-size: 17px;
-      line-height: 1.75;
+    .screen-body .ic{
+      width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+      color:var(--gold-light);background:rgba(216,181,106,.08);border:1px solid rgba(216,181,106,.22);font-size:20px;
     }
+    .screen-body strong{font-size:15px}
+    .screen-body span{color:var(--muted);font-size:13px;max-width:240px}
 
-    /* =========================
-       BUTTONS
-    ========================== */
-
-    .actions {
-      margin-top: 36px;
-
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-
-      flex-wrap: wrap;
+    /* ---------- features ---------- */
+    .feature-grid{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+    .feature{
+      padding:26px;min-height:190px;border-radius:var(--radius);
+      border:1px solid var(--border);background:var(--surface);
+      transition:border-color .25s,transform .25s;
     }
-
-    .primary {
-      min-height: 52px;
-
-      padding: 0 27px;
-
-      border-radius: 14px;
-
-      border: 1px solid rgba(216,181,106,.5);
-
-      background:
-        linear-gradient(
-          135deg,
-          #e5c274,
-          #c79d4e
-        );
-
-      color: #15120c;
-
-      font-size: 14px;
-      font-weight: 750;
-
-      box-shadow:
-        0 12px 35px rgba(216,181,106,.12);
+    .feature:hover{border-color:rgba(216,181,106,.35);transform:translateY(-3px)}
+    .feature-icon{
+      width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+      border-radius:12px;color:var(--gold-light);background:rgba(216,181,106,.08);margin-bottom:20px;
     }
+    .feature h3{font-size:16px;margin-bottom:9px}
+    .feature p{color:var(--muted);font-size:13.5px;line-height:1.65}
 
-    .secondary {
-      min-height: 52px;
-
-      padding: 0 27px;
-
-      border-radius: 14px;
-
-      border: 1px solid var(--border);
-
-      background: rgba(255,255,255,.04);
-
-      color: var(--text);
-
-      font-size: 14px;
-      font-weight: 650;
+    /* ---------- how it works (a real sequence) ---------- */
+    .steps{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:step}
+    .step{padding:28px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);position:relative}
+    .step::before{
+      counter-increment:step;content:counter(step);
+      width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#e5c274,#c79d4e);color:#15120c;font-weight:800;font-size:14px;margin-bottom:18px;
     }
+    .step h3{font-size:16px;margin-bottom:8px}
+    .step p{color:var(--muted);font-size:13.5px;line-height:1.65}
 
-    .primary:hover {
-      transform: translateY(-1px);
+    /* ---------- privacy ---------- */
+    .privacy{
+      display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+      padding:48px;border-radius:28px;border:1px solid rgba(216,181,106,.2);
+      background:linear-gradient(145deg,rgba(216,181,106,.08),rgba(216,181,106,.02));
     }
+    .privacy h2{font-size:clamp(26px,3.4vw,34px);letter-spacing:-.8px;margin-bottom:14px}
+    .privacy p{color:var(--muted);font-size:15px;line-height:1.75}
+    .privacy ul{list-style:none;display:grid;gap:14px}
+    .privacy li{display:flex;gap:12px;font-size:14.5px;color:#e4e1d8}
+    .privacy li::before{content:"✓";color:var(--gold);font-weight:700;flex:none}
 
-    .secondary:hover {
-      background: rgba(255,255,255,.07);
+    /* ---------- FAQ ---------- */
+    .faq{max-width:740px;margin:40px auto 0;display:grid;gap:10px}
+    details{border:1px solid var(--border);border-radius:16px;background:var(--surface);overflow:hidden;transition:border-color .2s}
+    details[open]{border-color:rgba(216,181,106,.3)}
+    summary{
+      list-style:none;cursor:pointer;padding:19px 22px;font-weight:600;font-size:15px;
+      display:flex;justify-content:space-between;align-items:center;gap:16px;
     }
+    summary::-webkit-details-marker{display:none}
+    summary::after{content:"+";color:var(--gold);font-size:22px;font-weight:400;transition:transform .25s}
+    details[open] summary::after{transform:rotate(45deg)}
+    details p{padding:0 22px 20px;color:var(--muted);font-size:14px;line-height:1.7}
 
-    /* =========================
-       REAL APP PREVIEW
-       NO FAKE DATA
-    ========================== */
-
-    .preview {
-      max-width: 900px;
-
-      margin: 0 auto 100px;
-
-      padding: 0 6%;
+    /* ---------- call to action ---------- */
+    .cta{
+      text-align:center;padding:64px 28px;border-radius:28px;
+      border:1px solid var(--border);
+      background:radial-gradient(circle at 50% 0%,rgba(216,181,106,.14),transparent 60%),var(--surface);
     }
+    .cta h2{font-size:clamp(28px,4.4vw,42px);letter-spacing:-1.2px}
+    .cta p{color:var(--muted);margin:12px auto 0;max-width:460px;font-size:15px}
+    .cta .actions{margin-top:28px}
 
-    .preview-card {
-      min-height: 330px;
-
-      border: 1px solid var(--border);
-
-      border-radius: 28px;
-
-      background:
-        linear-gradient(
-          145deg,
-          rgba(255,255,255,.055),
-          rgba(255,255,255,.018)
-        );
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      text-align: center;
-
-      padding: 40px;
+    /* ---------- about ---------- */
+    .about{
+      max-width:760px;margin:0 auto;padding:0 6% 90px;
     }
-
-    .preview-content {
-      max-width: 500px;
+    .about-card{
+      display:flex;gap:24px;align-items:center;
+      padding:32px;border-radius:24px;border:1px solid var(--border);background:var(--surface);
     }
-
-    .preview-icon {
-      width: 62px;
-      height: 62px;
-
-      margin: 0 auto 20px;
-
-      border-radius: 18px;
-
-      border: 1px solid rgba(216,181,106,.25);
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      color: var(--gold-light);
-
-      font-size: 25px;
-
-      background: rgba(216,181,106,.07);
+    .avatar{
+      flex:none;width:76px;height:76px;border-radius:22px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:30px;font-weight:800;color:#15120c;
+      background:linear-gradient(135deg,#e5c274,#c79d4e);
     }
+    .about-card h2{font-size:13px;color:var(--gold-light);font-weight:600;margin-bottom:6px}
+    .about-card .name{font-size:22px;font-weight:700;letter-spacing:-.4px}
+    .about-card p{color:var(--muted);font-size:14.5px;margin-top:4px;line-height:1.6}
 
-    .preview-card h2 {
-      font-size: 25px;
-
-      margin-bottom: 10px;
+    /* ---------- footer ---------- */
+    footer{
+      border-top:1px solid var(--border);padding:30px 6% calc(30px + env(safe-area-inset-bottom,0px));
+      text-align:center;color:#77756f;font-size:12.5px;line-height:1.8;
     }
+    footer strong{color:#c9c6bd;font-weight:600}
 
-    .preview-card p {
-      color: var(--muted);
+    /* ---------- reveal (single, quiet effect) ---------- */
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.in{opacity:1;transform:none}
 
-      font-size: 14px;
-
-      line-height: 1.7;
+    /* ---------- responsive ---------- */
+    @media (max-width:860px){
+      .device,.privacy{grid-template-columns:1fr}
+      .device-screen{border-left:0;border-top:1px solid var(--border)}
+      .privacy{padding:32px 24px;gap:28px}
     }
-
-    /* =========================
-       FEATURES
-    ========================== */
-
-    .features {
-      max-width: 1100px;
-
-      margin: auto;
-
-      padding: 0 6% 100px;
-    }
-
-    .section-title {
-      text-align: center;
-
-      font-size: 32px;
-
-      letter-spacing: -1px;
-    }
-
-    .section-description {
-      text-align: center;
-
-      color: var(--muted);
-
-      font-size: 14px;
-
-      margin-top: 10px;
-    }
-
-    .feature-grid {
-      margin-top: 35px;
-
-      display: grid;
-
-      grid-template-columns:
-        repeat(3, 1fr);
-
-      gap: 15px;
-    }
-
-    .feature {
-      padding: 25px;
-
-      min-height: 180px;
-
-      border-radius: 20px;
-
-      border: 1px solid var(--border);
-
-      background: var(--surface);
-    }
-
-    .feature-icon {
-      width: 40px;
-      height: 40px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      border-radius: 12px;
-
-      color: var(--gold-light);
-
-      background: rgba(216,181,106,.08);
-
-      margin-bottom: 20px;
-    }
-
-    .feature h3 {
-      font-size: 16px;
-
-      margin-bottom: 9px;
-    }
-
-    .feature p {
-      color: var(--muted);
-
-      font-size: 13px;
-
-      line-height: 1.65;
-    }
-
-    /* =========================
-       FOOTER
-    ========================== */
-
-    footer {
-      border-top: 1px solid var(--border);
-
-      padding: 28px 6%;
-
-      text-align: center;
-
-      color: #66645f;
-
-      font-size: 11px;
-    }
-
-    /* =========================
-       MOBILE
-    ========================== */
-
-    @media (max-width: 700px) {
-
-      header {
-        padding: 0 20px;
+    @media (max-width:700px){
+      header{padding:0 20px}
+      .menu-toggle{display:block}
+      nav{
+        position:fixed;top:72px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;
+        background:rgba(9,9,11,.97);border-bottom:1px solid var(--border);
+        padding:10px 20px 20px;transform:translateY(-130%);transition:transform .3s;
+        backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
       }
-
-      .hero {
-        padding:
-          125px 20px 65px;
-      }
-
-      h1 {
-        font-size: 51px;
-        letter-spacing: -2.5px;
-      }
-
-      .description {
-        font-size: 15px;
-      }
-
-      .actions {
-        flex-direction: column;
-      }
-
-      .primary,
-      .secondary {
-        width: 100%;
-      }
-
-      .preview {
-        padding: 0 20px 70px;
-      }
-
-      .preview-card {
-        min-height: 290px;
-
-        padding: 30px 20px;
-
-        border-radius: 23px;
-      }
-
-      .features {
-        padding: 0 20px 70px;
-      }
-
-      .feature-grid {
-        grid-template-columns: 1fr;
-      }
+      nav.open{transform:none}
+      nav a.link{padding:14px 4px;border-bottom:1px solid var(--border)}
+      nav .login-button{margin-top:14px;padding:13px}
+      .hero{padding:125px 20px 65px}
+      h1{font-size:51px;letter-spacing:-2.5px}
+      .description{font-size:15px}
+      .actions{flex-direction:column}
+      .primary,.secondary{width:100%}
+      section.block{padding:0 20px 80px}
+      .preview{padding:0 20px 80px}
+      .device-text{padding:32px 24px}
+      .feature-grid,.steps{grid-template-columns:1fr}
+      .about{padding:0 20px 70px}
+      .about-card{flex-direction:column;text-align:center;padding:28px 22px}
     }
+    @media (prefers-reduced-motion:reduce){
+      *{animation:none!important;transition:none!important}
+      html{scroll-behavior:auto}
+      .reveal{opacity:1;transform:none}
+    }
+
+
+/* ===== PRIVATE COMMUNITY LUXURY PWA INSTALL ===== */
+
+#pcInstallOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+#pcInstallOverlay.pc-visible {
+  display: flex;
+  animation: pcFadeIn .25s ease;
+}
+
+#pcInstallCard {
+  width: min(390px,100%);
+  padding: 18px 24px 26px;
+  border: 1px solid rgba(216,181,106,.32);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(216,181,106,.15),transparent 48%),
+    #111114;
+  box-shadow: 0 30px 100px rgba(0,0,0,.6);
+  text-align: center;
+  animation: pcCardIn .35s cubic-bezier(.2,.8,.2,1);
+}
+
+#pcInstallClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin-left: auto;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 50%;
+  background: rgba(255,255,255,.07);
+  color: #f7f4ed;
+  font-size: 25px;
+}
+
+#pcInstallIcon {
+  display: block;
+  width: 92px;
+  height: 92px;
+  margin: 8px auto 20px;
+  object-fit: cover;
+  border-radius: 24px;
+  box-shadow: 0 12px 34px rgba(216,181,106,.2);
+}
+
+#pcInstallEyebrow {
+  color: #d8b56a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+}
+
+#pcInstallTitle {
+  margin-top: 8px;
+  color: #f7f4ed;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -.7px;
+}
+
+#pcInstallDescription {
+  margin: 12px auto 23px;
+  max-width: 290px;
+  color: #a09e97;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+#pcInstallButton {
+  width: 100%;
+  min-height: 54px;
+  border: 1px solid rgba(240,215,151,.55);
+  border-radius: 16px;
+  background: linear-gradient(135deg,#f0d797,#c79d4e);
+  color: #17130b;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 12px 30px rgba(216,181,106,.15);
+}
+
+#pcInstallButton:active {
+  transform: scale(.98);
+}
+
+#pcInstallLater {
+  width: 100%;
+  padding: 15px 10px 5px;
+  border: 0;
+  background: transparent;
+  color: #a09e97;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pcInstallBenefits {
+  display: flex;
+  justify-content: center;
+  gap: 17px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+  color: #b7b3a9;
+  font-size: 11px;
+}
+
+.pcInstallBenefits span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+@keyframes pcFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pcCardIn {
+  from { opacity: 0; transform: translateY(16px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #pcInstallOverlay,
+  #pcInstallCard {
+    animation: none;
+  }
+}
+
+    
   </style>
 </head>
 
 <body>
+  <div class="progress" id="progress"></div>
 
   <!-- HEADER -->
-
-  <header>
-
-    <div class="brand">
+  <header id="header">
+    <a href="#top" class="brand" aria-label="Private home">
       <div class="brand-icon">P</div>
       <span>Private</span>
-    </div>
+    </a>
 
-    <button
-      class="login-button"
-      id="loginButton"
-    >
-      Login
-    </button>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
 
+    <nav id="nav">
+      <a class="link" href="#features">Features</a>
+      <a class="link" href="#how">How it works</a>
+      <a class="link" href="#faq">FAQ</a>
+      <a class="link" href="#about">About</a>
+      <button class="login-button" id="loginButton">Login</button>
+    </nav>
   </header>
 
+  <main id="top">
 
-  <!-- HERO -->
-
-  <main>
-
+    <!-- HERO -->
     <section class="hero">
-
       <div class="hero-content">
+        <div class="label"><span class="label-dot"></span>Private community</div>
 
-        <div class="label">
-          <span class="label-dot"></span>
-          Private community
-        </div>
-
-        <h1>
-          Your people.<br>
-          Your <span>space.</span>
-        </h1>
+        <h1>Your people.<br>Your <span class="gold">space.</span></h1>
 
         <p class="description">
-          A private place to connect with your community,
-          share moments, chat with friends and create memories.
+          A private place to connect with your community, share moments,
+          chat with friends and create memories.
         </p>
 
         <div class="actions">
-
-          <button
-            class="primary"
-            id="createAccountButton"
-          >
-            Create Account
-          </button>
-
-          <button
-            class="secondary"
-            id="memberLoginButton"
-          >
-            I'm already a member
-          </button>
-
+          <button class="primary" id="createAccountButton">Create account</button>
+          <button class="secondary" id="memberLoginButton">I'm already a member</button>
         </div>
 
+        <div class="trust">
+          <span>Members only</span>
+          <span>Real accounts</span>
+          <span>No public feed</span>
+        </div>
       </div>
-
     </section>
 
-
-    <!-- EMPTY / REAL APP PREVIEW -->
-
-    <section class="preview">
-
-      <div class="preview-card">
-
-        <div class="preview-content">
-
-          <div class="preview-icon">
-            ✦
-          </div>
-
-          <h2>
-            Your private space
-          </h2>
-
+    <!-- APP PREVIEW (no fake data) -->
+    <section class="preview reveal">
+      <div class="device">
+        <div class="device-text">
+          <h2>Your private space</h2>
           <p>
-            Your conversations, profiles, photos and posts
-            will appear here after you create an account
-            and join the community.
+            Your conversations, profiles, photos and posts appear here after
+            you create an account and join the community. Nothing is shown to
+            people outside it.
           </p>
-
         </div>
 
+        <div class="device-screen" aria-label="App preview">
+          <div class="tabs" role="tablist">
+            <button class="tab" role="tab" aria-selected="true" data-tab="home">Home</button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="chat">Chat</button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="profile">Profile</button>
+          </div>
+          <div class="screen-body" id="screenBody" aria-live="polite">
+            <div class="ic" id="screenIcon">⌂</div>
+            <strong id="screenTitle">No posts yet</strong>
+            <span id="screenText">Posts from members will show up here once you join.</span>
+          </div>
+        </div>
       </div>
-
     </section>
-
 
     <!-- FEATURES -->
-
-    <section class="features">
-
-      <h2 class="section-title">
-        Built for your community
-      </h2>
-
-      <p class="section-description">
-        Real accounts. Real people. Real connections.
-      </p>
-
+    <section class="block reveal" id="features">
+      <h2 class="section-title">Built for your community</h2>
+      <p class="section-description">Real accounts. Real people. Real connections.</p>
 
       <div class="feature-grid">
-
         <div class="feature">
-
-          <div class="feature-icon">
-            ◇
-          </div>
-
-          <h3>
-            Private Chat
-          </h3>
-
-          <p>
-            Send private messages to other members.
-            Conversations will use real Firebase data.
-          </p>
-
+          <div class="feature-icon">◇</div>
+          <h3>Private chat</h3>
+          <p>Send private messages to other members. Conversations are stored in real time with Firebase.</p>
         </div>
-
-
         <div class="feature">
-
-          <div class="feature-icon">
-            ◎
-          </div>
-
-          <h3>
-            Photos & Videos
-          </h3>
-
-          <p>
-            Upload and share your own media using
-            Cloudinary.
-          </p>
-
+          <div class="feature-icon">◎</div>
+          <h3>Photos &amp; videos</h3>
+          <p>Upload and share your own media. Files are hosted securely with Cloudinary.</p>
         </div>
-
-
         <div class="feature">
-
-          <div class="feature-icon">
-            ✦
-          </div>
-
-          <h3>
-            Member Profiles
-          </h3>
-
-          <p>
-            Create your own profile with a username,
-            profile photo and bio.
-          </p>
-
+          <div class="feature-icon">✦</div>
+          <h3>Member profiles</h3>
+          <p>Create your profile with a username, profile photo and bio.</p>
         </div>
-
-
         <div class="feature">
-
-          <div class="feature-icon">
-            ♢
-          </div>
-
-          <h3>
-            Posts
-          </h3>
-
-          <p>
-            Create real posts that are stored in
-            your private community.
-          </p>
-
+          <div class="feature-icon">♢</div>
+          <h3>Posts</h3>
+          <p>Write posts that are visible only inside your private community.</p>
         </div>
-
-
         <div class="feature">
-
-          <div class="feature-icon">
-            ◌
-          </div>
-
-          <h3>
-            Notifications
-          </h3>
-
-          <p>
-            Receive notifications for real activity
-            inside your community.
-          </p>
-
+          <div class="feature-icon">◌</div>
+          <h3>Notifications</h3>
+          <p>Get notified when someone messages you or reacts to what you share.</p>
         </div>
-
-
         <div class="feature">
-
-          <div class="feature-icon">
-            +
-          </div>
-
-          <h3>
-            Memories & Events
-          </h3>
-
-          <p>
-            Build shared memories and organize real
-            community events.
-          </p>
-
+          <div class="feature-icon">+</div>
+          <h3>Memories &amp; events</h3>
+          <p>Build shared memories and organise events with the people who matter.</p>
         </div>
-
       </div>
+    </section>
 
+    <!-- HOW IT WORKS -->
+    <section class="block reveal" id="how">
+      <h2 class="section-title">Get started in three steps</h2>
+      <p class="section-description">It takes less than a minute.</p>
+
+      <div class="steps">
+        <div class="step">
+          <h3>Create your account</h3>
+          <p>Sign up with your email and choose a username.</p>
+        </div>
+        <div class="step">
+          <h3>Set up your profile</h3>
+          <p>Add a profile photo and a short bio so people know it's you.</p>
+        </div>
+        <div class="step">
+          <h3>Start connecting</h3>
+          <p>Post, chat and share moments with other members.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRIVACY -->
+    <section class="block reveal">
+      <div class="privacy">
+        <div>
+          <h2>Privacy comes first</h2>
+          <p>Private is not a public network. Only people with an account can see what happens inside, and you decide what you share.</p>
+        </div>
+        <ul>
+          <li>Content is visible to members only</li>
+          <li>Secure sign-in powered by Firebase Authentication</li>
+          <li>Your media is stored on your own Cloudinary account</li>
+          <li>No ads and no public profiles</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="block reveal" id="faq">
+      <h2 class="section-title">Common questions</h2>
+
+      <div class="faq">
+        <details>
+          <summary>Who can see my posts?</summary>
+          <p>Only members of the community. Posts are not visible to anyone who is not logged in.</p>
+        </details>
+        <details>
+          <summary>Does it work on my phone?</summary>
+          <p>Yes. Private is designed mobile-first and works in any modern browser.</p>
+        </details>
+        <details>
+          <summary>Is it free to join?</summary>
+          <p>Creating an account is free.</p>
+        </details>
+        <details>
+          <summary>How do I log in again?</summary>
+          <p>Tap Login at the top of this page and sign in with the email and password you used to register.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- CALL TO ACTION -->
+    <section class="block reveal">
+      <div class="cta">
+        <h2>Ready to join?</h2>
+        <p>Create your account and step into your private space.</p>
+        <div class="actions">
+          <button class="primary" id="ctaCreate">Create account</button>
+          <button class="secondary" id="ctaLogin">Log in</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about reveal" id="about">
+      <div class="about-card">
+        <div class="avatar" aria-hidden="true">A</div>
+        <div>
+          <h2>About</h2>
+          <div class="name">Private Community</div>
+          <p>
+            Developed by <strong>Abhishek</strong><br>
+            BCA, AES National College
+          </p>
+        </div>
+      </div>
     </section>
 
   </main>
 
-
   <footer>
-    Private • Members only
+    <div>Private • Members only</div>
+    <div>Private Community developed by <strong>Abhishek</strong> · BCA, AES National College</div>
+    <div>© <span id="year"></span> Private. All rights reserved.</div>
   </footer>
 
-
-  <!-- NAVIGATION -->
-
   <script>
+    // ---------- navigation ----------
+    const go = (url) => () => { window.location.href = url; };
+    const bind = (id, url) => document.getElementById(id).addEventListener("click", go(url));
 
-    document
-      .getElementById("createAccountButton")
-      .addEventListener("click", () => {
-        window.location.href = "create-account.html";
+    bind("createAccountButton", "create-account.html");
+    bind("ctaCreate", "create-account.html");
+    bind("loginButton", "login.html");
+    bind("memberLoginButton", "login.html");
+    bind("ctaLogin", "login.html");
+
+    // ---------- mobile menu ----------
+    const nav = document.getElementById("nav");
+    const toggle = document.getElementById("menuToggle");
+
+    function setMenu(open) {
+      nav.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.textContent = open ? "✕" : "☰";
+    }
+    toggle.addEventListener("click", () => setMenu(!nav.classList.contains("open")));
+    nav.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+
+    // ---------- header + scroll progress ----------
+    const header = document.getElementById("header");
+    const progress = document.getElementById("progress");
+
+    function onScroll() {
+      header.classList.toggle("scrolled", window.scrollY > 10);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    // ---------- reveal on scroll ----------
+    const items = document.querySelectorAll(".reveal");
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.12 });
+      items.forEach((el) => io.observe(el));
+    } else {
+      items.forEach((el) => el.classList.add("in"));
+    }
+
+    // ---------- preview tabs (empty states only, no fake data) ----------
+    const states = {
+      home:    { icon: "⌂", title: "No posts yet",      text: "Posts from members will show up here once you join." },
+      chat:    { icon: "◇", title: "No messages yet",   text: "Start a private conversation with any member." },
+      profile: { icon: "✦", title: "Your profile",      text: "Add a photo, username and bio after you sign up." }
+    };
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", "false"));
+        tab.setAttribute("aria-selected", "true");
+        const s = states[tab.dataset.tab];
+        document.getElementById("screenIcon").textContent = s.icon;
+        document.getElementById("screenTitle").textContent = s.title;
+        document.getElementById("screenText").textContent = s.text;
       });
+    });
 
-    document
-      .getElementById("loginButton")
-      .addEventListener("click", () => {
-        window.location.href = "login.html";
-      });
-
-    document
-      .getElementById("memberLoginButton")
-      .addEventListener("click", () => {
-        window.location.href = "login.html";
-      });
-
+    // ---------- footer year ----------
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 
+
+<!-- PRIVATE COMMUNITY INSTALL POPUP -->
+<div id="pcInstallOverlay" role="dialog"
+     aria-modal="true" aria-labelledby="pcInstallTitle">
+
+  <div id="pcInstallCard">
+    <button id="pcInstallClose" type="button"
+            aria-label="Close install popup">×</button>
+
+    <img id="pcInstallIcon" src="./icon-512.webp"
+         alt="Private Community app icon">
+
+    <div id="pcInstallEyebrow">YOUR PEOPLE. YOUR SPACE.</div>
+
+    <h2 id="pcInstallTitle">Private Community</h2>
+
+    <p id="pcInstallDescription">
+      Your private space, always within reach.
+      Install the app for a clean, full-screen experience.
+    </p>
+
+    <button id="pcInstallButton" type="button">
+      Install App &nbsp; ↗
+    </button>
+
+    <button id="pcInstallLater" type="button">
+      Maybe later
+    </button>
+
+    <div class="pcInstallBenefits">
+      <span>✦ Premium design</span>
+      <span>⌂ Full-screen app</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== PRIVATE COMMUNITY PWA INSTALL ===== */
+
+(() => {
+  const overlay = document.getElementById("pcInstallOverlay");
+  const installButton = document.getElementById("pcInstallButton");
+  const closeButton = document.getElementById("pcInstallClose");
+  const laterButton = document.getElementById("pcInstallLater");
+
+  if (!overlay || !installButton) return;
+
+  let installPrompt = null;
+  let dismissedThisSession = false;
+
+  const isStandalone = () =>
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true;
+
+  function showInstallPopup() {
+    if (isStandalone() || dismissedThisSession) return;
+    if (localStorage.getItem("pc-install-dismissed") === "yes") return;
+
+    overlay.classList.add("pc-visible");
+  }
+
+  function hideInstallPopup(remember = true) {
+    overlay.classList.remove("pc-visible");
+
+    if (remember) {
+      dismissedThisSession = true;
+      localStorage.setItem("pc-install-dismissed", "yes");
+    }
+  }
+
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    installPrompt = event;
+
+    // Let the landing page load before showing the popup.
+    setTimeout(showInstallPopup, 1800);
+  });
+
+  installButton.addEventListener("click", async () => {
+    if (!installPrompt) {
+      // The browser may not support the native install prompt.
+      // Keep the popup closed and explain the manual option.
+      hideInstallPopup(false);
+
+      alert(
+        "To install Private Community, open your browser menu " +
+        "and choose 'Install app' or 'Add to Home screen'."
+      );
+
+      return;
+    }
+
+    installButton.disabled = true;
+
+    try {
+      installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+
+      if (choice.outcome === "accepted") {
+        hideInstallPopup(false);
+      }
+
+      installPrompt = null;
+    } catch (error) {
+      console.error("PWA installation failed:", error);
+    } finally {
+      installButton.disabled = false;
+    }
+  });
+
+  closeButton.addEventListener("click", () => hideInstallPopup());
+  laterButton.addEventListener("click", () => hideInstallPopup());
+
+  overlay.addEventListener("click", event => {
+    if (event.target === overlay) hideInstallPopup();
+  });
+
+  window.addEventListener("appinstalled", () => {
+    installPrompt = null;
+    overlay.classList.remove("pc-visible");
+    localStorage.setItem("pc-install-dismissed", "yes");
+  });
+
+  // Hide install UI if the user opens the installed app.
+  window.matchMedia("(display-mode: standalone)").addEventListener?.(
+    "change",
+    event => {
+      if (event.matches) overlay.classList.remove("pc-visible");
+    }
+  );
+
+  // Register the service worker.
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js")
+        .catch(error => console.error("Service worker error:", error));
+    });
+  }
+})();
+</script>
+  
 </body>
 </html>
