@@ -1,0 +1,3489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0b0c">
+<title>Chat • Private Community</title>
+
+<style>
+:root{
+  color-scheme:dark;
+
+  --bg:#0b0b0c;
+  --surface:#131315;
+  --surface2:#19191c;
+  --text:#f5f2eb;
+  --muted:#aaa6a0;
+  --border:rgba(255,255,255,.09);
+
+  --gold:#d8b56d;
+  --gold2:#f0d49a;
+
+  --danger:#ff7777;
+
+  --header-bg:rgba(11,11,12,.88);
+
+  --shadow:0 18px 50px rgba(0,0,0,.22);
+}
+
+:root[data-theme="light"]{
+  color-scheme:light;
+
+  --bg:#f6f4ef;
+  --surface:#fffefa;
+  --surface2:#f2eee5;
+  --text:#201d18;
+  --muted:#777168;
+  --border:rgba(39,32,22,.12);
+
+  --gold:#9c762e;
+  --gold2:#76571e;
+
+  --danger:#bd3c3c;
+
+  --header-bg:rgba(246,244,239,.90);
+
+  --shadow:0 18px 45px rgba(54,43,23,.08);
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+  margin:0;
+  width:100%;
+  height:100%;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  overflow:hidden;
+  transition:background .2s,color .2s;
+}
+
+button,input,textarea{ font:inherit; }
+button{ cursor:pointer; }
+a{ color:inherit; text-decoration:none; }
+svg{ display:block; }
+
+
+/* =====================================================
+   FULL PAGE CHAT
+===================================================== */
+
+.chat-page{
+  position:fixed;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  padding-top:env(safe-area-inset-top,0px);
+  display:grid;
+  grid-template-columns:320px minmax(0,1fr);
+  background:var(--bg);
+}
+
+
+/* =====================================================
+   SIDEBAR
+===================================================== */
+
+.members-panel{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+}
+
+.members-header{
+  padding:20px 18px 15px;
+  border-bottom:1px solid var(--border);
+}
+
+.members-heading-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.members-title{
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-.02em;
+}
+
+.members-count{
+  color:var(--muted);
+  font-size:11px;
+}
+
+/* tabs */
+
+.tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+  padding:4px;
+  margin-bottom:12px;
+  border-radius:13px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+}
+
+.tab{
+  height:36px;
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  transition:.2s;
+}
+
+.tab.active{
+  background:var(--surface);
+  color:var(--gold);
+  box-shadow:0 4px 14px rgba(0,0,0,.14);
+}
+
+.search-box{ position:relative; }
+
+.search-box svg{
+  position:absolute;
+  left:14px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+}
+
+#searchInput{
+  width:100%;
+  height:45px;
+  padding:0 12px 0 42px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  outline:none;
+  background:var(--surface2);
+  color:var(--text);
+  font-size:13px;
+  transition:.2s;
+}
+
+#searchInput:focus{
+  border-color:color-mix(in srgb,var(--gold) 65%,transparent);
+}
+
+#searchInput::placeholder{ color:var(--muted); }
+
+.people-list{
+  flex:1;
+  overflow-y:auto;
+  padding:8px;
+}
+
+.person{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:11px;
+  margin-bottom:2px;
+  border-radius:13px;
+  text-align:left;
+  transition:.18s;
+}
+
+.person:hover{ background:var(--surface2); }
+
+.person.active{
+  background:color-mix(in srgb,var(--gold) 10%,var(--surface2));
+}
+
+.person-avatar{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  overflow:hidden;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--gold);
+  font-size:12px;
+  font-weight:750;
+}
+
+.person-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.person-avatar.group{
+  border-color:color-mix(in srgb,var(--gold) 35%,var(--border));
+  background:color-mix(in srgb,var(--gold) 9%,var(--surface2));
+}
+
+.person-info{
+  min-width:0;
+  flex:1;
+}
+
+.person-name{
+  font-size:13px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.person-username{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.person.new-group .person-avatar{
+  border-style:dashed;
+  border-color:color-mix(in srgb,var(--gold) 55%,transparent);
+  background:transparent;
+}
+
+.person.new-group .person-name{ color:var(--gold); }
+
+.no-people{
+  padding:35px 18px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.65;
+}
+
+
+/* =====================================================
+   CONVERSATION
+===================================================== */
+
+.conversation{
+  min-width:0;
+  display:grid;
+  grid-template-rows:72px minmax(0,1fr) auto;
+  background:var(--bg);
+}
+
+.conversation-header{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 22px;
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+}
+
+.chat-user-avatar{
+  width:43px;
+  height:43px;
+  border-radius:50%;
+  overflow:hidden;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--gold);
+  font-size:12px;
+  font-weight:750;
+  padding:0;
+  cursor:pointer;
+}
+
+.chat-user-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.chat-user-info{
+  min-width:0;
+  cursor:pointer;
+}
+
+.chat-user-name{
+  font-size:14px;
+  font-weight:750;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.chat-user-handle{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
+
+.chat-header-spacer{ flex:1; }
+
+.chat-header-status{
+  color:var(--muted);
+  font-size:10px;
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
+.messages{
+  min-height:0;
+  overflow-y:auto;
+  padding:28px clamp(18px,4vw,60px);
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  scroll-behavior:smooth;
+}
+
+.empty-chat{
+  margin:auto;
+  max-width:330px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.empty-chat-icon{
+  width:62px;
+  height:62px;
+  margin:0 auto 15px;
+  border-radius:19px;
+  background:color-mix(in srgb,var(--gold) 9%,var(--surface));
+  border:1px solid color-mix(in srgb,var(--gold) 25%,var(--border));
+  display:grid;
+  place-items:center;
+  color:var(--gold);
+}
+
+.empty-chat strong{
+  display:block;
+  color:var(--text);
+  font-size:15px;
+  margin-bottom:7px;
+}
+
+.empty-chat p{
+  margin:0;
+  font-size:12px;
+  line-height:1.65;
+}
+
+.message-row{
+  width:100%;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+}
+
+.message-row.mine{ justify-content:flex-end; }
+.message-row.theirs{ justify-content:flex-start; }
+
+.message-row.gap-top{ margin-top:7px; }
+
+.msg-avatar{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  overflow:hidden;
+  flex-shrink:0;
+  display:grid;
+  place-items:center;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--gold);
+  font-size:10px;
+  font-weight:750;
+  padding:0;
+  cursor:pointer;
+}
+
+.msg-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.msg-avatar-space{
+  width:30px;
+  flex-shrink:0;
+}
+
+.message{
+  max-width:min(70%,520px);
+  padding:10px 13px;
+  border-radius:16px;
+  font-size:13px;
+  line-height:1.55;
+  word-break:break-word;
+}
+
+.message.mine{
+  color:#21190c;
+  background:var(--gold);
+  border-bottom-right-radius:5px;
+}
+
+.message.theirs{
+  color:var(--text);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-bottom-left-radius:5px;
+}
+
+.message-sender{
+  margin-bottom:3px;
+  color:var(--gold);
+  font-size:11px;
+  font-weight:750;
+  cursor:pointer;
+}
+
+.message-time{
+  margin-top:4px;
+  font-size:9px;
+  opacity:.65;
+  text-align:right;
+}
+
+.message.mine .message-time{ color:#4a3a20; }
+
+
+/* =====================================================
+   COMPOSER
+===================================================== */
+
+.composer{
+  min-height:74px;
+  display:flex;
+  align-items:flex-end;
+  gap:10px;
+  padding:13px clamp(15px,4vw,55px);
+  background:var(--surface);
+  border-top:1px solid var(--border);
+}
+
+#messageInput{
+  min-height:45px;
+  max-height:130px;
+  flex:1;
+  resize:none;
+  border:1px solid var(--border);
+  border-radius:14px;
+  outline:none;
+  background:var(--surface2);
+  color:var(--text);
+  padding:12px 14px;
+  font-size:13px;
+  line-height:1.45;
+  transition:.2s;
+}
+
+#messageInput:focus{
+  border-color:color-mix(in srgb,var(--gold) 65%,transparent);
+}
+
+#messageInput::placeholder{ color:var(--muted); }
+
+.send-btn{
+  width:45px;
+  height:45px;
+  flex-shrink:0;
+  border:0;
+  border-radius:14px;
+  background:var(--gold);
+  color:#21190c;
+  display:grid;
+  place-items:center;
+  transition:.2s;
+}
+
+.send-btn:hover{
+  background:var(--gold2);
+  transform:translateY(-1px);
+}
+
+.send-btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  transform:none;
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.back-mobile{
+  display:none;
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:50%;
+  background:transparent;
+  color:var(--text);
+  place-items:center;
+}
+
+
+/* =====================================================
+   BOTTOM SHEETS (new group / group info)
+===================================================== */
+
+.sheet-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:300;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+}
+
+.sheet-backdrop.open{ display:flex; }
+
+.sheet{
+  width:100%;
+  max-width:520px;
+  max-height:88vh;
+  max-height:88dvh;
+  display:flex;
+  flex-direction:column;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-bottom:0;
+  border-radius:22px 22px 0 0;
+  box-shadow:var(--shadow);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  animation:sheetUp .24s ease-out;
+}
+
+@keyframes sheetUp{
+  from{ transform:translateY(40px); opacity:0; }
+  to{ transform:translateY(0); opacity:1; }
+}
+
+.sheet-grab{
+  width:38px;
+  height:4px;
+  border-radius:4px;
+  background:var(--border);
+  margin:9px auto 0;
+  flex-shrink:0;
+}
+
+.sheet-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 18px 12px;
+  flex-shrink:0;
+}
+
+.sheet-title{
+  font-size:16px;
+  font-weight:720;
+  letter-spacing:-.02em;
+}
+
+.sheet-close{
+  width:34px;
+  height:34px;
+  border:1px solid var(--border);
+  border-radius:50%;
+  background:var(--surface2);
+  color:var(--text);
+  font-size:20px;
+  line-height:1;
+  padding:0;
+}
+
+.sheet-body{
+  overflow-y:auto;
+  padding:0 14px 14px;
+  min-height:0;
+}
+
+.sheet-foot{
+  padding:12px 18px 16px;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+}
+
+.sheet-label{
+  display:block;
+  margin:4px 4px 7px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:650;
+}
+
+.sheet-input{
+  width:100%;
+  height:46px;
+  padding:0 13px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  outline:none;
+  background:var(--surface2);
+  color:var(--text);
+  font-size:13px;
+  margin-bottom:14px;
+  transition:.2s;
+}
+
+.sheet-input:focus{
+  border-color:color-mix(in srgb,var(--gold) 65%,transparent);
+}
+
+.sheet-input::placeholder{ color:var(--muted); }
+
+.pick-row{
+  width:100%;
+  border:0;
+  background:transparent;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:9px 8px;
+  border-radius:13px;
+  text-align:left;
+  transition:.18s;
+}
+
+.pick-row:hover{ background:var(--surface2); }
+
+.pick-check{
+  width:22px;
+  height:22px;
+  margin-left:auto;
+  border-radius:50%;
+  border:1.5px solid var(--border);
+  display:grid;
+  place-items:center;
+  color:transparent;
+  font-size:12px;
+  font-weight:800;
+  flex-shrink:0;
+  transition:.18s;
+}
+
+.pick-row.selected .pick-check{
+  background:var(--gold);
+  border-color:var(--gold);
+  color:#21190c;
+}
+
+.sheet-btn{
+  width:100%;
+  height:48px;
+  border:0;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#21190c;
+  font-size:13px;
+  font-weight:750;
+  transition:.2s;
+}
+
+.sheet-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.pick-count{
+  margin:2px 4px 8px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+/* group info */
+
+.group-hero{
+  text-align:center;
+  padding:6px 0 16px;
+}
+
+.group-hero-avatar{
+  width:84px;
+  height:84px;
+  margin:0 auto 12px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:color-mix(in srgb,var(--gold) 9%,var(--surface2));
+  border:2px solid color-mix(in srgb,var(--gold) 40%,var(--border));
+  color:var(--gold);
+  font-size:26px;
+  font-weight:750;
+}
+
+.group-hero-name{
+  font-size:18px;
+  font-weight:750;
+  letter-spacing:-.02em;
+}
+
+.group-hero-sub{
+  margin-top:5px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.info-section-title{
+  margin:6px 8px 8px;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+.info-member{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px;
+  border-radius:13px;
+}
+
+.info-member .person-avatar{ cursor:pointer; }
+
+.info-member .person-info{ cursor:pointer; }
+
+.info-tag{
+  margin-left:auto;
+  color:var(--gold);
+  font-size:10px;
+  font-weight:750;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+
+/* =====================================================
+   FULL SCREEN PHOTO VIEWER
+===================================================== */
+
+.photo-viewer{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  width:100vw;
+  height:100vh;
+  height:100dvh;
+  overflow:hidden;
+  background:rgba(0,0,0,var(--viewer-bg,1));
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  touch-action:none;
+  overscroll-behavior:contain;
+  -webkit-user-select:none;
+  user-select:none;
+  transition:opacity .25s ease,visibility .25s ease;
+}
+
+.photo-viewer.show{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+}
+
+.photo-viewer.dragging .viewer-image{ transition:none; }
+
+.viewer-stage{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.viewer-image{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  transform-origin:center center;
+  will-change:transform;
+  transition:transform .25s ease;
+  -webkit-user-drag:none;
+  user-select:none;
+  touch-action:none;
+}
+
+.viewer-top{
+  position:absolute;
+  top:0;left:0;right:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 16px 26px;
+  background:linear-gradient(to bottom,rgba(0,0,0,.65),transparent);
+  transition:opacity .25s ease,transform .25s ease;
+}
+
+.photo-viewer.zoomed .viewer-top,
+.photo-viewer.dragging .viewer-top,
+.photo-viewer.zoomed .viewer-bottom,
+.photo-viewer.dragging .viewer-bottom{
+  opacity:0;
+  transform:translateY(-10px);
+  pointer-events:none;
+}
+
+.photo-viewer.zoomed .viewer-bottom,
+.photo-viewer.dragging .viewer-bottom{
+  transform:translateY(10px);
+}
+
+.viewer-close{
+  width:44px;
+  height:44px;
+  flex-shrink:0;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  line-height:1;
+  padding:0;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:background .2s ease,border-color .2s ease;
+}
+
+.viewer-close:hover{
+  border-color:rgba(216,181,106,.5);
+  background:rgba(216,181,106,.14);
+}
+
+.viewer-title{
+  min-width:0;
+  color:#fff;
+  font-size:14px;
+  font-weight:650;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.viewer-bottom{
+  position:absolute;
+  left:0;right:0;
+  bottom:0;
+  z-index:2;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  padding:30px 16px calc(env(safe-area-inset-bottom,0px) + 20px);
+  background:linear-gradient(to top,rgba(0,0,0,.6),transparent);
+  transition:opacity .25s ease,transform .25s ease;
+}
+
+.viewer-profile{
+  min-width:170px;
+  height:44px;
+  padding:0 22px;
+  border:1px solid rgba(216,181,106,.45);
+  border-radius:999px;
+  background:rgba(216,181,106,.14);
+  color:#f0d49a;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:700;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+.viewer-profile.show{ display:flex; }
+
+.viewer-hint{
+  color:rgba(255,255,255,.62);
+  font-size:11px;
+  text-align:center;
+  transition:opacity .3s ease;
+}
+
+.viewer-hint.faded{ opacity:0; }
+
+
+/* =====================================================
+   NOTICE
+===================================================== */
+
+.notice{
+  position:fixed;
+  top:calc(env(safe-area-inset-top,0px) + 15px);
+  left:50%;
+  z-index:150;
+  transform:translateX(-50%) translateY(-10px);
+  opacity:0;
+  pointer-events:none;
+  max-width:calc(100% - 30px);
+  padding:11px 15px;
+  border-radius:12px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  color:var(--danger);
+  font-size:12px;
+  transition:.2s;
+}
+
+.notice.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:28px;
+  z-index:1200;
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  max-width:calc(100% - 30px);
+  padding:12px 16px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:var(--surface);
+  color:var(--text);
+  box-shadow:var(--shadow);
+  font-size:12px;
+  transition:.25s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+
+/* =====================================================
+   BOTTOM NAV
+===================================================== */
+
+.bottom-nav{ display:none; }
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:720px){
+
+  body{ overflow:hidden; }
+
+  .chat-page{
+    top:0;
+    bottom:67px;
+    display:block;
+  }
+
+  .members-panel{
+    width:100%;
+    height:100%;
+    border-right:0;
+  }
+
+  .members-header{ padding:16px 15px 13px; }
+
+  .members-title{ font-size:16px; }
+
+  .people-list{ padding:7px 10px; }
+
+  .conversation{
+    position:fixed;
+    top:0;
+    right:0;
+    bottom:67px;
+    left:0;
+    padding-top:env(safe-area-inset-top,0px);
+    z-index:70;
+    display:none;
+    grid-template-rows:66px minmax(0,1fr) auto;
+  }
+
+  .chat-page.chat-open .conversation{ display:grid; }
+
+  .chat-page.chat-open .members-panel{ display:none; }
+
+  .conversation-header{
+    padding:8px 13px;
+    gap:9px;
+  }
+
+  .back-mobile{ display:grid; }
+
+  .chat-user-avatar{
+    width:39px;
+    height:39px;
+  }
+
+  .messages{ padding:18px 13px; }
+
+  .message{ max-width:82%; }
+
+  .composer{
+    min-height:68px;
+    padding:10px 11px;
+  }
+
+  #messageInput{ min-height:44px; }
+
+  .bottom-nav{
+    position:fixed;
+    z-index:120;
+    bottom:0;
+    left:0;
+    right:0;
+    height:67px;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    align-items:center;
+    padding:4px 10px max(5px,env(safe-area-inset-bottom));
+    background:color-mix(in srgb,var(--bg) 92%,transparent);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border-top:1px solid var(--border);
+  }
+
+  .nav-item{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    color:var(--muted);
+    font-size:10px;
+    position:relative;
+    padding:7px 0;
+  }
+
+  .nav-item svg{
+    width:21px;
+    height:21px;
+  }
+
+  .nav-item.active{ color:var(--gold); }
+
+  .nav-item.active:before{
+    content:"";
+    position:absolute;
+    top:-8px;
+    width:20px;
+    height:2px;
+    border-radius:2px;
+    background:var(--gold);
+    box-shadow:0 0 10px color-mix(in srgb,var(--gold) 40%,transparent);
+  }
+
+  .toast{ bottom:82px; }
+
+}
+
+@media(min-width:721px){
+
+  .sheet-backdrop{ align-items:center; }
+
+  .sheet{
+    border-bottom:1px solid var(--border);
+    border-radius:22px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media(max-width:380px){
+
+  .message{
+    max-width:88%;
+    font-size:12px;
+  }
+
+  .composer{ gap:7px; }
+
+  .send-btn{
+    width:43px;
+    height:43px;
+  }
+
+}
+</style>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     FULL CHAT PAGE
+===================================================== -->
+
+<div class="chat-page" id="chatPage">
+
+
+  <!-- SIDEBAR -->
+
+  <aside class="members-panel">
+
+    <div class="members-header">
+
+      <div class="members-heading-row">
+        <div class="members-title">Private     Community</div>
+        <div class="members-count" id="peopleCount">—</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" id="tabMembers" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M5 21a7 7 0 0 1 14 0"/>
+          </svg>
+          Members
+        </button>
+        <button class="tab" id="tabGroups" type="button">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="9" cy="8" r="3.4"/>
+            <path d="M3 20a6 6 0 0 1 12 0"/>
+            <path d="M16 4.6a3.4 3.4 0 0 1 0 6.4M18 14.2A6 6 0 0 1 21 20"/>
+          </svg>
+          Groups
+        </button>
+      </div>
+
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <circle cx="11" cy="11" r="7"/>
+          <path d="m20 20-4-4"/>
+        </svg>
+        <input id="searchInput" type="search" autocomplete="off" placeholder="Search community members...">
+      </div>
+
+    </div>
+
+    <div class="people-list" id="peopleList">
+      <div class="no-people">Loading community members...</div>
+    </div>
+
+  </aside>
+
+
+
+  <!-- CONVERSATION -->
+
+  <section class="conversation">
+
+    <div class="conversation-header">
+
+      <button class="back-mobile" id="backMobile" type="button" aria-label="Back to community">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+      </button>
+
+      <button class="chat-user-avatar" id="chatUserAvatar" type="button" aria-label="View photo">
+        <span>P</span>
+      </button>
+
+      <div class="chat-user-info" id="chatUserInfo">
+        <div class="chat-user-name" id="chatUserName">Select a member</div>
+        <div class="chat-user-handle" id="chatUserHandle">Choose someone to start chatting</div>
+      </div>
+
+      <div class="chat-header-spacer"></div>
+
+      <div class="chat-header-status" id="chatStatus">Private chat</div>
+
+    </div>
+
+
+    <!-- MESSAGES -->
+
+    <div class="messages" id="messages">
+
+      <div class="empty-chat">
+
+        <div class="empty-chat-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
+          </svg>
+        </div>
+
+        <strong>Your conversations</strong>
+
+        <p>Select a community member or group to start chatting.</p>
+
+      </div>
+
+    </div>
+
+
+    <!-- COMPOSER -->
+
+    <form class="composer" id="composer">
+
+      <textarea id="messageInput" rows="1" maxlength="3000" placeholder="Select a member to start chatting..." disabled></textarea>
+
+      <button class="send-btn" id="sendButton" type="submit" aria-label="Send message" disabled>
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="m22 2-7 20-4-9-9-4Z"/>
+          <path d="M22 2 11 13"/>
+        </svg>
+      </button>
+
+    </form>
+
+  </section>
+
+</div>
+
+
+
+<!-- =====================================================
+     MOBILE NAV
+===================================================== -->
+
+<nav class="bottom-nav" aria-label="Main navigation">
+
+  <a class="nav-item" href="home.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+      <path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>
+    </svg>
+    <span>Home</span>
+  </a>
+
+  <a class="nav-item active" href="chat.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+      <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
+    </svg>
+    <span>Chat</span>
+  </a>
+
+  <a class="nav-item" href="create-post.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+      <rect x="3" y="3" width="18" height="18" rx="5"/>
+      <path d="M12 8v8M8 12h8"/>
+    </svg>
+    <span>Create</span>
+  </a>
+
+  <a class="nav-item" href="notifications.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+      <path d="M10 21h4"/>
+    </svg>
+    <span>Alerts</span>
+  </a>
+
+  <a class="nav-item" href="profile.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M5 21a7 7 0 0 1 14 0"/>
+    </svg>
+    <span>Profile</span>
+  </a>
+
+</nav>
+
+
+
+<!-- =====================================================
+     NEW GROUP SHEET
+===================================================== -->
+
+<div class="sheet-backdrop" id="newGroupSheet">
+
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="New group">
+
+    <div class="sheet-grab"></div>
+
+    <div class="sheet-head">
+      <div class="sheet-title">New group</div>
+      <button class="sheet-close" id="newGroupClose" type="button" aria-label="Close">×</button>
+    </div>
+
+    <div class="sheet-body">
+
+      <label class="sheet-label" for="groupNameInput">Group name</label>
+      <input class="sheet-input" id="groupNameInput" type="text" maxlength="40" autocomplete="off" placeholder="e.g. Weekend plans">
+
+      <label class="sheet-label">Add members</label>
+      <div class="pick-count" id="pickCount">Select at least 2 members</div>
+
+      <div id="pickList"></div>
+
+    </div>
+
+    <div class="sheet-foot">
+      <button class="sheet-btn" id="createGroupButton" type="button" disabled>Create group</button>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     GROUP INFO SHEET
+===================================================== -->
+
+<div class="sheet-backdrop" id="groupInfoSheet">
+
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Group info">
+
+    <div class="sheet-grab"></div>
+
+    <div class="sheet-head">
+      <div class="sheet-title">Group info</div>
+      <button class="sheet-close" id="groupInfoClose" type="button" aria-label="Close">×</button>
+    </div>
+
+    <div class="sheet-body" id="groupInfoBody"></div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     FULL SCREEN PHOTO VIEWER
+===================================================== -->
+
+<div class="photo-viewer" id="photoViewer" role="dialog" aria-modal="true" aria-label="Profile photo">
+
+  <div class="viewer-stage">
+    <img class="viewer-image" id="viewerImage" alt="Profile photo" draggable="false">
+  </div>
+
+  <div class="viewer-top">
+    <button class="viewer-close" id="viewerClose" type="button" aria-label="Close photo">×</button>
+    <div class="viewer-title" id="viewerTitle"></div>
+  </div>
+
+  <div class="viewer-bottom">
+    <a class="viewer-profile" id="viewerProfile" href="profile.html">View profile</a>
+    <div class="viewer-hint" id="viewerHint">Pinch or double-tap to zoom • Swipe down to close</div>
+  </div>
+
+</div>
+
+
+<div class="notice" id="notice"></div>
+
+<div class="toast" id="toast"></div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script type="module">
+
+import {
+  auth,
+  db
+} from "./firebase.js";
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  addDoc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const $ = id => document.getElementById(id);
+
+const chatPage = $("chatPage");
+const peopleList = $("peopleList");
+const peopleCount = $("peopleCount");
+const searchInput = $("searchInput");
+const tabMembers = $("tabMembers");
+const tabGroups = $("tabGroups");
+const chatUserAvatar = $("chatUserAvatar");
+const chatUserInfo = $("chatUserInfo");
+const chatUserName = $("chatUserName");
+const chatUserHandle = $("chatUserHandle");
+const chatStatus = $("chatStatus");
+const messages = $("messages");
+const composer = $("composer");
+const messageInput = $("messageInput");
+const sendButton = $("sendButton");
+const notice = $("notice");
+
+const newGroupSheet = $("newGroupSheet");
+const groupNameInput = $("groupNameInput");
+const pickList = $("pickList");
+const pickCount = $("pickCount");
+const createGroupButton = $("createGroupButton");
+const groupInfoSheet = $("groupInfoSheet");
+const groupInfoBody = $("groupInfoBody");
+
+
+
+/* =====================================================
+   STATE
+===================================================== */
+
+let currentUser = null;
+let currentProfile = {};
+
+let allMembers = [];
+const profiles = new Map();
+
+let groups = [];
+
+let activeTab = "members";
+
+/* { type:"direct"|"group", id, member? } */
+let selectedChat = null;
+
+let unsubscribeMessages = null;
+let unsubscribeGroups = null;
+
+let sending = false;
+
+let pickedUids = new Set();
+
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showToast(message){
+
+  const toast = $("toast");
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(showToast.timer);
+
+  showToast.timer = setTimeout(
+    () => toast.classList.remove("show"),
+    2800
+  );
+
+}
+
+
+
+/* =====================================================
+   NOTICE
+===================================================== */
+
+function showNotice(message){
+
+  notice.textContent = message;
+  notice.classList.add("show");
+
+  clearTimeout(showNotice.timer);
+
+  showNotice.timer = setTimeout(
+    () => notice.classList.remove("show"),
+    5000
+  );
+
+}
+
+
+
+/* =====================================================
+   THEME
+   (follows the saved choice or the system setting)
+===================================================== */
+
+function applyTheme(theme){
+
+  const chosen =
+    ["dark","light","system"].includes(theme)
+      ? theme
+      : "system";
+
+  const resolved =
+    chosen === "system"
+      ? (
+          window.matchMedia("(prefers-color-scheme: light)").matches
+            ? "light"
+            : "dark"
+        )
+      : chosen;
+
+  document.documentElement.dataset.theme = resolved;
+
+}
+
+applyTheme(localStorage.getItem("private-theme") || "system");
+
+window
+  .matchMedia("(prefers-color-scheme: light)")
+  .addEventListener?.("change", () => {
+
+    if((localStorage.getItem("private-theme") || "system") === "system"){
+      applyTheme("system");
+    }
+
+  });
+
+
+
+/* =====================================================
+   PROFILE HELPERS
+===================================================== */
+
+function getName(profile = {}, user = null){
+
+  return (
+    profile.fullName ||
+    profile.name ||
+    user?.displayName ||
+    user?.email?.split("@")[0] ||
+    "Private member"
+  );
+
+}
+
+function getPhoto(profile = {}, user = null){
+
+  return (
+    profile.profilePhoto ||
+    profile.photoURL ||
+    user?.photoURL ||
+    ""
+  );
+
+}
+
+function initials(name){
+
+  return (
+    String(name || "P")
+      .trim()
+      .split(/\s+/)
+      .slice(0,2)
+      .map(part => part[0] || "")
+      .join("")
+      .toUpperCase()
+    ||
+    "P"
+  );
+
+}
+
+function setAvatar(element, photo, name){
+
+  element.replaceChildren();
+
+  const fallback = initials(name);
+
+  if(photo){
+
+    const img = document.createElement("img");
+
+    img.src = photo;
+    img.alt = `${name} profile photo`;
+    img.referrerPolicy = "no-referrer";
+
+    img.onerror = () => {
+      element.replaceChildren();
+      element.textContent = fallback;
+    };
+
+    element.appendChild(img);
+
+  }else{
+
+    element.textContent = fallback;
+
+  }
+
+}
+
+function handleOf(member){
+
+  return member?.username
+    ? "@" + String(member.username).replace(/^@/,"")
+    : "Community member";
+
+}
+
+/* a member's profile data by uid (includes yourself) */
+function profileFor(uid){
+
+  if(currentUser && uid === currentUser.uid){
+
+    return {
+      ...currentProfile,
+      uid,
+      fullName:getName(currentProfile, currentUser),
+      profilePhoto:getPhoto(currentProfile, currentUser)
+    };
+
+  }
+
+  return profiles.get(uid) || { uid };
+
+}
+
+function escapeHTML(value){
+
+  const element = document.createElement("div");
+
+  element.textContent = String(value ?? "");
+
+  return element.innerHTML;
+
+}
+
+function emptyState(icon, title, text){
+
+  return `
+    <div class="empty-chat">
+      <div class="empty-chat-icon">${icon}</div>
+      <strong>${escapeHTML(title)}</strong>
+      <p>${escapeHTML(text)}</p>
+    </div>
+  `;
+
+}
+
+const CHAT_ICON = `
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8z"/>
+  </svg>
+`;
+
+
+
+/* =====================================================
+   FULL SCREEN PHOTO VIEWER
+   pinch / double-tap zoom • drag to pan
+   swipe down to close • back button closes
+===================================================== */
+
+const photoViewer = $("photoViewer");
+const viewerImage = $("viewerImage");
+const viewerTitle = $("viewerTitle");
+const viewerClose = $("viewerClose");
+const viewerHint = $("viewerHint");
+const viewerProfile = $("viewerProfile");
+
+const MIN_SCALE = 1;
+const MAX_SCALE = 5;
+
+let vScale = 1;
+let vX = 0;
+let vY = 0;
+
+let viewerOpen = false;
+let viewerHistoryPushed = false;
+
+const pointers = new Map();
+
+let startScale = 1;
+let startDist = 0;
+let startX = 0;
+let startY = 0;
+let startMidX = 0;
+let startMidY = 0;
+let gestureStartX = 0;
+let gestureStartY = 0;
+let moved = false;
+let dismissing = false;
+let lastTap = 0;
+let lastTapX = 0;
+let lastTapY = 0;
+
+function applyViewerTransform(){
+
+  viewerImage.style.transform =
+    `translate(${vX}px, ${vY}px) scale(${vScale})`;
+
+  photoViewer.classList.toggle("zoomed", vScale > 1.02);
+
+}
+
+function clampPan(){
+
+  if(vScale <= 1){
+    return;
+  }
+
+  const w = photoViewer.clientWidth;
+  const h = photoViewer.clientHeight;
+
+  const maxX = (w * vScale - w) / 2;
+  const maxY = (h * vScale - h) / 2;
+
+  vX = Math.max(-maxX, Math.min(maxX, vX));
+  vY = Math.max(-maxY, Math.min(maxY, vY));
+
+}
+
+function resetViewerTransform(){
+
+  vScale = 1;
+  vX = 0;
+  vY = 0;
+
+  photoViewer.style.setProperty("--viewer-bg","1");
+
+  applyViewerTransform();
+
+}
+
+function zoomAt(newScale, clientX, clientY){
+
+  newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+
+  const rect = photoViewer.getBoundingClientRect();
+
+  const cx = clientX - rect.left - rect.width / 2;
+  const cy = clientY - rect.top - rect.height / 2;
+
+  const ratio = newScale / vScale;
+
+  vX = cx - (cx - vX) * ratio;
+  vY = cy - (cy - vY) * ratio;
+  vScale = newScale;
+
+  if(vScale <= 1){
+    vX = 0;
+    vY = 0;
+  }
+
+  clampPan();
+  applyViewerTransform();
+
+}
+
+function pointerDistance(){
+  const [a,b] = [...pointers.values()];
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function pointerMidpoint(){
+  const [a,b] = [...pointers.values()];
+  return { x:(a.x + b.x) / 2, y:(a.y + b.y) / 2 };
+}
+
+function openPhotoViewer({ photo, name, uid, self }){
+
+  if(!photo){
+    showToast("No profile photo available.");
+    return;
+  }
+
+  resetViewerTransform();
+
+  viewerImage.src = photo;
+  viewerTitle.textContent = `${name || "Member"}`;
+
+  /* "View profile" button */
+  if(uid){
+
+    viewerProfile.href =
+      self
+        ? "profile.html"
+        : `profile.html?uid=${encodeURIComponent(uid)}`;
+
+    viewerProfile.classList.add("show");
+
+  }else{
+
+    viewerProfile.classList.remove("show");
+
+  }
+
+  viewerHint.classList.remove("faded");
+
+  photoViewer.classList.add("show");
+
+  document.body.style.overflow = "hidden";
+
+  viewerOpen = true;
+
+  try{
+    history.pushState({ photoViewer:true }, "");
+    viewerHistoryPushed = true;
+  }catch(e){
+    viewerHistoryPushed = false;
+  }
+
+  clearTimeout(openPhotoViewer.hintTimer);
+
+  openPhotoViewer.hintTimer = setTimeout(() => {
+    viewerHint.classList.add("faded");
+  }, 3200);
+
+}
+
+function closePhotoViewer(fromPopState = false){
+
+  if(!viewerOpen){
+    return;
+  }
+
+  viewerOpen = false;
+
+  photoViewer.classList.remove("show","dragging","zoomed");
+
+  document.body.style.overflow = "";
+
+  pointers.clear();
+
+  if(viewerHistoryPushed && !fromPopState){
+    viewerHistoryPushed = false;
+    history.back();
+  }else{
+    viewerHistoryPushed = false;
+  }
+
+  setTimeout(() => {
+    if(!viewerOpen){
+      viewerImage.removeAttribute("src");
+      resetViewerTransform();
+    }
+  }, 280);
+
+}
+
+window.addEventListener("popstate", () => {
+  if(viewerOpen){
+    closePhotoViewer(true);
+  }
+});
+
+photoViewer.addEventListener("pointerdown", event => {
+
+  if(event.target.closest(".viewer-close, .viewer-profile")){
+    return;
+  }
+
+  photoViewer.setPointerCapture?.(event.pointerId);
+
+  pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+
+  photoViewer.classList.add("dragging");
+
+  if(pointers.size === 1){
+
+    gestureStartX = event.clientX;
+    gestureStartY = event.clientY;
+    startX = vX;
+    startY = vY;
+    moved = false;
+    dismissing = false;
+
+  }else if(pointers.size === 2){
+
+    startDist = pointerDistance();
+    startScale = vScale;
+
+    const mid = pointerMidpoint();
+    startMidX = mid.x;
+    startMidY = mid.y;
+    startX = vX;
+    startY = vY;
+
+    dismissing = false;
+    moved = true;
+
+    photoViewer.style.setProperty("--viewer-bg","1");
+
+  }
+
+});
+
+photoViewer.addEventListener("pointermove", event => {
+
+  if(!pointers.has(event.pointerId)){
+    return;
+  }
+
+  pointers.set(event.pointerId, { x:event.clientX, y:event.clientY });
+
+  if(pointers.size === 2){
+
+    const dist = pointerDistance();
+    const mid = pointerMidpoint();
+
+    let newScale = startScale * (dist / startDist);
+    newScale = Math.max(MIN_SCALE * .85, Math.min(MAX_SCALE, newScale));
+
+    const rect = photoViewer.getBoundingClientRect();
+
+    const cx = startMidX - rect.left - rect.width / 2;
+    const cy = startMidY - rect.top - rect.height / 2;
+
+    const ratio = newScale / startScale;
+
+    vScale = newScale;
+    vX = cx - (cx - startX) * ratio + (mid.x - startMidX);
+    vY = cy - (cy - startY) * ratio + (mid.y - startMidY);
+
+    applyViewerTransform();
+
+    return;
+
+  }
+
+  if(pointers.size === 1){
+
+    const dx = event.clientX - gestureStartX;
+    const dy = event.clientY - gestureStartY;
+
+    if(Math.abs(dx) > 6 || Math.abs(dy) > 6){
+      moved = true;
+    }
+
+    if(vScale > 1.02){
+
+      vX = startX + dx;
+      vY = startY + dy;
+
+      clampPan();
+      applyViewerTransform();
+
+    }else if(moved){
+
+      if(!dismissing && Math.abs(dy) > Math.abs(dx)){
+        dismissing = true;
+      }
+
+      if(dismissing){
+
+        vX = dx * .35;
+        vY = dy;
+
+        const fade = 1 - Math.min(Math.abs(dy) / 380, .75);
+
+        photoViewer.style.setProperty("--viewer-bg", fade.toFixed(2));
+
+        applyViewerTransform();
+
+      }
+
+    }
+
+  }
+
+});
+
+function endPointer(event){
+
+  if(!pointers.has(event.pointerId)){
+    return;
+  }
+
+  const wasSingle = pointers.size === 1;
+
+  pointers.delete(event.pointerId);
+
+  if(pointers.size === 1){
+
+    const [p] = [...pointers.values()];
+
+    gestureStartX = p.x;
+    gestureStartY = p.y;
+    startX = vX;
+    startY = vY;
+
+    return;
+
+  }
+
+  if(pointers.size > 0){
+    return;
+  }
+
+  photoViewer.classList.remove("dragging");
+
+  if(vScale < 1){
+    vScale = 1;
+    vX = 0;
+    vY = 0;
+  }
+
+  if(dismissing){
+
+    const dy = event.clientY - gestureStartY;
+
+    dismissing = false;
+
+    if(Math.abs(dy) > 120){
+      closePhotoViewer();
+      return;
+    }
+
+    photoViewer.style.setProperty("--viewer-bg","1");
+
+    vX = 0;
+    vY = 0;
+
+    applyViewerTransform();
+
+    return;
+
+  }
+
+  if(wasSingle && !moved && event.type === "pointerup"){
+
+    const now = Date.now();
+
+    const closeEnough =
+      Math.abs(event.clientX - lastTapX) < 40 &&
+      Math.abs(event.clientY - lastTapY) < 40;
+
+    if(now - lastTap < 300 && closeEnough){
+
+      if(vScale > 1.02){
+        zoomAt(1, event.clientX, event.clientY);
+      }else{
+        zoomAt(2.5, event.clientX, event.clientY);
+      }
+
+      lastTap = 0;
+
+    }else{
+
+      lastTap = now;
+      lastTapX = event.clientX;
+      lastTapY = event.clientY;
+
+    }
+
+    return;
+
+  }
+
+  clampPan();
+  applyViewerTransform();
+
+}
+
+photoViewer.addEventListener("pointerup", endPointer);
+photoViewer.addEventListener("pointercancel", endPointer);
+
+photoViewer.addEventListener("wheel", event => {
+
+  event.preventDefault();
+
+  const factor = event.deltaY < 0 ? 1.15 : 1 / 1.15;
+
+  photoViewer.classList.remove("dragging");
+
+  zoomAt(vScale * factor, event.clientX, event.clientY);
+
+},{ passive:false });
+
+viewerImage.addEventListener("dragstart", event => event.preventDefault());
+
+viewerClose.addEventListener("click", () => closePhotoViewer());
+
+/* open a member's photo */
+function viewMemberPhoto(uid){
+
+  const profile = profileFor(uid);
+
+  openPhotoViewer({
+    photo:getPhoto(profile),
+    name:getName(profile),
+    uid,
+    self:currentUser && uid === currentUser.uid
+  });
+
+}
+
+
+
+/* =====================================================
+   SHEETS
+===================================================== */
+
+function openSheet(sheet){
+  sheet.classList.add("open");
+}
+
+function closeSheet(sheet){
+  sheet.classList.remove("open");
+}
+
+[newGroupSheet, groupInfoSheet].forEach(sheet => {
+
+  sheet.addEventListener("click", event => {
+    if(event.target === sheet){
+      closeSheet(sheet);
+    }
+  });
+
+});
+
+$("newGroupClose").addEventListener("click", () => closeSheet(newGroupSheet));
+$("groupInfoClose").addEventListener("click", () => closeSheet(groupInfoSheet));
+
+document.addEventListener("keydown", event => {
+
+  if(event.key === "Escape"){
+
+    if(viewerOpen){
+      closePhotoViewer();
+    }else{
+      closeSheet(newGroupSheet);
+      closeSheet(groupInfoSheet);
+    }
+
+  }
+
+});
+
+
+
+/* =====================================================
+   AUTH
+===================================================== */
+
+onAuthStateChanged(auth, async user => {
+
+  if(!user){
+
+    location.replace("index.html");
+
+    return;
+
+  }
+
+  currentUser = user;
+
+  try{
+
+    const profileSnap = await getDoc(doc(db, "users", user.uid));
+
+    currentProfile = profileSnap.exists() ? profileSnap.data() : {};
+
+    await loadMembers();
+
+    subscribeToGroups();
+
+  }catch(error){
+
+    console.error("Authentication/profile error:", error);
+
+    showNotice("Could not load your community.");
+
+  }
+
+});
+
+
+
+/* =====================================================
+   LOAD MEMBERS
+===================================================== */
+
+async function loadMembers(){
+
+  peopleList.innerHTML = `<div class="no-people">Loading community members...</div>`;
+
+  try{
+
+    const snapshot = await getDocs(collection(db, "users"));
+
+    allMembers = [];
+
+    profiles.clear();
+
+    snapshot.forEach(userDoc => {
+
+      const data = { uid:userDoc.id, ...userDoc.data() };
+
+      profiles.set(userDoc.id, data);
+
+      if(userDoc.id === currentUser.uid){
+        return;
+      }
+
+      allMembers.push(data);
+
+    });
+
+    allMembers.sort((a,b) =>
+      getName(a).toLowerCase().localeCompare(getName(b).toLowerCase())
+    );
+
+    renderList();
+
+  }catch(error){
+
+    console.error("Member loading error:", error);
+
+    peopleList.innerHTML = `<div class="no-people">Community members could not be loaded.</div>`;
+
+    showNotice("Could not read the users collection. Check your Firestore rules.");
+
+  }
+
+}
+
+
+
+/* =====================================================
+   TABS
+===================================================== */
+
+function setTab(tab){
+
+  activeTab = tab;
+
+  tabMembers.classList.toggle("active", tab === "members");
+  tabGroups.classList.toggle("active", tab === "groups");
+
+  searchInput.placeholder =
+    tab === "members"
+      ? "Search community members..."
+      : "Search groups...";
+
+  renderList();
+
+}
+
+tabMembers.addEventListener("click", () => setTab("members"));
+tabGroups.addEventListener("click", () => setTab("groups"));
+
+function renderList(){
+
+  if(activeTab === "members"){
+    renderMembers();
+  }else{
+    renderGroups();
+  }
+
+}
+
+searchInput.addEventListener("input", renderList);
+
+
+
+/* =====================================================
+   RENDER MEMBERS
+===================================================== */
+
+function renderMembers(){
+
+  const search = searchInput.value.trim().toLowerCase();
+
+  const filtered = allMembers.filter(member => {
+
+    const name = getName(member).toLowerCase();
+
+    const username = String(member.username || "").toLowerCase();
+
+    return name.includes(search) || username.includes(search);
+
+  });
+
+  peopleCount.textContent = `${filtered.length} members`;
+
+  peopleList.innerHTML = "";
+
+  if(!filtered.length){
+
+    peopleList.innerHTML = `
+      <div class="no-people">
+        ${
+          allMembers.length
+            ? "No community member matches your search."
+            : "No other community members are available yet."
+        }
+      </div>
+    `;
+
+    return;
+
+  }
+
+  filtered.forEach(member => {
+
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "person";
+
+    if(
+      selectedChat?.type === "direct" &&
+      selectedChat.member?.uid === member.uid
+    ){
+      button.classList.add("active");
+    }
+
+    const avatar = document.createElement("div");
+
+    avatar.className = "person-avatar";
+
+    setAvatar(avatar, getPhoto(member), getName(member));
+
+    /* tap the photo → full photo */
+    avatar.addEventListener("click", event => {
+
+      event.stopPropagation();
+
+      viewMemberPhoto(member.uid);
+
+    });
+
+    const info = document.createElement("div");
+
+    info.className = "person-info";
+
+    const name = document.createElement("div");
+
+    name.className = "person-name";
+    name.textContent = getName(member);
+
+    const username = document.createElement("div");
+
+    username.className = "person-username";
+    username.textContent = handleOf(member);
+
+    info.appendChild(name);
+    info.appendChild(username);
+
+    button.appendChild(avatar);
+    button.appendChild(info);
+
+    button.addEventListener("click", () => openChat(member));
+
+    peopleList.appendChild(button);
+
+  });
+
+}
+
+
+
+/* =====================================================
+   GROUPS
+===================================================== */
+
+function subscribeToGroups(){
+
+  if(unsubscribeGroups){
+    unsubscribeGroups();
+    unsubscribeGroups = null;
+  }
+
+  const groupsQuery = query(
+    collection(db, "chats"),
+    where("participants", "array-contains", currentUser.uid)
+  );
+
+  unsubscribeGroups = onSnapshot(
+
+    groupsQuery,
+
+    snapshot => {
+
+      groups = [];
+
+      snapshot.forEach(chatDoc => {
+
+        const data = chatDoc.data();
+
+        if(data.type === "group"){
+          groups.push({ id:chatDoc.id, ...data });
+        }
+
+      });
+
+      groups.sort((a,b) => millis(b.updatedAt) - millis(a.updatedAt));
+
+      if(activeTab === "groups"){
+        renderGroups();
+      }
+
+      /* keep open group header in sync */
+      if(selectedChat?.type === "group"){
+
+        const current = groups.find(g => g.id === selectedChat.id);
+
+        if(current){
+          fillGroupHeader(current);
+        }
+
+      }
+
+      if(groupInfoSheet.classList.contains("open")){
+        renderGroupInfo();
+      }
+
+    },
+
+    error => {
+
+      console.error("Groups listener error:", error);
+
+      showNotice("Could not load groups. Check your Firestore rules.");
+
+    }
+
+  );
+
+}
+
+function millis(timestamp){
+
+  if(!timestamp){
+    return Date.now();
+  }
+
+  try{
+    return timestamp.toMillis ? timestamp.toMillis() : new Date(timestamp).getTime();
+  }catch{
+    return 0;
+  }
+
+}
+
+function renderGroups(){
+
+  const search = searchInput.value.trim().toLowerCase();
+
+  const filtered = groups.filter(group =>
+    String(group.name || "").toLowerCase().includes(search)
+  );
+
+  peopleCount.textContent = `${filtered.length} groups`;
+
+  peopleList.innerHTML = "";
+
+  /* new group row */
+
+  const create = document.createElement("button");
+
+  create.type = "button";
+  create.className = "person new-group";
+
+  create.innerHTML = `
+    <div class="person-avatar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+    </div>
+    <div class="person-info">
+      <div class="person-name">New group</div>
+      <div class="person-username">Chat with several members</div>
+    </div>
+  `;
+
+  create.addEventListener("click", openNewGroup);
+
+  peopleList.appendChild(create);
+
+  if(!filtered.length){
+
+    const empty = document.createElement("div");
+
+    empty.className = "no-people";
+
+    empty.textContent =
+      groups.length
+        ? "No group matches your search."
+        : "You are not in any group yet. Create one to start chatting together.";
+
+    peopleList.appendChild(empty);
+
+    return;
+
+  }
+
+  filtered.forEach(group => {
+
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "person";
+
+    if(
+      selectedChat?.type === "group" &&
+      selectedChat.id === group.id
+    ){
+      button.classList.add("active");
+    }
+
+    const avatar = document.createElement("div");
+
+    avatar.className = "person-avatar group";
+    avatar.textContent = initials(group.name);
+
+    const info = document.createElement("div");
+
+    info.className = "person-info";
+
+    const name = document.createElement("div");
+
+    name.className = "person-name";
+    name.textContent = group.name || "Group";
+
+    const sub = document.createElement("div");
+
+    sub.className = "person-username";
+    sub.textContent = `${(group.participants || []).length} members`;
+
+    info.appendChild(name);
+    info.appendChild(sub);
+
+    button.appendChild(avatar);
+    button.appendChild(info);
+
+    button.addEventListener("click", () => openGroup(group));
+
+    peopleList.appendChild(button);
+
+  });
+
+}
+
+
+
+/* =====================================================
+   NEW GROUP
+===================================================== */
+
+function openNewGroup(){
+
+  pickedUids = new Set();
+
+  groupNameInput.value = "";
+
+  renderPickList();
+
+  updatePickState();
+
+  openSheet(newGroupSheet);
+
+}
+
+function renderPickList(){
+
+  pickList.innerHTML = "";
+
+  if(!allMembers.length){
+
+    pickList.innerHTML = `<div class="no-people">No other community members are available yet.</div>`;
+
+    return;
+
+  }
+
+  allMembers.forEach(member => {
+
+    const row = document.createElement("button");
+
+    row.type = "button";
+    row.className = "pick-row";
+
+    if(pickedUids.has(member.uid)){
+      row.classList.add("selected");
+    }
+
+    const avatar = document.createElement("div");
+
+    avatar.className = "person-avatar";
+
+    setAvatar(avatar, getPhoto(member), getName(member));
+
+    const info = document.createElement("div");
+
+    info.className = "person-info";
+
+    const name = document.createElement("div");
+
+    name.className = "person-name";
+    name.textContent = getName(member);
+
+    const username = document.createElement("div");
+
+    username.className = "person-username";
+    username.textContent = handleOf(member);
+
+    info.appendChild(name);
+    info.appendChild(username);
+
+    const check = document.createElement("div");
+
+    check.className = "pick-check";
+    check.textContent = "✓";
+
+    row.appendChild(avatar);
+    row.appendChild(info);
+    row.appendChild(check);
+
+    row.addEventListener("click", () => {
+
+      if(pickedUids.has(member.uid)){
+        pickedUids.delete(member.uid);
+      }else{
+        pickedUids.add(member.uid);
+      }
+
+      row.classList.toggle("selected", pickedUids.has(member.uid));
+
+      updatePickState();
+
+    });
+
+    pickList.appendChild(row);
+
+  });
+
+}
+
+function updatePickState(){
+
+  const count = pickedUids.size;
+
+  pickCount.textContent =
+    count < 2
+      ? `Select at least 2 members (${count} selected)`
+      : `${count} members selected`;
+
+  createGroupButton.disabled =
+    count < 2 || groupNameInput.value.trim().length < 2;
+
+}
+
+groupNameInput.addEventListener("input", updatePickState);
+
+createGroupButton.addEventListener("click", async () => {
+
+  const name = groupNameInput.value.trim();
+
+  if(name.length < 2 || pickedUids.size < 2 || !currentUser){
+    return;
+  }
+
+  createGroupButton.disabled = true;
+  createGroupButton.textContent = "Creating...";
+
+  try{
+
+    const groupRef = doc(collection(db, "chats"));
+
+    await setDoc(groupRef, {
+
+      type:"group",
+
+      name:name,
+
+      participants:[currentUser.uid, ...pickedUids],
+
+      createdBy:currentUser.uid,
+
+      createdAt:serverTimestamp(),
+
+      updatedAt:serverTimestamp()
+
+    });
+
+    closeSheet(newGroupSheet);
+
+    showToast("Group created");
+
+    setTab("groups");
+
+    openGroup({
+      id:groupRef.id,
+      type:"group",
+      name:name,
+      participants:[currentUser.uid, ...pickedUids],
+      createdBy:currentUser.uid
+    });
+
+  }catch(error){
+
+    console.error("Create group error:", error);
+
+    showNotice("Group could not be created. Check your Firestore rules.");
+
+    showToast("Could not create group");
+
+  }finally{
+
+    createGroupButton.textContent = "Create group";
+
+    updatePickState();
+
+  }
+
+});
+
+
+
+/* =====================================================
+   GROUP INFO
+===================================================== */
+
+function currentGroup(){
+
+  if(selectedChat?.type !== "group"){
+    return null;
+  }
+
+  return groups.find(g => g.id === selectedChat.id) || selectedChat.group || null;
+
+}
+
+function renderGroupInfo(){
+
+  const group = currentGroup();
+
+  if(!group){
+    return;
+  }
+
+  const uids = group.participants || [];
+
+  groupInfoBody.innerHTML = "";
+
+  const hero = document.createElement("div");
+
+  hero.className = "group-hero";
+
+  hero.innerHTML = `
+    <div class="group-hero-avatar">${escapeHTML(initials(group.name))}</div>
+    <div class="group-hero-name">${escapeHTML(group.name || "Group")}</div>
+    <div class="group-hero-sub">${uids.length} members</div>
+  `;
+
+  groupInfoBody.appendChild(hero);
+
+  const title = document.createElement("div");
+
+  title.className = "info-section-title";
+  title.textContent = "Members";
+
+  groupInfoBody.appendChild(title);
+
+  /* you first, then others by name */
+
+  const ordered = [...uids].sort((a,b) => {
+
+    if(a === currentUser.uid) return -1;
+    if(b === currentUser.uid) return 1;
+
+    return getName(profileFor(a)).toLowerCase()
+      .localeCompare(getName(profileFor(b)).toLowerCase());
+
+  });
+
+  ordered.forEach(uid => {
+
+    const profile = profileFor(uid);
+
+    const mine = uid === currentUser.uid;
+
+    const row = document.createElement("div");
+
+    row.className = "info-member";
+
+    const avatar = document.createElement("div");
+
+    avatar.className = "person-avatar";
+
+    setAvatar(avatar, getPhoto(profile), getName(profile));
+
+    avatar.addEventListener("click", () => viewMemberPhoto(uid));
+
+    const info = document.createElement("div");
+
+    info.className = "person-info";
+
+    const name = document.createElement("div");
+
+    name.className = "person-name";
+    name.textContent = mine ? `${getName(profile)} (You)` : getName(profile);
+
+    const username = document.createElement("div");
+
+    username.className = "person-username";
+    username.textContent = handleOf(profile);
+
+    info.appendChild(name);
+    info.appendChild(username);
+
+    info.addEventListener("click", () => {
+
+      location.href =
+        mine
+          ? "profile.html"
+          : `profile.html?uid=${encodeURIComponent(uid)}`;
+
+    });
+
+    row.appendChild(avatar);
+    row.appendChild(info);
+
+    if(uid === group.createdBy){
+
+      const tag = document.createElement("div");
+
+      tag.className = "info-tag";
+      tag.textContent = "Admin";
+
+      row.appendChild(tag);
+
+    }
+
+    groupInfoBody.appendChild(row);
+
+  });
+
+}
+
+function openGroupInfo(){
+
+  if(!currentGroup()){
+    return;
+  }
+
+  renderGroupInfo();
+
+  openSheet(groupInfoSheet);
+
+}
+
+
+
+/* =====================================================
+   CHAT ID
+===================================================== */
+
+function makeChatId(uidA, uidB){
+
+  return [uidA, uidB].sort().join("_");
+
+}
+
+
+
+/* =====================================================
+   ENSURE DIRECT CHAT DOCUMENT EXISTS
+===================================================== */
+
+async function ensureChatDocument(){
+
+  if(
+    !currentUser ||
+    selectedChat?.type !== "direct" ||
+    !selectedChat.id
+  ){
+    return;
+  }
+
+  const chatRef = doc(db, "chats", selectedChat.id);
+
+  const chatSnap = await getDoc(chatRef);
+
+  if(!chatSnap.exists()){
+
+    await setDoc(chatRef, {
+
+      type:"direct",
+
+      participants:[currentUser.uid, selectedChat.member.uid],
+
+      createdAt:serverTimestamp(),
+
+      updatedAt:serverTimestamp()
+
+    });
+
+  }
+
+}
+
+
+
+/* =====================================================
+   CONVERSATION HEADER
+===================================================== */
+
+function fillDirectHeader(member){
+
+  chatUserName.textContent = getName(member);
+
+  chatUserHandle.textContent = handleOf(member);
+
+  chatStatus.textContent = "Private chat";
+
+  chatUserAvatar.classList.remove("group");
+
+  setAvatar(chatUserAvatar, getPhoto(member), getName(member));
+
+}
+
+function fillGroupHeader(group){
+
+  const count = (group.participants || []).length;
+
+  chatUserName.textContent = group.name || "Group";
+
+  chatUserHandle.textContent = `${count} members • tap for info`;
+
+  chatStatus.textContent = "Group chat";
+
+  chatUserAvatar.replaceChildren();
+
+  chatUserAvatar.textContent = initials(group.name);
+
+  messageInput.placeholder = `Message ${group.name || "group"}...`;
+
+}
+
+chatUserAvatar.addEventListener("click", () => {
+
+  if(!selectedChat){
+    return;
+  }
+
+  if(selectedChat.type === "group"){
+    openGroupInfo();
+    return;
+  }
+
+  viewMemberPhoto(selectedChat.member.uid);
+
+});
+
+chatUserInfo.addEventListener("click", () => {
+
+  if(!selectedChat){
+    return;
+  }
+
+  if(selectedChat.type === "group"){
+    openGroupInfo();
+    return;
+  }
+
+  location.href =
+    `profile.html?uid=${encodeURIComponent(selectedChat.member.uid)}`;
+
+});
+
+
+
+/* =====================================================
+   OPEN CHAT (direct)
+===================================================== */
+
+async function openChat(member){
+
+  if(!member || !currentUser){
+    return;
+  }
+
+  selectedChat = {
+    type:"direct",
+    id:makeChatId(currentUser.uid, member.uid),
+    member
+  };
+
+  renderList();
+
+  fillDirectHeader(member);
+
+  messageInput.placeholder = `Message ${getName(member)}...`;
+
+  prepareConversation();
+
+  try{
+
+    /* create the parent chat doc before reading messages */
+
+    await ensureChatDocument();
+
+    subscribeToMessages();
+
+  }catch(error){
+
+    chatInitFailed(error);
+
+  }
+
+}
+
+
+
+/* =====================================================
+   OPEN GROUP
+===================================================== */
+
+function openGroup(group){
+
+  if(!group || !currentUser){
+    return;
+  }
+
+  selectedChat = {
+    type:"group",
+    id:group.id,
+    group
+  };
+
+  renderList();
+
+  fillGroupHeader(group);
+
+  prepareConversation();
+
+  subscribeToMessages();
+
+}
+
+
+
+function prepareConversation(){
+
+  messageInput.disabled = false;
+
+  sendButton.disabled = false;
+
+  chatPage.classList.add("chat-open");
+
+  messages.innerHTML = emptyState(
+    CHAT_ICON,
+    "Opening conversation...",
+    "Loading your messages."
+  );
+
+}
+
+function chatInitFailed(error){
+
+  console.error("Chat initialization error:", error);
+
+  messages.innerHTML = emptyState(
+    "!",
+    "Chat could not open",
+    error?.message || "Check your Firestore rules."
+  );
+
+  showNotice("Chat could not be opened. Check your Firestore rules.");
+
+}
+
+
+
+/* =====================================================
+   MOBILE BACK
+===================================================== */
+
+$("backMobile").addEventListener("click", () => {
+
+  chatPage.classList.remove("chat-open");
+
+});
+
+
+
+/* =====================================================
+   SUBSCRIBE MESSAGES
+===================================================== */
+
+function subscribeToMessages(){
+
+  if(!selectedChat?.id){
+    return;
+  }
+
+  if(unsubscribeMessages){
+    unsubscribeMessages();
+    unsubscribeMessages = null;
+  }
+
+  const chatId = selectedChat.id;
+
+  const messagesQuery = query(
+    collection(db, "chats", chatId, "messages"),
+    orderBy("createdAt", "asc")
+  );
+
+  unsubscribeMessages = onSnapshot(
+
+    messagesQuery,
+
+    snapshot => {
+
+      /* ignore late results from a chat we already left */
+      if(selectedChat?.id !== chatId){
+        return;
+      }
+
+      renderMessages(snapshot);
+
+    },
+
+    error => {
+
+      console.error("Messages listener error:", error);
+
+      messages.innerHTML = emptyState(
+        "!",
+        "Messages could not load",
+        "Check your Firestore rules for chats and messages."
+      );
+
+    }
+
+  );
+
+}
+
+
+
+/* =====================================================
+   RENDER MESSAGES
+===================================================== */
+
+function renderMessages(snapshot){
+
+  messages.innerHTML = "";
+
+  const isGroup = selectedChat?.type === "group";
+
+  if(snapshot.empty){
+
+    messages.innerHTML = emptyState(
+      CHAT_ICON,
+      "No messages yet",
+      isGroup
+        ? "Say hello to the group by sending the first message."
+        : "Start the conversation by sending the first message."
+    );
+
+    return;
+
+  }
+
+  let previousSender = null;
+
+  snapshot.forEach(messageDoc => {
+
+    const data = messageDoc.data();
+
+    const mine = data.senderId === currentUser.uid;
+
+    const firstOfRun = data.senderId !== previousSender;
+
+    previousSender = data.senderId;
+
+    const row = document.createElement("div");
+
+    row.className = "message-row " + (mine ? "mine" : "theirs");
+
+    if(isGroup && firstOfRun){
+      row.classList.add("gap-top");
+    }
+
+    /* avatar beside other people's group messages */
+
+    if(isGroup && !mine){
+
+      if(firstOfRun){
+
+        const profile = profileFor(data.senderId);
+
+        const avatar = document.createElement("button");
+
+        avatar.type = "button";
+        avatar.className = "msg-avatar";
+        avatar.setAttribute("aria-label", `View ${getName(profile)} photo`);
+
+        setAvatar(avatar, getPhoto(profile), getName(profile));
+
+        avatar.addEventListener("click", () => viewMemberPhoto(data.senderId));
+
+        row.appendChild(avatar);
+
+      }else{
+
+        const space = document.createElement("div");
+
+        space.className = "msg-avatar-space";
+
+        row.appendChild(space);
+
+      }
+
+    }
+
+    const bubble = document.createElement("div");
+
+    bubble.className = "message " + (mine ? "mine" : "theirs");
+
+    /* sender name inside group bubbles */
+
+    if(isGroup && !mine && firstOfRun){
+
+      const sender = document.createElement("div");
+
+      sender.className = "message-sender";
+
+      sender.textContent = getName(profileFor(data.senderId));
+
+      sender.addEventListener("click", () => viewMemberPhoto(data.senderId));
+
+      bubble.appendChild(sender);
+
+    }
+
+    const text = document.createElement("div");
+
+    /* textContent prevents HTML injection */
+
+    text.textContent = data.text || "";
+
+    const time = document.createElement("div");
+
+    time.className = "message-time";
+
+    time.textContent = formatTime(data.createdAt);
+
+    bubble.appendChild(text);
+    bubble.appendChild(time);
+
+    row.appendChild(bubble);
+
+    messages.appendChild(row);
+
+  });
+
+  requestAnimationFrame(() => {
+    messages.scrollTop = messages.scrollHeight;
+  });
+
+}
+
+
+
+/* =====================================================
+   FORMAT TIME
+===================================================== */
+
+function formatTime(timestamp){
+
+  if(!timestamp){
+    return "";
+  }
+
+  try{
+
+    const date =
+      timestamp.toDate
+        ? timestamp.toDate()
+        : new Date(timestamp);
+
+    return date.toLocaleTimeString([], {
+      hour:"numeric",
+      minute:"2-digit"
+    });
+
+  }catch{
+
+    return "";
+
+  }
+
+}
+
+
+
+/* =====================================================
+   TEXTAREA AUTO HEIGHT
+===================================================== */
+
+messageInput.addEventListener("input", () => {
+
+  messageInput.style.height = "auto";
+
+  messageInput.style.height =
+    Math.min(messageInput.scrollHeight, 130) + "px";
+
+});
+
+
+
+/* =====================================================
+   SEND MESSAGE
+===================================================== */
+
+composer.addEventListener("submit", async event => {
+
+  event.preventDefault();
+
+  if(sending || !currentUser || !selectedChat){
+    return;
+  }
+
+  const text = messageInput.value.trim();
+
+  if(!text){
+    return;
+  }
+
+  sending = true;
+
+  sendButton.disabled = true;
+
+  try{
+
+    /* direct chats: make sure the parent chat exists */
+
+    await ensureChatDocument();
+
+    const payload = {
+
+      senderId:currentUser.uid,
+
+      text:text,
+
+      createdAt:serverTimestamp()
+
+    };
+
+    if(selectedChat.type === "direct"){
+      payload.receiverId = selectedChat.member.uid;
+    }
+
+    await addDoc(
+      collection(db, "chats", selectedChat.id, "messages"),
+      payload
+    );
+
+    /* update chat activity */
+
+    await setDoc(
+      doc(db, "chats", selectedChat.id),
+      { updatedAt:serverTimestamp() },
+      { merge:true }
+    );
+
+    messageInput.value = "";
+
+    messageInput.style.height = "45px";
+
+    messageInput.focus();
+
+  }catch(error){
+
+    console.error("Send message error:", error);
+
+    showNotice("Message could not be sent. Check your Firestore rules.");
+
+    showToast("Could not send message");
+
+  }finally{
+
+    sending = false;
+
+    sendButton.disabled = !selectedChat;
+
+  }
+
+});
+
+
+
+/* =====================================================
+   ENTER SEND
+   SHIFT + ENTER = NEW LINE
+===================================================== */
+
+messageInput.addEventListener("keydown", event => {
+
+  if(event.key === "Enter" && !event.shiftKey){
+
+    event.preventDefault();
+
+    composer.requestSubmit();
+
+  }
+
+});
+
+</script>
+
+</body>
+</html>
