@@ -1,0 +1,21 @@
+
+{
+  "id": "./",
+  "name": "Private Community",
+  "short_name": "Private",
+  "description": "Your people. Your space. A private community for chatting and sharing.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "icons": [
+    {
+      "src": "./icon-512.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any"
+    }
+  ]
+}
